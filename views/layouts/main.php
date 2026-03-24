@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= e(config('app.name')) ?></title>
-    <meta name="description" content="Resqnet — Your Learning Management System">
+    <meta name="description" content="resqnet — Disaster early warning and post-disaster donation management">
     <link rel="stylesheet" href="<?= asset('css/style.css') ?>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -14,6 +14,8 @@
         <div class="container">
             <a href="/" class="logo"><?= e(config('app.name')) ?></a>
             <nav class="main-nav">
+                <a href="/warnings">Warnings</a>
+                <a href="/donations">Donations</a>
                 <?php if (auth_check()): ?>
                     <a href="/dashboard">Dashboard</a>
                     <a href="/logout" class="btn btn-sm btn-outline">Logout</a>

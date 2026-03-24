@@ -1,6 +1,6 @@
 {
-  "name": "resqnet/lms",
-  "description": "Resqnet 21 — Plain PHP+MySQL Module-Based MVC Boilerplate",
+  "name": "resqnet/platform",
+  "description": "resqnet — Disaster early warning and post-disaster donation management system",
   "type": "project",
   "require": {
     "php": ">=8.1",
@@ -9,7 +9,7 @@
   "scripts": {
     "serve": [
       "Composer\\Config::disableProcessTimeout",
-      "@php -S localhost:8000 -t public"
+      "@php -S localhost:8001 -t public"
     ],
     "start": [
       "@serve"

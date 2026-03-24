@@ -5,7 +5,7 @@
  */
 
 return [
-    'name' => env('APP_NAME', 'Resqnet 21'),
+    'name' => env('APP_NAME', 'resqnet'),
     'url' => env('APP_URL', 'http://localhost:8000'),
     'debug' => env('APP_DEBUG', false),
 ];
