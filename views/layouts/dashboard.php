@@ -12,7 +12,7 @@
     <aside class="sidebar">
         <div class="sidebar-header">
             <a href="/dashboard" class="logo"><?= e(config('app.name')) ?></a>
-            <span class="role-badge role-<?= e(user_role()) ?>"><?= ucfirst(e(user_role())) ?></span>
+            <span class="role-badge role-<?= e(user_role() ?? 'guest') ?>"><?= e(role_label(user_role())) ?></span>
         </div>
 
         <?php

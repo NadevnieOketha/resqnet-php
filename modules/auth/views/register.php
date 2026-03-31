@@ -1,7 +1,7 @@
 <div class="auth-container">
     <div class="auth-card">
         <h2>Create Account</h2>
-        <p class="auth-subtitle">Join <?= e(config('app.name')) ?></p>
+        <p class="auth-subtitle">Join <?= e(config('app.name')) ?> as a registered general public user</p>
 
         <?php if ($error = get_flash('error')): ?>
             <div class="alert alert-error"><?= e($error) ?></div>

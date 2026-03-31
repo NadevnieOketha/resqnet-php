@@ -2,8 +2,6 @@
 
 /**
  * Dashboard Module — Controllers
- * 
- * Routes to the correct dashboard view based on user role.
  */
 
 function dashboard_index(): void
@@ -12,46 +10,63 @@ function dashboard_index(): void
     $role = $user['role'];
     $data = ['user' => $user];
 
-    // Load role-specific dashboard data
+    try {
+        $data['published_warning_count'] = db_count('warnings', ['status' => 'published']);
+        $data['open_request_count'] = db_count('donation_requests', ['status' => 'open']);
+        $data['total_contributions'] = (float) (db_fetch('SELECT COALESCE(SUM(amount), 0) AS total FROM donations')['total'] ?? 0);
+    } catch (\PDOException) {
+        $data['published_warning_count'] = 0;
+        $data['open_request_count'] = 0;
+        $data['total_contributions'] = 0;
+    }
+
     switch ($role) {
-        case 'admin':
+        case 'dmc_admin':
             try {
-                $data['user_count']    = db_count('users');
-                $data['subject_count'] = db_count('subjects');
+                $data['user_count'] = db_count('users');
+                $data['warnings'] = warnings_recent(6, null);
+                $data['requests'] = donations_recent_requests(6, null);
             } catch (\PDOException) {
-                $data['user_count']    = 0;
-                $data['subject_count'] = 0;
+                $data['user_count'] = 0;
+                $data['warnings'] = [];
+                $data['requests'] = [];
             }
-            $viewName = 'admin';
+            $viewName = 'dmc_admin';
             break;
 
-        case 'moderator':
+        case 'grama_niladhari':
             try {
-                $data['subjects']      = db_fetch_all('SELECT * FROM subjects ORDER BY created_at DESC LIMIT 10');
-                $data['subject_count'] = db_count('subjects');
+                $data['my_warning_count'] = db_count('warnings', ['issued_by' => auth_id()]);
+                $data['warnings'] = warnings_recent(8, auth_id());
             } catch (\PDOException) {
-                $data['subjects']      = [];
-                $data['subject_count'] = 0;
+                $data['my_warning_count'] = 0;
+                $data['warnings'] = [];
             }
-            $viewName = 'moderator';
+            $viewName = 'grama_niladhari';
             break;
 
-        case 'coordinator':
+        case 'ngo':
             try {
-                $data['subjects'] = db_fetch_all('SELECT * FROM subjects ORDER BY name ASC');
+                $data['my_request_count'] = donations_count_requests_for_ngo((int) auth_id());
+                $data['my_collected_total'] = donations_total_for_ngo((int) auth_id());
+                $data['requests'] = donations_recent_requests_for_ngo((int) auth_id(), 8);
             } catch (\PDOException) {
-                $data['subjects'] = [];
+                $data['my_request_count'] = 0;
+                $data['my_collected_total'] = 0;
+                $data['requests'] = [];
             }
-            $viewName = 'coordinator';
+            $viewName = 'ngo';
             break;
 
-        default: // student
+        default: // general_public
             try {
-                $data['subjects'] = db_fetch_all('SELECT * FROM subjects ORDER BY name ASC');
+                $data['warnings'] = warnings_recent(6, null, 'published');
+                $data['requests'] = donations_recent_requests(6, 'open');
             } catch (\PDOException) {
-                $data['subjects'] = [];
+                $data['warnings'] = [];
+                $data['requests'] = [];
             }
-            $viewName = 'student';
+            $viewName = 'general_public';
             break;
     }
 

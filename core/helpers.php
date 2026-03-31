@@ -216,24 +216,39 @@ function auth_id(): ?int
 
 /**
  * Check if the current user has the given role.
- * Supports role hierarchy: admin > moderator > coordinator > student
+ * Roles are treated as separate access levels.
  */
 function is_role(string $role): bool
 {
     $user = auth_user();
     if (!$user) return false;
 
-    $hierarchy = [
-        'student'     => 1,
-        'coordinator' => 2,
-        'moderator'   => 3,
-        'admin'       => 4,
-    ];
+    return ($user['role'] ?? null) === $role;
+}
 
-    $userLevel = $hierarchy[$user['role']] ?? 0;
-    $requiredLevel = $hierarchy[$role] ?? 0;
+/**
+ * Check if current user belongs to any role in the given list.
+ */
+function is_any_role(array $roles): bool
+{
+    $user = auth_user();
+    if (!$user) return false;
 
-    return $userLevel >= $requiredLevel;
+    return in_array($user['role'] ?? '', $roles, true);
+}
+
+/**
+ * Human-friendly role labels for UI.
+ */
+function role_label(?string $role): string
+{
+    return match ($role) {
+        'general_public'  => 'General Public',
+        'grama_niladhari' => 'Grama Niladhari',
+        'ngo'             => 'NGO',
+        'dmc_admin'       => 'DMC Admin',
+        default           => 'Guest',
+    };
 }
 
 function user_role(): ?string

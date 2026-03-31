@@ -21,15 +21,61 @@ function db_connect(): PDO
             $config['charset']
         );
 
+        $options = [
+            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES   => false,
+            PDO::ATTR_TIMEOUT            => (int) ($config['connect_timeout'] ?? 10),
+        ];
+
+        $sslMode = strtolower((string) ($config['ssl_mode'] ?? 'disable'));
+        if ($sslMode !== '' && $sslMode !== 'disable') {
+            if (defined('PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT')) {
+                // Managed DB providers often use CA-signed certs; allow disabling strict verify when CA isn't configured.
+                $options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = false;
+            }
+
+            $sslCa = (string) ($config['ssl_ca'] ?? '');
+            if ($sslCa === '') {
+                // Common CA bundle locations on macOS/Linux.
+                $candidateCAs = [
+                    '/etc/ssl/cert.pem',
+                    '/etc/ssl/certs/ca-certificates.crt',
+                    '/opt/homebrew/etc/openssl@3/cert.pem',
+                ];
+
+                foreach ($candidateCAs as $candidate) {
+                    if (file_exists($candidate)) {
+                        $sslCa = $candidate;
+                        break;
+                    }
+                }
+            }
+
+            if ($sslCa !== '' && file_exists($sslCa) && defined('PDO::MYSQL_ATTR_SSL_CA')) {
+                $options[PDO::MYSQL_ATTR_SSL_CA] = $sslCa;
+            }
+
+            $sslCert = (string) ($config['ssl_cert'] ?? '');
+            if ($sslCert !== '' && file_exists($sslCert) && defined('PDO::MYSQL_ATTR_SSL_CERT')) {
+                $options[PDO::MYSQL_ATTR_SSL_CERT] = $sslCert;
+            }
+
+            $sslKey = (string) ($config['ssl_key'] ?? '');
+            if ($sslKey !== '' && file_exists($sslKey) && defined('PDO::MYSQL_ATTR_SSL_KEY')) {
+                $options[PDO::MYSQL_ATTR_SSL_KEY] = $sslKey;
+            }
+        }
+
         try {
-            $pdo = new PDO($dsn, $config['username'], $config['password'], [
-                PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                PDO::ATTR_EMULATE_PREPARES   => false,
-            ]);
+            $pdo = new PDO($dsn, $config['username'], $config['password'], $options);
         } catch (PDOException $e) {
             if (config('app.debug')) {
-                die('Database connection failed: ' . $e->getMessage());
+                $msg = 'Database connection failed: ' . $e->getMessage();
+                if (str_contains($e->getMessage(), '2006')) {
+                    $msg .= ' (Check DB host/port reachability and SSL settings in .env: DB_SSL_MODE/DB_SSL_CA.)';
+                }
+                die($msg);
             }
             die('Database connection failed.');
         }

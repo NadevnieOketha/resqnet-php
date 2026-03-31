@@ -28,15 +28,24 @@ function middleware_guest(): void
 }
 
 /**
- * Require a specific role. Supports role hierarchy:
- *   admin > moderator > coordinator > student
+ * Require a specific role.
  * 
  * Usage in routes:
- *   route('GET', '/subjects', 'subjects_index', ['middleware_auth', fn() => middleware_role('moderator')]);
+ *   route('GET', '/dashboard/warnings', 'warnings_manage_index', ['middleware_auth', fn() => middleware_role('dmc_admin')]);
  */
 function middleware_role(string $role): void
 {
     if (!is_role($role)) {
+        abort(403, 'You do not have permission to access this page.');
+    }
+}
+
+/**
+ * Require any one role from a list.
+ */
+function middleware_roles(array $roles): void
+{
+    if (!is_any_role($roles)) {
         abort(403, 'You do not have permission to access this page.');
     }
 }
