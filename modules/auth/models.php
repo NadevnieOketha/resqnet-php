@@ -352,20 +352,20 @@ function auth_reset_user_password(int $userId, string $password): void
 function auth_pending_approval_users(): array
 {
     return db_fetch_all(
-        'SELECT u.user_id, u.username, u.email, u.role, u.active,
+        "SELECT u.user_id, u.username, u.email, u.role, u.active,
                 COALESCE(v.name, n.organization_name, u.username) AS display_name
          FROM users u
          LEFT JOIN volunteers v ON v.user_id = u.user_id
          LEFT JOIN ngos n ON n.user_id = u.user_id
-         WHERE u.active = 0 AND u.role IN ("volunteer", "ngo")
-         ORDER BY u.user_id DESC'
+         WHERE u.active = 0 AND u.role IN ('volunteer', 'ngo')
+         ORDER BY u.user_id DESC"
     );
 }
 
 function auth_approve_user(int $userId): int
 {
     return db_query(
-        'UPDATE users SET active = 1 WHERE user_id = ? AND role IN ("volunteer", "ngo") AND active = 0',
+        "UPDATE users SET active = 1 WHERE user_id = ? AND role IN ('volunteer', 'ngo') AND active = 0",
         [$userId]
     )->rowCount();
 }
@@ -379,11 +379,11 @@ function auth_create_grama_niladhari_account(array $data): int
 function auth_list_grama_niladhari_users(): array
 {
     return db_fetch_all(
-        'SELECT u.user_id, u.username, u.email, u.active, g.name, g.contact_number, g.gn_division
+        "SELECT u.user_id, u.username, u.email, u.active, g.name, g.contact_number, g.gn_division
          FROM users u
          INNER JOIN grama_niladhari g ON g.user_id = u.user_id
-         WHERE u.role = "grama_niladhari"
-         ORDER BY u.user_id DESC'
+         WHERE u.role = 'grama_niladhari'
+         ORDER BY u.user_id DESC"
     );
 }
 
