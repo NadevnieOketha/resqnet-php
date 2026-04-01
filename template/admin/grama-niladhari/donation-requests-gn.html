@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>ResQnet - Donation Requests (GN)</title>
+    <link rel="stylesheet" href="./styles/core.css" />
+    <link rel="stylesheet" href="./styles/dashboard.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+    <style>
+      h1 { margin:0 0 0.5rem; }
+      .subtitle { color:#9a8b5a; font-size:0.75rem; margin-bottom:1.2rem; }
+      .tabs { display:flex; gap:2.75rem; border-bottom:1px solid var(--color-border); margin-bottom:1rem; position:relative; }
+      .tab-btn { all:unset; cursor:pointer; font-size:0.7rem; font-weight:600; padding:0.9rem 0; color:#222; }
+      .tab-btn[aria-selected='true'] { color:#000; }
+      .tab-indicator { position:absolute; bottom:-1px; height:2px; background:var(--color-accent); width:220px; transition:transform .25s ease, width .25s ease; }
+      .table-shell { border:1px solid var(--color-border); border-radius:var(--radius-lg); overflow:hidden; background:#fff; }
+      table.req-table { width:100%; border-collapse:collapse; font-size:0.65rem; }
+      table.req-table thead th { text-align:left; padding:0.75rem 0.85rem; background:#fafafa; font-weight:600; border-bottom:1px solid var(--color-border); }
+      table.req-table tbody td { padding:0.9rem 0.85rem; border-bottom:1px solid var(--color-border); vertical-align:top; }
+      table.req-table tbody tr:last-child td { border-bottom:none; }
+      .action-pills { display:flex; gap:0.55rem; align-items:center; }
+      .pill { all:unset; cursor:pointer; font-size:0.55rem; font-weight:600; padding:0.5rem 1.05rem; border-radius:999px; background:#e3e3e3; display:inline-flex; align-items:center; gap:0.35rem; }
+      .pill svg { width:14px; height:14px; }
+      .hidden { display:none !important; }
+      @media (max-width:780px){ table.req-table thead { display:none; } table.req-table tbody td { display:block; padding:0.6rem 0.85rem; } table.req-table tbody tr { border-bottom:1px solid var(--color-border); } table.req-table tbody td::before { content:attr(data-label); display:block; font-weight:600; margin-bottom:0.25rem; } .action-pills{ flex-wrap:wrap; } }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar" aria-label="Primary">
+        <div class="brand"><img class="logo-img" src="./assets/img/logo.svg" alt="ResQnet Logo" width="120" height="32" /><span class="brand-name sr-only">ResQnet</span></div>
+        <nav class="nav">
+          <button class="nav-item" data-section="overview"><span class="icon" data-lucide="home"></span><span>Overview</span></button>
+          <button class="nav-item" data-section="forecast"><span class="icon" data-lucide="line-chart"></span><span>Forecast Dashboard</span></button>
+          <button class="nav-item active" data-section="donation-requests"><span class="icon" data-lucide="gift"></span><span>Donation Requests</span></button>
+          <button class="nav-item" data-section="disaster-reports"><span class="icon" data-lucide="file-text"></span><span>Disaster Reports</span></button>
+          <button class="nav-item" data-section="safe-locations"><span class="icon" data-lucide="map-pin"></span><span>Safe Locations</span></button>
+          <button class="nav-item" data-section="forum"><span class="icon" data-lucide="message-circle"></span><span>Forum</span></button>
+          <button class="nav-item" data-section="profile-settings"><span class="icon" data-lucide="user"></span><span>Profile Settings</span></button>
+        </nav>
+        <div class="sidebar-footer"><button class="logout" aria-label="Logout">↩ Logout</button></div>
+      </aside>
+      <header class="topbar">
+        <div class="breadcrumb">GN Dashboard / <span>Donation Requests</span></div>
+        <div class="topbar-right">
+          <div class="hotline" role="button" tabindex="0" aria-label="Hotline 117"><span class="hotline-icon" data-lucide="phone"></span>Hotline: <strong>117</strong></div>
+          <div class="user-avatar" aria-label="User Menu" role="button"><img src="https://via.placeholder.com/40x40.png?text=U" alt="User Avatar" /></div>
+          <button class="menu-toggle" aria-label="Open Menu"><span data-lucide="menu"></span></button>
+        </div>
+      </header>
+      <main class="content" id="mainContent" tabindex="-1">
+        <h1>Donation Requests</h1>
+        <div class="subtitle">Coastal Division</div>
+        <div class="tabs" role="tablist">
+          <button class="tab-btn" id="tab-approved" role="tab" aria-controls="panel-approved" aria-selected="true">Approved Donation Requests</button>
+          <button class="tab-btn" id="tab-pending" role="tab" aria-controls="panel-pending" aria-selected="false">Pending Donation Requests</button>
+          <span class="tab-indicator" aria-hidden="true"></span>
+        </div>
+        <section id="panel-approved" role="tabpanel" aria-labelledby="tab-approved">
+          <div class="table-shell">
+            <table class="req-table" aria-describedby="mainContent">
+              <thead>
+                <tr>
+                  <th>Request ID</th>
+                  <th>Submitted By</th>
+                  <th>Location</th>
+                  <th>Item List</th>
+                  <th>Notes</th>
+                  <th>Submitted Date</th>
+                </tr>
+              </thead>
+              <tbody id="approvedBody"></tbody>
+            </table>
+          </div>
+        </section>
+        <section id="panel-pending" role="tabpanel" aria-labelledby="tab-pending" class="hidden">
+          <div class="table-shell">
+            <table class="req-table" aria-describedby="mainContent">
+              <thead>
+                <tr>
+                  <th>Request ID</th>
+                  <th>Submitted By</th>
+                  <th>Location</th>
+                  <th>Item List</th>
+                  <th>Notes</th>
+                  <th>Submitted Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="pendingBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <template id="row-template">
+      <tr>
+        <td class="c-id"></td>
+        <td class="c-submitted"></td>
+        <td class="c-location"></td>
+        <td class="c-items"></td>
+        <td class="c-notes"></td>
+        <td class="c-date"></td>
+      </tr>
+    </template>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        if(window.lucide) lucide.createIcons();
+        const tabs=Array.from(document.querySelectorAll('.tab-btn')); const indicator=document.querySelector('.tab-indicator');
+        function pos(idx){ const b=tabs[idx]; indicator.style.width=b.offsetWidth+'px'; indicator.style.transform=`translateX(${b.offsetLeft}px)`; }
+        pos(0); window.addEventListener('resize',()=>pos(tabs.findIndex(t=>t.getAttribute('aria-selected')==='true')));
+        tabs.forEach((btn,idx)=>btn.addEventListener('click',()=>{ if(btn.getAttribute('aria-selected')==='true') return; tabs.forEach(t=>t.setAttribute('aria-selected','false')); btn.setAttribute('aria-selected','true'); document.querySelectorAll('[role=tabpanel]').forEach(p=>p.classList.add('hidden')); document.getElementById(btn.getAttribute('aria-controls')).classList.remove('hidden'); pos(idx); }));
+
+        const approved = [
+          { id:'#12345', submitter:'Liam Carter\n(555–123–4567)', location:'Community Center A, 123 Main St', items:'Water (100), Canned Goods (50), Blankets (20)', notes:'Urgent need for baby supplies', date:'2024–01–15' },
+          { id:'#67890', submitter:'Olivia Bennett\n(555–987–6543)', location:'Shelter B, 456 Oak Ave', items:'First Aid Kits (30), Flashlights (50), Batteries (100)', notes:'Request for medical supplies', date:'2024–01–16' },
+          { id:'#11223', submitter:'Ethan Harper\n(555–111–2222)', location:'Relief Hub C, 789 Pine Ln', items:'Tents (10), Sleeping Bags (20), Cooking Sets (5)', notes:'Need for temporary shelter items', date:'2024–01–17' }
+        ];
+        let pending = JSON.parse(JSON.stringify(approved)); // reuse rows for layout; actions differ
+
+        const tmpl=document.getElementById('row-template');
+        function renderRows(bodyId,data,withActions=false){
+          const body=document.getElementById(bodyId); body.innerHTML='';
+          data.forEach(r=>{
+            const node=tmpl.content.firstElementChild.cloneNode(true);
+            node.querySelector('.c-id').textContent=r.id;
+            node.querySelector('.c-submitted').innerHTML=r.submitter.replace(/\n/g,'<br/>');
+            node.querySelector('.c-location').textContent=r.location;
+            node.querySelector('.c-items').textContent=r.items;
+            node.querySelector('.c-notes').textContent=r.notes;
+            node.querySelector('.c-date').textContent=r.date;
+            // labels for responsive
+            node.children[0].setAttribute('data-label','Request ID');
+            node.children[1].setAttribute('data-label','Submitted By');
+            node.children[2].setAttribute('data-label','Location');
+            node.children[3].setAttribute('data-label','Item List');
+            node.children[4].setAttribute('data-label','Notes');
+            node.children[5].setAttribute('data-label','Submitted Date');
+            if(withActions){
+              const td=document.createElement('td'); td.className='c-actions'; td.setAttribute('data-label','Actions');
+              const wrap=document.createElement('div'); wrap.className='action-pills';
+              const verify=document.createElement('button'); verify.className='pill'; verify.type='button'; verify.innerHTML='<span data-lucide="check"></span><span>Verify</span>';
+              verify.addEventListener('click',()=>verifyReq(r.id));
+              const edit=document.createElement('button'); edit.className='pill'; edit.type='button'; edit.innerHTML='<span data-lucide="edit-2"></span><span>Edit</span>';
+              edit.addEventListener('click',()=>{ alert('Edit request '+r.id); });
+              wrap.appendChild(verify); wrap.appendChild(edit); td.appendChild(wrap); node.appendChild(td);
+            }
+            body.appendChild(node);
+          });
+          if(window.lucide) lucide.createIcons();
+        }
+        function verifyReq(id){ const idx=pending.findIndex(x=>x.id===id); if(idx>-1){ const [row]=pending.splice(idx,1); approved.push(row); rerender(); }}
+        function rerender(){ renderRows('approvedBody', approved, false); renderRows('pendingBody', pending, true); }
+        rerender();
+      });
+    </script>
+  </body>
+</html>

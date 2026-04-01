@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ResQnet - Organization Signup</title>
+    <link rel="stylesheet" href="./styles/core.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+      body { background:#fff; }
+      .site-header { position:sticky; top:0; z-index:40; }
+      .auth-actions { margin-left:auto; display:flex; gap:.75rem; }
+      .main-wrapper { max-width:1080px; margin:0 auto; padding:3.5rem clamp(1rem,3vw,2.5rem) 4rem; }
+      h1 { text-align:center; margin:0 0 2.8rem; font-size:clamp(1.9rem,3vw,2.1rem); }
+      form.org-form { display:flex; flex-direction:column; gap:2.2rem; }
+      .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr)); gap:1.4rem 2.5rem; }
+      .grid .wide { grid-column:1/-1; }
+      .form-field { margin:0; display:flex; flex-direction:column; }
+      .btn-primary { --btn-bg: var(--color-accent); --btn-border: var(--color-accent); width:100%; font-weight:600; padding:16px 24px; font-size:0.85rem; }
+      .error { font-size:var(--font-size-xs); color:var(--color-danger); margin-top:6px; display:none; }
+      @media (max-width:640px){ .grid { grid-template-columns:1fr; } }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a href="index.html" class="brand-inline">
+          <img src="./assets/img/logo.svg" alt="ResQnet Logo" />
+          <span>ResQnet</span>
+        </a>
+        <nav class="primary-nav" aria-label="Main"></nav>
+        <div class="auth-actions">
+          <button class="btn" type="button">Login</button>
+          <button class="btn btn-primary" type="button">Sign Up</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="main-wrapper" id="mainContent" tabindex="-1">
+      <h1>Sign up your organization</h1>
+      <form id="orgPublicSignupForm" class="org-form" novalidate>
+        <div class="grid">
+          <div class="form-field wide">
+            <label for="orgName">Organization Name</label>
+            <input class="input" id="orgName" name="orgName" placeholder="Enter organization name" required />
+          </div>
+          <div class="form-field">
+            <label for="regNo">Registration No.</label>
+            <input class="input" id="regNo" name="regNo" placeholder="Enter registration number" required />
+          </div>
+          <div class="form-field">
+            <label for="years">Years of Operation</label>
+            <input class="input" type="number" min="0" id="years" name="years" placeholder="Enter years of operation" />
+          </div>
+          <div class="form-field">
+            <label for="contactPerson">Name</label>
+            <input class="input" id="contactPerson" name="contactPerson" placeholder="Enter contact person's name" required />
+          </div>
+          <div class="form-field">
+            <label for="email">Email</label>
+            <input class="input" type="email" id="email" name="email" placeholder="Enter contact person's email" required />
+          </div>
+          <div class="form-field">
+            <label for="telephone">Telephone</label>
+            <input class="input" id="telephone" name="telephone" placeholder="Enter contact person's telephone" required />
+          </div>
+          <div class="form-field">
+            <label for="address">Address</label>
+            <input class="input" id="address" name="address" placeholder="Enter organization address" />
+          </div>
+          <div class="form-field">
+            <label for="password">Password</label>
+            <input class="input" type="password" id="password" name="password" placeholder="Enter password" minlength="8" required />
+            <div class="form-help">Minimum 8 characters.</div>
+          </div>
+          <div class="form-field">
+            <label for="confirmPassword">Confirm Password</label>
+            <input class="input" type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm password" required />
+            <div class="error" id="pwError">Passwords do not match.</div>
+          </div>
+        </div>
+        <div>
+          <button type="submit" class="btn btn-primary">Sign Up</button>
+        </div>
+      </form>
+    </main>
+
+    <script>
+      const form = document.getElementById('orgPublicSignupForm');
+      const pw = document.getElementById('password');
+      const confirmPw = document.getElementById('confirmPassword');
+      const pwError = document.getElementById('pwError');
+      function checkMatch(){
+        const mismatch = pw.value && confirmPw.value && pw.value !== confirmPw.value;
+        pwError.style.display = mismatch ? 'block' : 'none';
+        confirmPw.classList.toggle('is-invalid', mismatch);
+        return !mismatch;
+      }
+      pw.addEventListener('input', checkMatch);
+      confirmPw.addEventListener('input', checkMatch);
+      form.addEventListener('submit', e => {
+        e.preventDefault();
+        if(!form.reportValidity() || !checkMatch()) return;
+        const data = new FormData(form);
+        const payload = Object.fromEntries(data.entries());
+        delete payload.confirmPassword;
+        console.log('Public org signup submitted', payload);
+        alert('Organization signup submitted! (Console only)');
+        form.reset();
+        pwError.style.display='none';
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ResQnet NGO Dashboard</title>
+    <link rel="stylesheet" href="./styles/core.css" />
+    <link rel="stylesheet" href="./styles/dashboard.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+    <style>
+      .dashboard-section h2 { margin:0 0 1rem; font-size:1rem; }
+      .quick-actions-ngo { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1rem; }
+      .action-card.large { min-height:100px; }
+      /* Donation requests list */
+      .requests-list { display:flex; flex-direction:column; gap:0.9rem; margin:0; padding:0; list-style:none; }
+      .request-card { display:grid; grid-template-columns:1fr auto; gap:1rem; background:#f7f7f7; border:1px solid var(--color-border); border-radius:var(--radius-lg); padding:1rem 1.15rem; position:relative; }
+      .request-card.highlight { background:#fff9e3; }
+      .req-meta { display:flex; flex-direction:column; gap:0.4rem; font-size:0.65rem; }
+      .req-location { font-size:0.75rem; font-weight:600; display:flex; gap:0.35rem; align-items:center; }
+      .item-tags { display:flex; flex-wrap:wrap; gap:0.4rem; margin-top:0.35rem; }
+      .tag { background:#eee; border:1px solid #e3e3e3; padding:2px 8px; font-size:0.55rem; border-radius:999px; font-weight:500; letter-spacing:.25px; }
+      .status-btn { all:unset; background:#e4e4e4; color:#222; font-size:0.6rem; font-weight:600; padding:0.45rem 1.1rem; border-radius:999px; cursor:pointer; align-self:start; }
+      .status-btn.reserved { background:var(--color-accent); }
+      .collection-points { display:flex; flex-direction:column; gap:1rem; margin-top:1.25rem; }
+      .point-card { background:#f7f7f7; border:1px solid var(--color-border); border-radius:var(--radius-lg); padding:1rem 1.15rem; font-size:0.65rem; display:flex; flex-direction:column; gap:0.4rem; }
+      .point-card h3 { margin:0; font-size:0.8rem; }
+      .small-meta { display:flex; flex-direction:column; gap:0.15rem; }
+      .req-section { margin-top:2.5rem; }
+      .col-section { margin-top:2.5rem; }
+      @media (max-width:640px){ .request-card { grid-template-columns:1fr; } .status-btn { justify-self:start; } }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <!-- Sidebar copy -->
+      <aside class="sidebar" aria-label="Primary">
+        <div class="brand">
+          <img class="logo-img" src="./assets/img/logo.svg" alt="ResQnet Logo" width="120" height="32" />
+          <span class="brand-name sr-only">ResQnet</span>
+        </div>
+        <nav class="nav">
+          <button class="nav-item active" data-section="overview"><span class="icon" data-lucide="home"></span><span>Overview</span></button>
+          <button class="nav-item" data-section="forecast"><span class="icon" data-lucide="line-chart"></span><span>Forecast Dashboard</span></button>
+          <button class="nav-item" data-section="safe-locations"><span class="icon" data-lucide="map-pin"></span><span>Safe Locations</span></button>
+          <button class="nav-item" data-section="donation-requests"><span class="icon" data-lucide="gift"></span><span>Donation Requests</span></button>
+          <button class="nav-item" data-section="manage-inventory"><span class="icon" data-lucide="boxes"></span><span>Manage Inventory</span></button>
+          <button class="nav-item" data-section="manage-collection"><span class="icon" data-lucide="map"></span><span>Manage Collection Points</span></button>
+          <button class="nav-item" data-section="forum"><span class="icon" data-lucide="message-circle"></span><span>Forum</span></button>
+          <button class="nav-item" data-section="profile-settings"><span class="icon" data-lucide="user"></span><span>Profile Settings</span></button>
+        </nav>
+        <div class="sidebar-footer">
+          <button class="logout" aria-label="Logout">↩ Logout</button>
+        </div>
+      </aside>
+
+      <!-- Topbar copy -->
+      <header class="topbar">
+        <div class="breadcrumb">NGO Dashboard / <span>Overview</span></div>
+        <div class="topbar-right">
+          <div class="hotline" role="button" tabindex="0" aria-label="Hotline 117"><span class="hotline-icon" data-lucide="phone"></span>Hotline: <strong>117</strong></div>
+          <div class="user-avatar" aria-label="User Menu" role="button"><img src="https://via.placeholder.com/40x40.png?text=U" alt="User Avatar" /></div>
+          <button class="menu-toggle" aria-label="Open Menu"><span data-lucide="menu"></span></button>
+        </div>
+      </header>
+
+      <main class="content" id="mainContent" tabindex="-1">
+        <section class="welcome">
+          <h1>Welcome NGO!</h1>
+          <div class="alert info" style="background:#fff9e6;border-color:#f5e3a3;">
+            <span class="alert-icon" data-lucide="alert-triangle"></span>
+            <p>Heavy Rainfall Warning in Gampaha District – Next 48 Hours</p>
+          </div>
+        </section>
+
+        <section aria-label="Primary Actions">
+          <div class="quick-actions-ngo">
+            <button class="action-card large" data-section="donation-requests">
+              <div class="action-icon"><i data-lucide="gift"></i></div>
+              <span>Donation Requests</span>
+            </button>
+            <button class="action-card large" data-section="manage-inventory">
+              <div class="action-icon"><i data-lucide="boxes"></i></div>
+              <span>Manage Inventory</span>
+            </button>
+            <button class="action-card large" data-section="manage-collection">
+              <div class="action-icon"><i data-lucide="map"></i></div>
+              <span>Collection Points</span>
+            </button>
+            <button class="action-card large" data-section="safe-locations">
+              <div class="action-icon"><i data-lucide="map-pin"></i></div>
+              <span>Safe Locations</span>
+            </button>
+          </div>
+        </section>
+
+        <section class="req-section" aria-labelledby="donationRequestsHeading">
+          <h2 id="donationRequestsHeading">Donation Requests</h2>
+          <ul class="requests-list" id="requestsList"></ul>
+        </section>
+
+        <section class="col-section" aria-labelledby="collectionPointsHeading">
+          <h2 id="collectionPointsHeading">Collection Points</h2>
+          <div class="collection-points" id="collectionPoints"></div>
+        </section>
+      </main>
+    </div>
+
+    <template id="request-card-template">
+      <li class="request-card">
+        <div class="req-meta">
+          <div class="req-location"><i data-lucide="map-pin" style="width:14px;height:14px;"></i><span class="loc-text"></span></div>
+          <div><i data-lucide="calendar" style="width:12px;height:12px;vertical-align:middle;"></i> <span class="date-text"></span></div>
+          <div class="item-tags"></div>
+        </div>
+        <button class="status-btn">Fulfill</button>
+      </li>
+    </template>
+
+    <template id="collection-point-template">
+      <div class="point-card">
+        <h3 class="point-name"></h3>
+        <div class="small-meta">
+          <div class="city"></div>
+          <div><i data-lucide="map-pin" style="width:12px;height:12px;vertical-align:middle;"></i> <span class="address"></span></div>
+        </div>
+      </div>
+    </template>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        if (window.lucide) lucide.createIcons();
+        const requests = [
+          { id:1, location:'GN Division: 123 - Central', date:'2024-01-15', items:['Rice 10kg','Canned fish 15 units','Rice 10kg'], status:'fulfilled' },
+          { id:2, location:'GN Division: 123 - Central', date:'2024-01-15', items:['Rice 10kg','Canned fish 10 units','Rice 10kg'], status:'fulfilled' },
+          { id:3, location:'GN Division: 123 - Central', date:'2024-01-15', items:['Rice 10kg','Canned fish 10 units','Rice 10kg'], status:'reserved' }
+        ];
+        const listEl = document.getElementById('requestsList');
+        const tmpl = document.getElementById('request-card-template');
+        requests.forEach(r => {
+          const node = tmpl.content.firstElementChild.cloneNode(true);
+          node.querySelector('.loc-text').textContent = r.location;
+            node.querySelector('.date-text').textContent = 'Requested on: '+r.date;
+          const tagsWrap = node.querySelector('.item-tags');
+          r.items.slice(0,3).forEach(item => {
+            const span = document.createElement('span');
+            span.className='tag';
+            span.textContent=item;
+            tagsWrap.appendChild(span);
+          });
+          const statusBtn = node.querySelector('.status-btn');
+          if (r.status==='reserved'){ statusBtn.textContent='Reserved'; statusBtn.classList.add('reserved'); node.classList.add('highlight'); }
+          listEl.appendChild(node);
+        });
+
+        const points = [
+          { name:'Colombo Central Hub', city:'Colombo', address:'123 Main Street, Colombo 01' },
+          { name:'Colombo Central Hub', city:'Colombo', address:'123 Main Street, Colombo 01' },
+          { name:'Colombo Central Hub', city:'Colombo', address:'123 Main Street, Colombo 01' }
+        ];
+        const cpWrap = document.getElementById('collectionPoints');
+        const cpTmpl = document.getElementById('collection-point-template');
+        points.forEach(p => {
+          const card = cpTmpl.content.firstElementChild.cloneNode(true);
+          card.querySelector('.point-name').textContent = p.name;
+          card.querySelector('.city').textContent = p.city;
+          card.querySelector('.address').textContent = p.address;
+          cpWrap.appendChild(card);
+        });
+      });
+    </script>
+  </body>
+</html>

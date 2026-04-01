@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>ResQnet - Inventory Management</title>
+    <link rel="stylesheet" href="./styles/core.css" />
+    <link rel="stylesheet" href="./styles/dashboard.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+    <style>
+      h1 { margin:0 0 1.9rem; }
+      .stat-cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1rem; margin-bottom:1.5rem; }
+      .stat-card { background:#f5f5f5; border:1px solid var(--color-border); border-radius:var(--radius-lg); padding:1rem 1.1rem; display:flex; flex-direction:column; gap:0.4rem; }
+      .stat-card h3 { font-size:0.55rem; font-weight:600; margin:0; letter-spacing:.5px; text-transform:uppercase; }
+      .stat-card .value { font-size:1.35rem; font-weight:600; }
+      .filters { display:flex; gap:0.65rem; flex-wrap:wrap; margin:0 0 1rem; }
+      .filters .search-wrap { flex:1 1 240px; position:relative; }
+      .filters input[type=search] { width:100%; padding-left:2rem; }
+      .filters .search-wrap .icon { position:absolute; top:50%; left:0.6rem; transform:translateY(-50%); width:16px; height:16px; opacity:.6; }
+      .pill-select { position:relative; }
+      .pill-select select { appearance:none; -webkit-appearance:none; background:#fff; font-size:0.65rem; padding:0.7rem 1.9rem 0.7rem 0.9rem; border:1px solid var(--color-border); border-radius:999px; font-weight:500; cursor:pointer; }
+      .pill-select:after { content:"\25BC"; position:absolute; right:0.9rem; top:50%; transform:translateY(-48%); font-size:0.45rem; pointer-events:none; }
+      .inventory-table-wrapper { border:1px solid var(--color-border); border-radius:var(--radius-lg); overflow:hidden; background:#fff; }
+      table.inventory { width:100%; border-collapse:collapse; font-size:0.65rem; }
+      table.inventory thead th { text-align:left; padding:0.75rem 0.85rem; background:#fafafa; font-weight:600; border-bottom:1px solid var(--color-border); }
+      table.inventory tbody td { padding:0.9rem 0.85rem; border-bottom:1px solid var(--color-border); vertical-align:middle; }
+      table.inventory tbody tr:last-child td { border-bottom:none; }
+      .qty-cell { display:flex; align-items:center; gap:0.6rem; }
+      .qty-cell input { width:70px; text-align:right; font-size:0.65rem; }
+      .update-btn { all:unset; background:#e3e3e3; padding:0.5rem 0.9rem; border-radius:999px; cursor:pointer; font-size:0.55rem; font-weight:600; }
+      .update-btn:hover { background:#dadada; }
+      .status { font-weight:600; font-size:0.6rem; }
+      .status.in-stock { color:#0d6b35; }
+      .status.low { color:#b25600; }
+      .status.out { color:#b00020; }
+      .empty-row { text-align:center; padding:2rem !important; color:#666; font-style:italic; }
+      @media (max-width:780px){ .qty-cell { flex-direction:column; align-items:flex-start; } .qty-cell input { width:100%; } }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar" aria-label="Primary">
+        <div class="brand"><img class="logo-img" src="./assets/img/logo.svg" alt="ResQnet Logo" width="120" height="32" /><span class="brand-name sr-only">ResQnet</span></div>
+        <nav class="nav">
+          <button class="nav-item" data-section="overview"><span class="icon" data-lucide="home"></span><span>Overview</span></button>
+          <button class="nav-item" data-section="forecast"><span class="icon" data-lucide="line-chart"></span><span>Forecast Dashboard</span></button>
+          <button class="nav-item" data-section="safe-locations"><span class="icon" data-lucide="map-pin"></span><span>Safe Locations</span></button>
+          <button class="nav-item" data-section="donation-requests"><span class="icon" data-lucide="gift"></span><span>Donation Requests</span></button>
+          <button class="nav-item active" data-section="manage-inventory"><span class="icon" data-lucide="boxes"></span><span>Manage Inventory</span></button>
+          <button class="nav-item" data-section="manage-collection"><span class="icon" data-lucide="map"></span><span>Manage Collection Points</span></button>
+          <button class="nav-item" data-section="forum"><span class="icon" data-lucide="message-circle"></span><span>Forum</span></button>
+          <button class="nav-item" data-section="profile-settings"><span class="icon" data-lucide="user"></span><span>Profile Settings</span></button>
+        </nav>
+        <div class="sidebar-footer"><button class="logout" aria-label="Logout">↩ Logout</button></div>
+      </aside>
+      <header class="topbar">
+        <div class="breadcrumb">NGO Dashboard / <span>Manage Inventory</span></div>
+        <div class="topbar-right">
+          <div class="hotline" role="button" tabindex="0" aria-label="Hotline 117"><span class="hotline-icon" data-lucide="phone"></span>Hotline: <strong>117</strong></div>
+          <div class="user-avatar" aria-label="User Menu" role="button"><img src="https://via.placeholder.com/40x40.png?text=U" alt="User Avatar" /></div>
+          <button class="menu-toggle" aria-label="Open Menu"><span data-lucide="menu"></span></button>
+        </div>
+      </header>
+      <main class="content" id="mainContent" tabindex="-1">
+        <h1>Inventory Management</h1>
+        <div class="stat-cards" aria-label="Inventory summary">
+          <div class="stat-card"><h3>In Stock</h3><div class="value" id="statInStock">0</div></div>
+          <div class="stat-card"><h3>Delivered to DMC</h3><div class="value" id="statDelivered">0</div></div>
+          <div class="stat-card"><h3>Donations received - <span id="statDate">--/--/--</span></h3><div class="value" id="statReceived">0</div></div>
+        </div>
+        <div class="filters" aria-label="Filters and search">
+          <div class="search-wrap">
+            <span class="icon" data-lucide="search"></span>
+            <input type="search" id="search" placeholder="Search" aria-label="Search inventory" />
+          </div>
+          <div class="pill-select"><select id="filterCategory" aria-label="Filter by category"><option value="">Category</option></select></div>
+          <div class="pill-select"><select id="filterPoint" aria-label="Filter by collection point"><option value="">Collection  Point</option></select></div>
+          <div class="pill-select"><select id="filterStatus" aria-label="Filter by status"><option value="">Status</option><option value="in-stock">In Stock</option><option value="low">Low</option><option value="out">Out</option></select></div>
+          <div class="pill-select"><select id="filterDate" aria-label="Filter by date range"><option value="">Date Range</option><option value="last7">Last 7 Days</option><option value="last30">Last 30 Days</option><option value="ytd">YTD</option></select></div>
+        </div>
+        <div class="inventory-table-wrapper">
+          <table class="inventory" aria-describedby="mainContent">
+            <thead><tr><th>Item Name</th><th>Category</th><th>Status</th><th>Quantity</th></tr></thead>
+            <tbody id="inventoryBody"></tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+    <template id="rowTemplate">
+      <tr>
+        <td class="c-name"></td>
+        <td class="c-cat"></td>
+        <td class="c-status"></td>
+        <td class="c-qty"></td>
+      </tr>
+    </template>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        if(window.lucide) lucide.createIcons();
+        // Sample data
+        let items = [
+          { id:1, name:'Water Bottles', category:'Supplies', point:'Main Warehouse', status:'in-stock', qty:899, receivedOn:'2024/02/12' },
+          { id:2, name:'Water Bottles', category:'Supplies', point:'Point A', status:'in-stock', qty:88, receivedOn:'2024/02/12' },
+          { id:3, name:'Water Bottles', category:'Supplies', point:'Point B', status:'in-stock', qty:100, receivedOn:'2024/02/12' },
+          { id:4, name:'Water Bottles', category:'Supplies', point:'Point C', status:'in-stock', qty:133, receivedOn:'2024/02/12' },
+          { id:5, name:'Water Bottles', category:'Supplies', point:'Point D', status:'in-stock', qty:12, receivedOn:'2024/02/12' },
+          { id:6, name:'Water Bottles', category:'Supplies', point:'Point E', status:'in-stock', qty:11, receivedOn:'2024/02/12' },
+          { id:7, name:'Water Bottles', category:'Supplies', point:'Point F', status:'in-stock', qty:133, receivedOn:'2024/02/12' },
+          { id:8, name:'Water Bottles', category:'Supplies', point:'Point G', status:'in-stock', qty:32, receivedOn:'2024/02/12' }
+        ];
+        const body = document.getElementById('inventoryBody');
+        const tmpl = document.getElementById('rowTemplate');
+        const search = document.getElementById('search');
+        const filterCategory = document.getElementById('filterCategory');
+        const filterPoint = document.getElementById('filterPoint');
+        const filterStatus = document.getElementById('filterStatus');
+        const filterDate = document.getElementById('filterDate');
+        const statInStock = document.getElementById('statInStock');
+        const statDelivered = document.getElementById('statDelivered');
+        const statReceived = document.getElementById('statReceived');
+        const statDate = document.getElementById('statDate');
+        function populateFilters(){
+          const cats=[...new Set(items.map(i=>i.category))]; cats.forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent=c; filterCategory.appendChild(o); });
+          const points=[...new Set(items.map(i=>i.point))]; points.forEach(p=>{ const o=document.createElement('option'); o.value=p; o.textContent=p; filterPoint.appendChild(o); });
+          statDate.textContent = items[0]?.receivedOn || '--/--/--';
+        }
+        function updateStats(){
+          const totalInStock = items.reduce((s,i)=>s+i.qty,0); statInStock.textContent= totalInStock.toLocaleString();
+          statDelivered.textContent = 280; // static placeholder
+          statReceived.textContent = 250; // static placeholder
+        }
+        function statusLabel(item){ if(item.qty===0) return 'out'; if(item.qty<20) return 'low'; return 'in-stock'; }
+        function render(){
+          body.innerHTML='';
+          const term = search.value.trim().toLowerCase();
+          const filtered = items.filter(i => (!term || i.name.toLowerCase().includes(term))
+            && (!filterCategory.value || i.category===filterCategory.value)
+            && (!filterPoint.value || i.point===filterPoint.value)
+            && (!filterStatus.value || statusLabel(i)===filterStatus.value));
+          if(!filtered.length){ const tr=document.createElement('tr'); const td=document.createElement('td'); td.colSpan=4; td.className='empty-row'; td.textContent='No items found.'; tr.appendChild(td); body.appendChild(tr); return; }
+          filtered.forEach(item => {
+            const node=tmpl.content.firstElementChild.cloneNode(true);
+            node.dataset.id=item.id;
+            node.querySelector('.c-name').textContent=item.name;
+            node.querySelector('.c-cat').textContent=item.category;
+            const st = statusLabel(item); item.status=st; const stEl=document.createElement('span'); stEl.className='status '+st; stEl.textContent = st==='in-stock'?'In Stock': st==='low'?'Low':'Out'; node.querySelector('.c-status').appendChild(stEl);
+            const qtyWrap=document.createElement('div'); qtyWrap.className='qty-cell';
+            const input=document.createElement('input'); input.type='number'; input.min='0'; input.value=item.qty; input.addEventListener('change',()=>{ input.dataset.changed='true'; });
+            const btn=document.createElement('button'); btn.className='update-btn'; btn.type='button'; btn.textContent='Update QTY'; btn.addEventListener('click',()=>{ const newVal=parseInt(input.value,10)||0; item.qty=newVal; updateStats(); render(); console.log('Quantity updated', { id:item.id, qty:newVal }); });
+            qtyWrap.appendChild(input); qtyWrap.appendChild(btn); node.querySelector('.c-qty').appendChild(qtyWrap);
+            body.appendChild(node);
+          });
+        }
+        [search, filterCategory, filterPoint, filterStatus, filterDate].forEach(el => el.addEventListener('input', render));
+        populateFilters(); updateStats(); render();
+      });
+    </script>
+  </body>
+</html>

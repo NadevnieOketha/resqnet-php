@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ResQnet Report a Disaster</title>
+    <link rel="stylesheet" href="./styles/core.css" />
+    <link rel="stylesheet" href="./styles/dashboard.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+    <style>
+      /* Small page-scoped layout helpers (reuse tokens) */
+      .two-col-grid { display:grid; gap:2rem 2.25rem; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); max-width:1100px; }
+      .disaster-types { display:flex; flex-direction:column; gap:0.75rem; }
+      .disaster-option { border:1px solid var(--color-border); border-radius:var(--radius-sm); padding:0.9rem 1rem; display:flex; align-items:center; gap:0.75rem; font-size:0.85rem; cursor:pointer; background:#fff; }
+      .disaster-option:hover { background:var(--color-hover-surface); }
+      .disaster-option input { accent-color: var(--color-accent); }
+      .form-inline { display:flex; flex-direction:column; }
+      #reportDisasterForm { background:#fff; border:1px solid var(--color-border); border-radius:var(--radius-lg); padding:2rem 2rem 2.5rem; box-shadow: var(--shadow-sm); max-width:1100px; }
+      .inline-actions { display:flex; justify-content:space-between; align-items:center; margin-top:1.5rem; }
+      .ack { display:flex; align-items:center; gap:0.6rem; font-size:0.75rem; }
+      .ack input { width:16px; height:16px; }
+      .btn.primary { background: var(--color-accent); border-color: var(--color-accent); font-weight:600; }
+      .btn.primary:hover { background: var(--color-accent-hover); }
+      .btn.secondary { background:#f1f1f1; }
+      .file-input { border:1px dashed var(--color-border); padding:0.9rem 1rem; border-radius:var(--radius-sm); background:#fff; font-size:0.75rem; cursor:pointer; }
+      .file-input:hover { background:var(--color-hover-surface); }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <!-- Sidebar copied -->
+      <aside class="sidebar" aria-label="Primary">
+        <div class="brand">
+          <img class="logo-img" src="./assets/img/logo.svg" alt="ResQnet Logo" width="120" height="32" />
+          <span class="brand-name sr-only">ResQnet</span>
+        </div>
+        <nav class="nav">
+          <button class="nav-item" data-section="overview"><span class="icon" data-lucide="home"></span><span>Overview</span></button>
+          <button class="nav-item" data-section="forecast"><span class="icon" data-lucide="line-chart"></span><span>Forecast Dashboard</span></button>
+            <button class="nav-item" data-section="make-donation"><span class="icon" data-lucide="gift"></span><span>Make a Donation</span></button>
+          <button class="nav-item" data-section="request-donation"><span class="icon" data-lucide="package"></span><span>Request a Donation</span></button>
+          <button class="nav-item active" data-section="report-disaster"><span class="icon" data-lucide="alert-triangle"></span><span>Report a Disaster</span></button>
+          <button class="nav-item" data-section="forum"><span class="icon" data-lucide="message-circle"></span><span>Forum</span></button>
+          <button class="nav-item" data-section="profile-settings"><span class="icon" data-lucide="user"></span><span>Profile Settings</span></button>
+        </nav>
+        <div class="sidebar-footer">
+          <button class="logout" aria-label="Logout">↩ Logout</button>
+        </div>
+      </aside>
+
+      <!-- Topbar copied -->
+      <header class="topbar">
+        <div class="breadcrumb">General Public Dashboard / <span>Report a Disaster</span></div>
+        <div class="topbar-right">
+          <div class="hotline" role="button" tabindex="0" aria-label="Hotline 117">
+            <span class="hotline-icon" data-lucide="phone"></span>Hotline: <strong>117</strong>
+          </div>
+          <div class="user-avatar" aria-label="User Menu" role="button">
+            <img src="https://via.placeholder.com/40x40.png?text=U" alt="User Avatar" />
+          </div>
+          <button class="menu-toggle" aria-label="Open Menu"><span data-lucide="menu"></span></button>
+        </div>
+      </header>
+
+      <main class="content" id="mainContent" tabindex="-1">
+        <h1>Report a Disaster</h1>
+        <form id="reportDisasterForm" novalidate>
+          <div class="two-col-grid">
+            <div class="form-field">
+              <label for="reporterName">Reporter's Name</label>
+              <input class="input" type="text" id="reporterName" name="reporterName" placeholder="Enter your name" required />
+            </div>
+            <div class="form-field">
+              <label for="contactNumber">Contact Number</label>
+              <input class="input" type="tel" id="contactNumber" name="contactNumber" placeholder="Enter your contact number" required />
+            </div>
+
+            <div class="form-field" style="grid-row: span 6;">
+              <label>Type of Disaster</label>
+              <div class="disaster-types" role="radiogroup" aria-label="Disaster Type">
+                <label class="disaster-option"><input type="radio" name="disasterType" value="Flood" checked /> Flood</label>
+                <label class="disaster-option"><input type="radio" name="disasterType" value="Landslide" /> Landslide</label>
+                <label class="disaster-option"><input type="radio" name="disasterType" value="Fire" /> Fire</label>
+                <label class="disaster-option"><input type="radio" name="disasterType" value="Earthquake" /> Earthquake</label>
+                <label class="disaster-option"><input type="radio" name="disasterType" value="Tsunami" /> Tsunami</label>
+                <label class="disaster-option"><input type="radio" name="disasterType" value="Other" /> Other</label>
+              </div>
+            </div>
+
+            <div class="form-field">
+              <label for="otherDisaster">If 'Other', specify</label>
+              <input class="input" type="text" id="otherDisaster" name="otherDisaster" placeholder="Specify the type of disaster" disabled />
+            </div>
+            
+            <div class="form-field">
+              <label for="datetime">Date and Time of Disaster</label>
+              <input class="input" type="datetime-local" id="datetime" name="datetime" required />
+            </div>
+
+            <div class="form-field">
+              <label for="location">Location</label>
+              <input class="input" type="text" id="location" name="location" placeholder="Enter the location of the disaster" required />
+            </div>
+
+            <div class="form-field">
+              <label for="proofImage">Upload Image of Proof</label>
+              <input class="input" type="file" id="proofImage" name="proofImage" accept="image/*" />
+            </div>
+          </div>
+
+          <div class="ack" style="margin-top:1.25rem;">
+            <input type="checkbox" id="confirmation" required />
+            <label for="confirmation" style="margin:0;font-weight:400;">I confirm that the information provided is accurate to the best of my knowledge.</label>
+          </div>
+
+          <div class="inline-actions">
+            <button type="reset" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+            <button type="submit" class="btn btn-primary">Submit Report</button>
+          </div>
+        </form>
+      </main>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        if (window.lucide) lucide.createIcons();
+        const form = document.getElementById('reportDisasterForm');
+        const otherInput = document.getElementById('otherDisaster');
+        form.addEventListener('change', (e) => {
+          if (e.target.name === 'disasterType') {
+            otherInput.disabled = e.target.value !== 'Other';
+            if (otherInput.disabled) otherInput.value = '';
+          }
+        });
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          if (!form.reportValidity()) return;
+          const data = new FormData(form);
+          const payload = Object.fromEntries(data.entries());
+          // Attach chosen disasterType explicitly
+          payload.disasterType = data.get('disasterType');
+          if (payload.proofImage instanceof File) {
+            payload.proofImageName = payload.proofImage.name; // simple metadata
+            delete payload.proofImage; // avoid huge object in log
+          }
+          console.log('Disaster Report Submitted', payload);
+          alert('Disaster report submitted! (See console for payload)');
+          form.reset();
+          otherInput.disabled = true;
+        });
+      });
+    </script>
+  </body>
+</html>

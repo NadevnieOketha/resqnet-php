@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login – ResQnet</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles/core.css" />
+    <link rel="icon" type="image/svg+xml" href="./assets/img/logo.svg" />
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+    <style>
+      /* Page specific tweaks (kept minimal) */
+      .auth-wrapper {
+        width: 100%;
+      }
+      .forgot-link {
+        font-size: var(--font-size-xs);
+        color: var(--color-text-subtle);
+      }
+      .forgot-link:hover {
+        color: var(--color-text);
+      }
+      .brand-inline {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.65rem;
+        margin-bottom: var(--space-6);
+      }
+      .brand-inline img {
+        height: 36px;
+        width: auto;
+        display: block;
+      }
+      .brand-inline span {
+        font-weight: 600;
+        font-size: 1.05rem;
+        letter-spacing: 0.5px;
+      }
+      #loginHeading {
+        text-align: center;
+      }
+      .signup-hint {
+        font-size: var(--font-size-xs);
+        color: var(--color-text-subtle);
+        margin-top: var(--space-6);
+      }
+      .signup-hint a {
+        font-weight: 600;
+      }
+      .signup-hint a:hover {
+        color: var(--color-text);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="center-grid">
+      <div
+        class="auth-wrapper panel max-w-sm full-width"
+        role="form"
+        aria-labelledby="loginHeading"
+      >
+        <div class="brand-inline">
+          <img src="./assets/img/logo.svg" alt="ResQnet Logo" height="36" />
+          <span class="sr-only">ResQnet</span>
+        </div>
+        <h1 id="loginHeading" class="h1">Welcome back</h1>
+        <form id="loginForm" novalidate>
+          <div class="form-field">
+            <label for="username">Username</label>
+            <input
+              id="username"
+              name="username"
+              type="text"
+              class="input"
+              placeholder="Enter your username"
+              autocomplete="username"
+              required
+            />
+            <p class="form-help hidden" id="usernameHelp">
+              Username is required.
+            </p>
+          </div>
+          <div class="form-field">
+            <label for="password">Password</label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              class="input"
+              placeholder="Enter your password"
+              autocomplete="current-password"
+              required
+              minlength="6"
+            />
+            <p class="form-help hidden" id="passwordHelp">
+              Password must be at least 6 characters.
+            </p>
+          </div>
+          <div class="mb-4">
+            <a href="#" class="underline-link forgot-link">Forgot password?</a>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block" id="loginBtn">
+            Log In
+          </button>
+        </form>
+        <div class="signup-hint text-center">
+          <span>Don't have an account? </span
+          ><a href="signup.html" class="underline-link signup-link">Sign up</a>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        if (window.lucide) {
+          window.lucide.createIcons();
+        }
+        const form = document.getElementById("loginForm");
+        const username = document.getElementById("username");
+        const password = document.getElementById("password");
+        const usernameHelp = document.getElementById("usernameHelp");
+        const passwordHelp = document.getElementById("passwordHelp");
+
+        function show(el) {
+          el.classList.remove("hidden");
+        }
+        function hide(el) {
+          el.classList.add("hidden");
+        }
+        function invalidate(input, help) {
+          input.classList.add("is-invalid");
+          show(help);
+        }
+        function validateField(input, help) {
+          if (!input.checkValidity()) {
+            invalidate(input, help);
+            return false;
+          }
+          input.classList.remove("is-invalid");
+          hide(help);
+          return true;
+        }
+
+        form.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const userValid = validateField(username, usernameHelp);
+          const passValid = validateField(password, passwordHelp);
+          if (userValid && passValid) {
+            // Simulate success route
+            form.querySelector("#loginBtn").disabled = true;
+            form.querySelector("#loginBtn").textContent = "Signing in...";
+            setTimeout(() => {
+              window.location.href = "index.html";
+            }, 900);
+          }
+        });
+
+        username.addEventListener("input", () =>
+          validateField(username, usernameHelp)
+        );
+        password.addEventListener("input", () =>
+          validateField(password, passwordHelp)
+        );
+      });
+    </script>
+  </body>
+</html>

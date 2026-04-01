@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Make a Donation – ResQnet</title>
+    <link rel="stylesheet" href="./styles/core.css" />
+    <link rel="stylesheet" href="./styles/dashboard.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+    <style>
+      /* Minimal page-specific structure leveraging existing tokens */
+      .donation-form h1 {
+        margin: 0 0 var(--space-6);
+        font-size: clamp(1.4rem, 2.1vw, 1.55rem);
+      }
+      .form-grid {
+        display: grid;
+        gap: var(--space-6);
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        margin-bottom: var(--space-6);
+      }
+      .section-heading {
+        font-size: var(--font-size-sm);
+        font-weight: 600;
+        letter-spacing: 0.3px;
+        margin: 0 0 var(--space-4);
+      }
+      .time-slots {
+        display: flex;
+        gap: var(--space-3);
+        flex-wrap: wrap;
+      }
+      .time-slot-btn {
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        padding: 8px 14px;
+        border-radius: var(--radius-pill);
+        font-size: var(--font-size-xs);
+        cursor: pointer;
+        transition: background-color var(--transition-fast),
+          border-color var(--transition-fast);
+      }
+      .time-slot-btn:hover {
+        background: var(--color-surface-alt-2);
+      }
+      .time-slot-btn[aria-pressed="true"] {
+        background: var(--color-accent);
+        border-color: var(--color-accent);
+        color: #151515;
+        font-weight: 600;
+      }
+      .donation-items {
+        display: grid;
+        gap: var(--space-8);
+        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+        margin-bottom: var(--space-6);
+      }
+      .item-col h3 {
+        margin: 0 0 var(--space-4);
+        font-size: var(--font-size-sm);
+        font-weight: 600;
+      }
+      .don-item {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        font-size: var(--font-size-sm);
+        padding: 4px 0;
+      }
+      .don-item input[type="number"] {
+        width: 54px;
+        padding: 6px 6px;
+        font-size: var(--font-size-xs);
+      }
+      .notes-area {
+        resize: vertical;
+        min-height: 120px;
+      }
+      .confirm-line {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--space-2);
+        font-size: var(--font-size-xs);
+        margin-top: var(--space-4);
+      }
+      .form-actions {
+        display: flex;
+        justify-content: space-between;
+        gap: var(--space-4);
+        margin-top: var(--space-6);
+        flex-wrap: wrap;
+      }
+      .form-actions .btn {
+        min-width: 160px;
+      }
+      @media (max-width: 680px) {
+        .donation-items {
+          grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <!-- Sidebar copied as-is -->
+      <aside class="sidebar" aria-label="Primary">
+        <div class="brand">
+          <img
+            class="logo-img"
+            src="./assets/img/logo.svg"
+            alt="ResQnet Logo"
+            width="120"
+            height="32"
+          />
+          <span class="brand-name sr-only">ResQnet</span>
+        </div>
+        <nav class="nav">
+          <button class="nav-item" data-section="overview">
+            <span class="icon" data-lucide="home"></span><span>Overview</span>
+          </button>
+          <button class="nav-item" data-section="forecast">
+            <span class="icon" data-lucide="line-chart"></span
+            ><span>Forecast Dashboard</span>
+          </button>
+          <button class="nav-item" data-section="safe-locations">
+            <span class="icon" data-lucide="map-pin"></span
+            ><span>Safe Locations</span>
+          </button>
+          <button class="nav-item active" data-section="make-donation">
+            <span class="icon" data-lucide="gift"></span
+            ><span>Make a Donation</span>
+          </button>
+          <button class="nav-item" data-section="request-donation">
+            <span class="icon" data-lucide="package"></span
+            ><span>Request a Donation</span>
+          </button>
+          <button class="nav-item" data-section="report-disaster">
+            <span class="icon" data-lucide="alert-triangle"></span
+            ><span>Report a Disaster</span>
+          </button>
+          <button class="nav-item" data-section="forum">
+            <span class="icon" data-lucide="message-circle"></span
+            ><span>Forum</span>
+          </button>
+          <button class="nav-item" data-section="profile-settings">
+            <span class="icon" data-lucide="user"></span
+            ><span>Profile Settings</span>
+          </button>
+        </nav>
+        <div class="sidebar-footer">
+          <button class="logout" aria-label="Logout">↩ Logout</button>
+        </div>
+      </aside>
+
+      <!-- Topbar copied -->
+      <header class="topbar">
+        <div class="breadcrumb">
+          General Public Dashboard / <span>Make a Donation</span>
+        </div>
+        <div class="topbar-right">
+          <div
+            class="hotline"
+            role="button"
+            tabindex="0"
+            aria-label="Hotline 117"
+          >
+            <span class="hotline-icon" data-lucide="phone"></span>Hotline:
+            <strong>117</strong>
+          </div>
+          <div class="user-avatar" aria-label="User Menu" role="button">
+            <img
+              src="https://via.placeholder.com/40x40.png?text=U"
+              alt="User Avatar"
+            />
+          </div>
+          <button class="menu-toggle" aria-label="Open Menu">
+            <span data-lucide="menu"></span>
+          </button>
+        </div>
+      </header>
+
+      <main class="content" id="mainContent" tabindex="-1">
+        <form class="donation-form" id="donationForm" novalidate>
+          <h1>Make a Donation</h1>
+          <!-- Basic Info -->
+          <div class="form-grid" aria-label="Donor basic information">
+            <div class="form-field">
+              <label for="donorName">Name</label>
+              <input
+                id="donorName"
+                name="donorName"
+                type="text"
+                class="input"
+                placeholder="Enter your name"
+                required
+              />
+            </div>
+            <div class="form-field">
+              <label for="donorContact">Contact Number</label>
+              <input
+                id="donorContact"
+                name="donorContact"
+                type="tel"
+                class="input"
+                placeholder="Enter your contact number"
+                required
+                pattern="[0-9+\-() ]{7,}"
+              />
+            </div>
+            <div class="form-field" style="grid-column: 1 / -1">
+              <label for="donorEmail">Email</label>
+              <input
+                id="donorEmail"
+                name="donorEmail"
+                type="email"
+                class="input"
+                placeholder="Enter your email"
+                required
+              />
+            </div>
+            <div class="form-field" style="grid-column: 1 / -1">
+              <label for="donorAddress">Address</label>
+              <textarea
+                id="donorAddress"
+                name="donorAddress"
+                class="input"
+                placeholder="Enter your address"
+                rows="4"
+                required
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Collection Details -->
+          <section aria-labelledby="collectionDetailsHeading">
+            <h2 id="collectionDetailsHeading" class="section-heading">
+              Collection Details
+            </h2>
+            <div class="form-grid">
+              <div class="form-field">
+                <label for="collectionPoint">Collection Point</label>
+                <select
+                  id="collectionPoint"
+                  name="collectionPoint"
+                  class="input"
+                  required
+                >
+                  <option value="" disabled selected>
+                    Select a collection point
+                  </option>
+                  <option>Main Warehouse</option>
+                  <option>City Hall Center</option>
+                  <option>Community School</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label for="collectionDate">Date</label>
+                <input
+                  id="collectionDate"
+                  name="collectionDate"
+                  type="date"
+                  class="input"
+                  required
+                />
+              </div>
+              <div class="form-field" style="grid-column: 1/-1">
+                <label>Select a Time Slot</label>
+                <div
+                  class="time-slots"
+                  role="group"
+                  aria-label="Select a time slot"
+                >
+                  <button
+                    type="button"
+                    class="time-slot-btn"
+                    data-slot="09-12"
+                    aria-pressed="false"
+                  >
+                    9am–12pm
+                  </button>
+                  <button
+                    type="button"
+                    class="time-slot-btn"
+                    data-slot="12-16"
+                    aria-pressed="false"
+                  >
+                    12pm–4pm
+                  </button>
+                  <button
+                    type="button"
+                    class="time-slot-btn"
+                    data-slot="18-21"
+                    aria-pressed="false"
+                  >
+                    6pm–9pm
+                  </button>
+                </div>
+                <input type="hidden" name="timeSlot" id="timeSlot" required />
+              </div>
+            </div>
+          </section>
+
+          <!-- Donation Items -->
+          <section aria-labelledby="donationItemsHeading">
+            <h2 id="donationItemsHeading" class="section-heading">
+              Donation Items
+            </h2>
+            <div class="donation-items">
+              <div class="item-col" aria-label="Medicine items">
+                <h3>Medicine</h3>
+                <div class="don-item">
+                  <input
+                    type="checkbox"
+                    id="itm_amox"
+                    name="items[amoxicillin]"
+                  /><label for="itm_amox">Amoxicillin</label
+                  ><input
+                    type="number"
+                    min="1"
+                    value="1"
+                    name="qty[amoxicillin]"
+                  />
+                </div>
+                <div class="don-item">
+                  <input
+                    type="checkbox"
+                    id="itm_band"
+                    name="items[bandages]"
+                  /><label for="itm_band">Bandages</label
+                  ><input
+                    type="number"
+                    min="1"
+                    value="1"
+                    name="qty[bandages]"
+                  />
+                </div>
+                <div class="don-item">
+                  <input
+                    type="checkbox"
+                    id="itm_para"
+                    name="items[paracetamol]"
+                  /><label for="itm_para">Paracetamol</label
+                  ><input
+                    type="number"
+                    min="1"
+                    value="1"
+                    name="qty[paracetamol]"
+                  />
+                </div>
+                <div class="don-item">
+                  <input
+                    type="checkbox"
+                    id="itm_asp"
+                    name="items[aspirin]"
+                  /><label for="itm_asp">Aspirin</label
+                  ><input type="number" min="1" value="1" name="qty[aspirin]" />
+                </div>
+                <div class="don-item">
+                  <input
+                    type="checkbox"
+                    id="itm_rep"
+                    name="items[repellent]"
+                  /><label for="itm_rep">Mosquito repellent</label
+                  ><input
+                    type="number"
+                    min="1"
+                    value="1"
+                    name="qty[repellent]"
+                  />
+                </div>
+                <div class="don-item">
+                  <input
+                    type="checkbox"
+                    id="itm_alc"
+                    name="items[alcohol-swabs]"
+                  /><label for="itm_alc">Alcohol swabs</label
+                  ><input
+                    type="number"
+                    min="1"
+                    value="1"
+                    name="qty[alcohol-swabs]"
+                  />
+                </div>
+              </div>
+              <div class="item-col" aria-label="Food items">
+                <h3>Food</h3>
+                <div class="don-item">
+                  <input
+                    type="checkbox"
+                    id="itm_rice"
+                    name="items[rice]"
+                  /><label for="itm_rice">Rice</label
+                  ><input type="number" min="1" value="1" name="qty[rice]" />
+                </div>
+                <div class="don-item">
+                  <input
+                    type="checkbox"
+                    id="itm_dhal"
+                    name="items[dhal]"
+                  /><label for="itm_dhal">Dhal</label
+                  ><input type="number" min="1" value="1" name="qty[dhal]" />
+                </div>
+                <div class="don-item">
+                  <input
+                    type="checkbox"
+                    id="itm_cfish"
+                    name="items[canned-fish]"
+                  /><label for="itm_cfish">Canned fish</label
+                  ><input
+                    type="number"
+                    min="1"
+                    value="1"
+                    name="qty[canned-fish]"
+                  />
+                </div>
+                <div class="don-item">
+                  <input
+                    type="checkbox"
+                    id="itm_water"
+                    name="items[drinking-water]"
+                  /><label for="itm_water">Drinking water</label
+                  ><input
+                    type="number"
+                    min="1"
+                    value="1"
+                    name="qty[drinking-water]"
+                  />
+                </div>
+                <div class="don-item">
+                  <input
+                    type="checkbox"
+                    id="itm_noodles"
+                    name="items[noodles]"
+                  /><label for="itm_noodles">Instant noodles</label
+                  ><input type="number" min="1" value="1" name="qty[noodles]" />
+                </div>
+                <div class="don-item">
+                  <input
+                    type="checkbox"
+                    id="itm_biscuits"
+                    name="items[biscuits]"
+                  /><label for="itm_biscuits">Biscuits</label
+                  ><input
+                    type="number"
+                    min="1"
+                    value="1"
+                    name="qty[biscuits]"
+                  />
+                </div>
+              </div>
+              <div class="item-col" aria-label="Shelter & other items">
+                <h3>Shelter</h3>
+                <div class="don-item">
+                  <input
+                    type="checkbox"
+                    id="itm_blankets"
+                    name="items[blankets]"
+                  /><label for="itm_blankets">Blankets</label
+                  ><input
+                    type="number"
+                    min="1"
+                    value="1"
+                    name="qty[blankets]"
+                  />
+                </div>
+                <div class="don-item">
+                  <input
+                    type="checkbox"
+                    id="itm_towels"
+                    name="items[towels]"
+                  /><label for="itm_towels">Towels</label
+                  ><input type="number" min="1" value="1" name="qty[towels]" />
+                </div>
+                <div class="don-item">
+                  <input
+                    type="checkbox"
+                    id="itm_soap"
+                    name="items[soap]"
+                  /><label for="itm_soap">Soap</label
+                  ><input type="number" min="1" value="1" name="qty[soap]" />
+                </div>
+                <div class="don-item">
+                  <input
+                    type="checkbox"
+                    id="itm_clothing"
+                    name="items[clothing]"
+                  /><label for="itm_clothing">Basic clothing</label
+                  ><input
+                    type="number"
+                    min="1"
+                    value="1"
+                    name="qty[clothing]"
+                  />
+                </div>
+                <div class="don-item">
+                  <input
+                    type="checkbox"
+                    id="itm_diapers"
+                    name="items[baby-diapers]"
+                  /><label for="itm_diapers">Baby diapers</label
+                  ><input
+                    type="number"
+                    min="1"
+                    value="1"
+                    name="qty[baby-diapers]"
+                  />
+                </div>
+                <div class="don-item">
+                  <input
+                    type="checkbox"
+                    id="itm_disinfect"
+                    name="items[disinfectant]"
+                  /><label for="itm_disinfect">Disinfectant</label
+                  ><input
+                    type="number"
+                    min="1"
+                    value="1"
+                    name="qty[disinfectant]"
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Special Notes -->
+          <div class="form-field">
+            <label for="specialNotes">Special Notes</label>
+            <textarea
+              id="specialNotes"
+              name="specialNotes"
+              class="input notes-area"
+              placeholder="Provide any additional information (optional)"
+            ></textarea>
+          </div>
+
+          <div class="confirm-line">
+            <input type="checkbox" id="conditionOk" required />
+            <label for="conditionOk"
+              >I confirm that all items are in acceptable condition and
+              non-expired.</label
+            >
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn" id="cancelBtn">Cancel</button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              id="submitDonationBtn"
+            >
+              Submit Donation
+            </button>
+          </div>
+        </form>
+      </main>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        if (window.lucide) window.lucide.createIcons();
+        // Time slot toggle
+        const timeSlots = document.querySelectorAll(".time-slot-btn");
+        const hiddenSlot = document.getElementById("timeSlot");
+        timeSlots.forEach((btn) =>
+          btn.addEventListener("click", () => {
+            const active = btn.getAttribute("aria-pressed") === "true";
+            timeSlots.forEach((b) => b.setAttribute("aria-pressed", "false"));
+            if (!active) {
+              btn.setAttribute("aria-pressed", "true");
+              hiddenSlot.value = btn.dataset.slot;
+            } else {
+              hiddenSlot.value = "";
+            }
+          })
+        );
+
+        // Simple form validation
+        const form = document.getElementById("donationForm");
+        form.addEventListener("submit", (e) => {
+          e.preventDefault();
+          if (!form.checkValidity() || !hiddenSlot.value) {
+            if (!hiddenSlot.value) {
+              timeSlots.forEach((b) => b.classList.add("shake"));
+              setTimeout(
+                () => timeSlots.forEach((b) => b.classList.remove("shake")),
+                450
+              );
+            }
+            form
+              .querySelectorAll(".input:invalid")
+              .forEach((inp) => inp.classList.add("is-invalid"));
+            return;
+          }
+          const submitBtn = document.getElementById("submitDonationBtn");
+          submitBtn.disabled = true;
+          submitBtn.textContent = "Submitting...";
+          setTimeout(() => {
+            alert("Thank you for your donation!");
+            window.location.href = "index.html";
+          }, 1000);
+        });
+
+        document
+          .getElementById("cancelBtn")
+          .addEventListener(
+            "click",
+            () => (window.location.href = "index.html")
+          );
+      });
+    </script>
+  </body>
+</html>
