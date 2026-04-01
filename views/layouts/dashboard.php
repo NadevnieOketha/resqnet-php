@@ -20,13 +20,15 @@
         $sidebarFile = BASE_PATH . '/views/layouts/partials/sidebar_' . $role . '.php';
         if (file_exists($sidebarFile)) {
             require $sidebarFile;
+        } else {
+            require BASE_PATH . '/views/layouts/partials/sidebar_general.php';
         }
         ?>
 
         <div class="sidebar-footer">
             <div class="sidebar-user">
-                <span class="user-name"><?= e(auth_user()['name']) ?></span>
-                <span class="user-email"><?= e(auth_user()['email']) ?></span>
+                <span class="user-name"><?= e(auth_display_name()) ?></span>
+                <span class="user-email"><?= e((string) (auth_user()['email'] ?? '')) ?></span>
             </div>
             <a href="/logout" class="btn btn-sm btn-outline btn-block">Logout</a>
         </div>
@@ -34,6 +36,12 @@
 
     <main class="dashboard-main">
         <div class="dashboard-content">
+            <?php if ($error = get_flash('error')): ?>
+                <div class="alert alert-error"><?= e($error) ?></div>
+            <?php endif; ?>
+            <?php if ($warning = get_flash('warning')): ?>
+                <div class="alert alert-warning"><?= e($warning) ?></div>
+            <?php endif; ?>
             <?php if ($success = get_flash('success')): ?>
                 <div class="alert alert-success"><?= e($success) ?></div>
             <?php endif; ?>

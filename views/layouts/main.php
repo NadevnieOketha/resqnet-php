@@ -14,10 +14,10 @@
         <div class="container">
             <a href="/" class="logo"><?= e(config('app.name')) ?></a>
             <nav class="main-nav">
-                <a href="/warnings">Warnings</a>
-                <a href="/donations">Donations</a>
+                <a href="/">Home</a>
                 <?php if (auth_check()): ?>
                     <a href="/dashboard">Dashboard</a>
+                    <a href="/profile">Profile</a>
                     <a href="/logout" class="btn btn-sm btn-outline">Logout</a>
                 <?php else: ?>
                     <a href="/login">Sign In</a>
@@ -29,6 +29,12 @@
 
     <main class="main-content">
         <div class="container">
+            <?php if ($error = get_flash('error')): ?>
+                <div class="alert alert-error"><?= e($error) ?></div>
+            <?php endif; ?>
+            <?php if ($warning = get_flash('warning')): ?>
+                <div class="alert alert-warning"><?= e($warning) ?></div>
+            <?php endif; ?>
             <?php if ($success = get_flash('success')): ?>
                 <div class="alert alert-success"><?= e($success) ?></div>
             <?php endif; ?>

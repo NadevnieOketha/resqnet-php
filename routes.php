@@ -3,38 +3,32 @@
 /**
  * Routes
  *
- * Central route definitions for the entire application.
+ * Central route definitions.
  */
 
-// Public pages
+// Public
 route('GET', '/', 'home_index');
-route('GET', '/warnings', 'warnings_public_index');
-route('GET', '/donations', 'donations_public_index');
-route('GET', '/donations/{id}', 'donations_public_show');
-route('POST', '/donations/{id}/contribute', 'donations_contribute');
 
-// Auth
-route('GET',  '/login',    'auth_login',          ['middleware_guest']);
-route('POST', '/login',    'auth_login_post',     ['middleware_guest']);
-route('GET',  '/register', 'auth_register',       ['middleware_guest']);
-route('POST', '/register', 'auth_register_post',  ['middleware_guest']);
-route('GET',  '/logout',   'auth_logout',         ['middleware_auth']);
+// Auth (guest)
+route('GET',  '/login',            'auth_login',               ['middleware_guest']);
+route('POST', '/login',            'auth_login_post',          ['middleware_guest']);
+route('GET',  '/register',         'auth_register',            ['middleware_guest']);
+route('POST', '/register',         'auth_register_post',       ['middleware_guest']);
+route('GET',  '/forgot-password',  'auth_forgot_password',     ['middleware_guest']);
+route('POST', '/forgot-password',  'auth_forgot_password_post',['middleware_guest']);
+route('GET',  '/reset-password',   'auth_reset_password',      ['middleware_guest']);
+route('POST', '/reset-password',   'auth_reset_password_post', ['middleware_guest']);
 
-// Dashboard
-route('GET', '/dashboard', 'dashboard_index', ['middleware_auth']);
+// Authenticated
+route('GET',  '/logout',              'auth_logout',             ['middleware_auth']);
+route('GET',  '/dashboard',           'dashboard_index',         ['middleware_auth']);
+route('GET',  '/profile',             'auth_profile',            ['middleware_auth']);
+route('POST', '/profile',             'auth_profile_post',       ['middleware_auth']);
+route('POST', '/profile/sms-alert',   'auth_profile_sms_toggle', ['middleware_auth']);
 
-// Early warnings management (Grama Niladhari + DMC)
-route('GET',  '/dashboard/warnings',              'warnings_manage_index',  ['middleware_auth', fn() => middleware_roles(['grama_niladhari', 'dmc_admin'])]);
-route('GET',  '/dashboard/warnings/create',       'warnings_create_form',   ['middleware_auth', fn() => middleware_roles(['grama_niladhari', 'dmc_admin'])]);
-route('POST', '/dashboard/warnings',              'warnings_store',         ['middleware_auth', fn() => middleware_roles(['grama_niladhari', 'dmc_admin'])]);
-route('GET',  '/dashboard/warnings/{id}/edit',    'warnings_edit_form',     ['middleware_auth', fn() => middleware_roles(['grama_niladhari', 'dmc_admin'])]);
-route('POST', '/dashboard/warnings/{id}',         'warnings_update_action', ['middleware_auth', fn() => middleware_roles(['grama_niladhari', 'dmc_admin'])]);
-route('POST', '/dashboard/warnings/{id}/delete',  'warnings_delete_action', ['middleware_auth', fn() => middleware_roles(['grama_niladhari', 'dmc_admin'])]);
-
-// Donation request management (NGO + DMC)
-route('GET',  '/dashboard/donations/manage',      'donations_manage_index',  ['middleware_auth', fn() => middleware_roles(['ngo', 'dmc_admin'])]);
-route('GET',  '/dashboard/donations/create',      'donations_create_form',   ['middleware_auth', fn() => middleware_roles(['ngo', 'dmc_admin'])]);
-route('POST', '/dashboard/donations',             'donations_store',         ['middleware_auth', fn() => middleware_roles(['ngo', 'dmc_admin'])]);
-route('GET',  '/dashboard/donations/{id}/edit',   'donations_edit_form',     ['middleware_auth', fn() => middleware_roles(['ngo', 'dmc_admin'])]);
-route('POST', '/dashboard/donations/{id}',        'donations_update_action', ['middleware_auth', fn() => middleware_roles(['ngo', 'dmc_admin'])]);
-route('POST', '/dashboard/donations/{id}/delete', 'donations_delete_action', ['middleware_auth', fn() => middleware_roles(['ngo', 'dmc_admin'])]);
+// DMC Auth Operations
+route('GET',  '/dashboard/admin/pending',                        'auth_dmc_pending_approvals',         ['middleware_auth', fn() => middleware_role('dmc')]);
+route('POST', '/dashboard/admin/approve/{userId}',               'auth_dmc_approve_user_action',       ['middleware_auth', fn() => middleware_role('dmc')]);
+route('GET',  '/dashboard/admin/grama-niladhari/create',         'auth_dmc_create_gn_form',            ['middleware_auth', fn() => middleware_role('dmc')]);
+route('POST', '/dashboard/admin/grama-niladhari/create',         'auth_dmc_create_gn_post',            ['middleware_auth', fn() => middleware_role('dmc')]);
+route('POST', '/dashboard/admin/grama-niladhari/{userId}/resend','auth_dmc_resend_gn_credentials',     ['middleware_auth', fn() => middleware_role('dmc')]);

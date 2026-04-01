@@ -15,6 +15,13 @@ function middleware_auth(): void
         flash('error', 'Please log in to continue.');
         redirect('/login');
     }
+
+    if ((int) (auth_user()['active'] ?? 0) !== 1) {
+        session_destroy();
+        session_start();
+        flash('error', 'Your account is inactive. Please contact DMC.');
+        redirect('/login');
+    }
 }
 
 /**
@@ -31,7 +38,7 @@ function middleware_guest(): void
  * Require a specific role.
  * 
  * Usage in routes:
- *   route('GET', '/dashboard/warnings', 'warnings_manage_index', ['middleware_auth', fn() => middleware_role('dmc_admin')]);
+ *   route('GET', '/dashboard/admin/pending', 'auth_dmc_pending_approvals', ['middleware_auth', fn() => middleware_role('dmc')]);
  */
 function middleware_role(string $role): void
 {

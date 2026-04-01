@@ -35,6 +35,7 @@ if (config('app.debug')) {
 require BASE_PATH . '/core/database.php';
 require BASE_PATH . '/core/router.php';
 require BASE_PATH . '/core/middleware.php';
+require BASE_PATH . '/core/mailer.php';
 
 // Auto-include all module controllers and models
 $modulesDir = BASE_PATH . '/modules';

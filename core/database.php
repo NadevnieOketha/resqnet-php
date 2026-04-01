@@ -6,9 +6,13 @@
  * PDO-based database helpers. No ORM — just clean prepared statements.
  */
 
-function db_connect(): PDO
+function db_connect(bool $forceReconnect = false): PDO
 {
     static $pdo = null;
+
+    if ($forceReconnect) {
+        $pdo = null;
+    }
 
     if ($pdo === null) {
         $config = require BASE_PATH . '/config/database.php';
@@ -89,9 +93,34 @@ function db_connect(): PDO
  */
 function db_query(string $sql, array $params = []): PDOStatement
 {
-    $stmt = db_connect()->prepare($sql);
-    $stmt->execute($params);
-    return $stmt;
+    $pdo = null;
+
+    try {
+        $pdo = db_connect();
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+        return $stmt;
+    } catch (PDOException $e) {
+        if (!db_is_connection_lost($e) || ($pdo instanceof PDO && $pdo->inTransaction())) {
+            throw $e;
+        }
+
+        // Retry once with a fresh PDO instance when MySQL drops idle connections.
+        $stmt = db_connect(true)->prepare($sql);
+        $stmt->execute($params);
+        return $stmt;
+    }
+}
+
+function db_is_connection_lost(PDOException $e): bool
+{
+    $code = (string) $e->getCode();
+    $message = strtolower($e->getMessage());
+
+    return $code === '2006'
+        || $code === '2013'
+        || str_contains($message, 'mysql server has gone away')
+        || str_contains($message, 'lost connection to mysql server');
 }
 
 /**

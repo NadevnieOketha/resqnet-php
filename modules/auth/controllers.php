@@ -13,59 +13,103 @@ function auth_login_post(): void
 {
     csrf_check();
 
-    $email    = trim(request_input('email', ''));
-    $password = request_input('password', '');
+    $identifier = trim(request_input('identifier', ''));
+    $password = (string) request_input('password', '');
 
-    if (empty($email) || empty($password)) {
-        flash('error', 'Please fill in all fields.');
+    if ($identifier === '' || $password === '') {
+        flash('error', 'Please enter your username/email and password.');
         flash_old_input();
         redirect('/login');
     }
 
     try {
-        $user = auth_find_by_email($email);
-    } catch (\PDOException $e) {
-        flash('error', 'Database error. Please ensure the database is set up. Run database/schema.sql.');
+        $user = auth_find_by_identifier($identifier);
+    } catch (\PDOException) {
+        flash('error', 'Database error. Please ensure the database is set up using database/schema.sql.');
         flash_old_input();
         redirect('/login');
     }
 
-    if (!$user || !password_verify($password, $user['password'])) {
-        flash('error', 'Invalid email or password.');
+    if (!$user || !password_verify($password, $user['password_hash'])) {
+        flash('error', 'Invalid login credentials.');
         flash_old_input();
         redirect('/login');
     }
 
-    // Store user in session (without password)
-    unset($user['password']);
-    $_SESSION['user'] = $user;
+    if ((int) $user['active'] !== 1) {
+        flash('error', 'Your account is pending DMC approval. Please wait for activation.');
+        flash_old_input();
+        redirect('/login');
+    }
+
+    $_SESSION['user'] = auth_build_session_user($user);
     clear_old_input();
 
-    flash('success', 'Welcome back, ' . e($user['name']) . '!');
+    flash('success', 'Welcome back, ' . auth_display_name() . '!');
     redirect('/dashboard');
 }
 
 function auth_register(): void
 {
-    view('auth::register', [], 'main');
+    $options = auth_registration_options();
+    view('auth::register', $options, 'main');
 }
 
 function auth_register_post(): void
 {
     csrf_check();
 
-    $name     = trim(request_input('name', ''));
-    $email    = trim(request_input('email', ''));
-    $password = request_input('password', '');
-    $confirm  = request_input('password_confirmation', '');
+    $role = trim((string) request_input('role', 'general'));
+    if (!in_array($role, ['general', 'volunteer', 'ngo'], true)) {
+        flash('error', 'Invalid registration role selected.');
+        flash_old_input();
+        redirect('/register');
+    }
 
-    // Validation
+    $username = trim((string) request_input('username', ''));
+    $password = (string) request_input('password', '');
+    $confirm = (string) request_input('password_confirmation', '');
+
+    $email = $role === 'ngo'
+        ? trim((string) request_input('contact_person_email', ''))
+        : trim((string) request_input('email', ''));
+
     $errors = [];
-    if (empty($name))     $errors[] = 'Name is required.';
-    if (empty($email))    $errors[] = 'Email is required.';
+
+    if ($username === '') $errors[] = 'Username is required.';
+    if (!preg_match('/^[A-Za-z0-9_.-]{4,100}$/', $username)) {
+        $errors[] = 'Username must be 4-100 chars and use only letters, numbers, dot, underscore, or dash.';
+    }
+
+    if ($email === '') $errors[] = 'Email is required.';
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Invalid email format.';
+
     if (strlen($password) < 6) $errors[] = 'Password must be at least 6 characters.';
     if ($password !== $confirm) $errors[] = 'Passwords do not match.';
+
+    if (auth_username_exists($username)) $errors[] = 'Username is already taken.';
+    if (auth_email_exists($email)) $errors[] = 'Email is already registered.';
+
+    $payload = [
+        'username' => $username,
+        'password' => $password,
+        'email' => $email,
+    ];
+
+    if ($role === 'general') {
+        $payload = array_merge($payload, auth_collect_general_fields($errors));
+        $payload['active'] = 1;
+    }
+
+    if ($role === 'volunteer') {
+        $payload = array_merge($payload, auth_collect_volunteer_fields($errors));
+        $payload['active'] = 0;
+    }
+
+    if ($role === 'ngo') {
+        $payload = array_merge($payload, auth_collect_ngo_fields($errors));
+        $payload['active'] = 0;
+    }
 
     if (!empty($errors)) {
         flash('error', implode(' ', $errors));
@@ -74,38 +118,516 @@ function auth_register_post(): void
     }
 
     try {
-        // Check if email already exists
-        if (auth_find_by_email($email)) {
-            flash('error', 'An account with this email already exists.');
-            flash_old_input();
-            redirect('/register');
-        }
-
-        $userId = auth_create_user([
-            'name'     => $name,
-            'email'    => $email,
-            'password' => $password,
-        ]);
-
-        // Auto-login after registration
-        $user = db_fetch('SELECT id, name, email, role, created_at FROM users WHERE id = ?', [$userId]);
-        $_SESSION['user'] = $user;
-        clear_old_input();
-
-        flash('success', 'Account created successfully!');
-        redirect('/dashboard');
-    } catch (\PDOException $e) {
-        flash('error', 'Database error. Please ensure the database is set up. Run database/schema.sql.');
+        $userId = auth_create_user($payload, $role);
+    } catch (\Throwable $e) {
+        flash('error', 'Registration failed. Please try again.');
         flash_old_input();
         redirect('/register');
     }
+
+    clear_old_input();
+
+    if ($role === 'general') {
+        $user = auth_find_user_by_id($userId);
+        if ($user) {
+            $_SESSION['user'] = auth_build_session_user($user);
+            flash('success', 'Account created successfully.');
+            redirect('/dashboard');
+        }
+    }
+
+    flash('success', 'Registration submitted successfully. Your account will be activated by DMC.');
+    redirect('/login');
+}
+
+function auth_forgot_password(): void
+{
+    view('auth::forgot_password', [], 'main');
+}
+
+function auth_forgot_password_post(): void
+{
+    csrf_check();
+
+    $identifier = trim((string) request_input('identifier', ''));
+    if ($identifier === '') {
+        flash('error', 'Please enter your username or email.');
+        flash_old_input();
+        redirect('/forgot-password');
+    }
+
+    $user = auth_find_by_identifier($identifier);
+    if (!$user) {
+        flash('success', 'If an account exists, a reset link has been sent.');
+        redirect('/forgot-password');
+    }
+
+    $token = auth_create_password_reset_token((int) $user['user_id']);
+    $resetLink = base_url('/reset-password?token=' . urlencode($token));
+
+    $subject = 'resqnet password reset';
+    $html = '<p>Hello ' . e($user['username']) . ',</p>'
+        . '<p>Use this link to reset your password:</p>'
+        . '<p><a href="' . e($resetLink) . '">' . e($resetLink) . '</a></p>'
+        . '<p>This link expires in 30 minutes.</p>';
+
+    $sent = mail_send((string) $user['email'], $subject, $html, "Reset link: {$resetLink}");
+
+    if ($sent) {
+        flash('success', 'A reset link has been sent to your email.');
+    } else {
+        flash('warning', 'Email sending failed. Use this reset link: ' . $resetLink);
+    }
+
+    clear_old_input();
+    redirect('/forgot-password');
+}
+
+function auth_reset_password(): void
+{
+    $token = trim((string) request_query('token', ''));
+    $tokenData = $token === '' ? null : auth_find_valid_password_reset_token($token);
+
+    view('auth::reset_password', [
+        'token' => $token,
+        'token_valid' => $tokenData !== null,
+    ], 'main');
+}
+
+function auth_reset_password_post(): void
+{
+    csrf_check();
+
+    $token = trim((string) request_input('token', ''));
+    $password = (string) request_input('password', '');
+    $confirm = (string) request_input('password_confirmation', '');
+
+    $tokenData = $token === '' ? null : auth_find_valid_password_reset_token($token);
+    if (!$tokenData) {
+        flash('error', 'Invalid or expired reset token.');
+        redirect('/reset-password?token=' . urlencode($token));
+    }
+
+    if (strlen($password) < 6) {
+        flash('error', 'Password must be at least 6 characters.');
+        redirect('/reset-password?token=' . urlencode($token));
+    }
+
+    if ($password !== $confirm) {
+        flash('error', 'Passwords do not match.');
+        redirect('/reset-password?token=' . urlencode($token));
+    }
+
+    auth_reset_user_password((int) $tokenData['user_id'], $password);
+    auth_mark_password_reset_token_used($token);
+
+    flash('success', 'Password updated successfully. Please sign in.');
+    redirect('/login');
+}
+
+function auth_profile(): void
+{
+    $user = auth_user();
+    $role = (string) ($user['role'] ?? '');
+    $profile = auth_get_profile((int) auth_id(), $role);
+
+    view('auth::profile', array_merge(auth_registration_options(), [
+        'profile' => $profile,
+        'role' => $role,
+    ]), 'dashboard');
+}
+
+function auth_profile_post(): void
+{
+    csrf_check();
+
+    $userId = (int) auth_id();
+    $role = (string) user_role();
+
+    $username = trim((string) request_input('username', ''));
+    $inputEmail = trim((string) request_input('email', ''));
+    $email = $role === 'ngo'
+        ? trim((string) request_input('contact_person_email', $inputEmail))
+        : $inputEmail;
+    $password = (string) request_input('password', '');
+    $passwordConfirmation = (string) request_input('password_confirmation', '');
+
+    $errors = [];
+
+    if ($username === '') $errors[] = 'Username is required.';
+    if (!preg_match('/^[A-Za-z0-9_.-]{4,100}$/', $username)) {
+        $errors[] = 'Username format is invalid.';
+    }
+
+    if ($email === '') $errors[] = 'Email is required.';
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Invalid email format.';
+
+    if (auth_username_exists($username, $userId)) $errors[] = 'Username is already taken.';
+    if (auth_email_exists($email, $userId)) $errors[] = 'Email is already registered.';
+
+    if ($password !== '' && strlen($password) < 6) {
+        $errors[] = 'Password must be at least 6 characters.';
+    }
+
+    if ($password !== '' && $password !== $passwordConfirmation) {
+        $errors[] = 'Passwords do not match.';
+    }
+
+    $payload = [
+        'username' => $username,
+        'email' => $email,
+        'password' => $password,
+    ];
+
+    if ($role === 'general') {
+        $payload = array_merge($payload, auth_collect_general_fields($errors));
+        $payload['sms_alert'] = (int) request_input('sms_alert', 0);
+    }
+
+    if ($role === 'volunteer') {
+        $payload = array_merge($payload, auth_collect_volunteer_fields($errors));
+    }
+
+    if ($role === 'ngo') {
+        $payload = array_merge($payload, auth_collect_ngo_fields($errors));
+        $payload['email'] = $payload['contact_person_email'];
+    }
+
+    if ($role === 'grama_niladhari') {
+        $payload = array_merge($payload, auth_collect_grama_niladhari_fields($errors));
+    }
+
+    if (!empty($errors)) {
+        flash('error', implode(' ', $errors));
+        flash_old_input();
+        redirect('/profile');
+    }
+
+    try {
+        auth_update_profile($userId, $role, $payload);
+    } catch (\Throwable) {
+        flash('error', 'Profile update failed.');
+        flash_old_input();
+        redirect('/profile');
+    }
+
+    $freshUser = auth_find_user_by_id($userId);
+    if ($freshUser) {
+        $_SESSION['user'] = auth_build_session_user($freshUser);
+    }
+
+    clear_old_input();
+    flash('success', 'Profile updated successfully.');
+    redirect('/profile');
+}
+
+function auth_profile_sms_toggle(): void
+{
+    csrf_check();
+
+    if (!is_role('general')) {
+        abort(403, 'Only general users can update SMS alerts.');
+    }
+
+    $enabled = (string) request_input('sms_alert', '0') === '1';
+    auth_set_general_sms_alert((int) auth_id(), $enabled);
+
+    flash('success', 'SMS alert preference updated.');
+    redirect('/profile');
+}
+
+function auth_dmc_pending_approvals(): void
+{
+    $pendingUsers = auth_pending_approval_users();
+    $gnUsers = auth_list_grama_niladhari_users();
+
+    view('auth::dmc_pending', [
+        'pending_users' => $pendingUsers,
+        'gn_users' => $gnUsers,
+    ], 'dashboard');
+}
+
+function auth_dmc_approve_user_action(string $userId): void
+{
+    csrf_check();
+
+    $affected = auth_approve_user((int) $userId);
+    if ($affected > 0) {
+        flash('success', 'Account approved successfully.');
+    } else {
+        flash('error', 'Unable to approve this account.');
+    }
+
+    redirect('/dashboard/admin/pending');
+}
+
+function auth_dmc_create_gn_form(): void
+{
+    view('auth::dmc_create_gn', auth_registration_options(), 'dashboard');
+}
+
+function auth_dmc_create_gn_post(): void
+{
+    csrf_check();
+
+    $username = trim((string) request_input('username', ''));
+    $email = trim((string) request_input('email', ''));
+    $password = (string) request_input('password', '');
+    $confirm = (string) request_input('password_confirmation', '');
+
+    $errors = [];
+
+    if ($username === '') $errors[] = 'Username is required.';
+    if (!preg_match('/^[A-Za-z0-9_.-]{4,100}$/', $username)) $errors[] = 'Invalid username format.';
+    if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Valid email is required.';
+    if (strlen($password) < 6) $errors[] = 'Password must be at least 6 characters.';
+    if ($password !== $confirm) $errors[] = 'Passwords do not match.';
+    if (auth_username_exists($username)) $errors[] = 'Username is already taken.';
+    if (auth_email_exists($email)) $errors[] = 'Email is already registered.';
+
+    $payload = array_merge([
+        'username' => $username,
+        'email' => $email,
+        'password' => $password,
+    ], auth_collect_grama_niladhari_fields($errors));
+
+    if (!empty($errors)) {
+        flash('error', implode(' ', $errors));
+        flash_old_input();
+        redirect('/dashboard/admin/grama-niladhari/create');
+    }
+
+    try {
+        $userId = auth_create_grama_niladhari_account($payload);
+    } catch (\Throwable) {
+        flash('error', 'Failed to create Grama Niladhari account.');
+        flash_old_input();
+        redirect('/dashboard/admin/grama-niladhari/create');
+    }
+
+    $subject = 'resqnet Grama Niladhari account created';
+    $html = '<p>Your account has been created by DMC.</p>'
+        . '<p>Username: <strong>' . e($username) . '</strong></p>'
+        . '<p>Password: <strong>' . e($password) . '</strong></p>'
+        . '<p>Login URL: <a href="' . e(base_url('/login')) . '">' . e(base_url('/login')) . '</a></p>';
+
+    $sent = mail_send($email, $subject, $html, "Username: {$username}\nPassword: {$password}\nLogin: " . base_url('/login'));
+
+    clear_old_input();
+    if ($sent) {
+        flash('success', 'Grama Niladhari account created and credentials emailed.');
+    } else {
+        flash('warning', 'Account created, but email sending failed. Share credentials manually.');
+    }
+
+    redirect('/dashboard/admin/pending');
+}
+
+function auth_dmc_resend_gn_credentials(string $userId): void
+{
+    csrf_check();
+
+    $user = auth_find_user_by_id((int) $userId);
+    if (!$user || $user['role'] !== 'grama_niladhari') {
+        flash('error', 'Selected user is not a Grama Niladhari account.');
+        redirect('/dashboard/admin/pending');
+    }
+
+    $token = auth_create_password_reset_token((int) $user['user_id']);
+    $resetLink = base_url('/reset-password?token=' . urlencode($token));
+
+    $subject = 'resqnet Grama Niladhari account access';
+    $html = '<p>Account access details:</p>'
+        . '<p>Username: <strong>' . e($user['username']) . '</strong></p>'
+        . '<p>Use this reset link to set a new password:</p>'
+        . '<p><a href="' . e($resetLink) . '">' . e($resetLink) . '</a></p>';
+
+    $sent = mail_send((string) $user['email'], $subject, $html, "Username: {$user['username']}\nReset link: {$resetLink}");
+
+    if ($sent) {
+        flash('success', 'Credential email sent successfully.');
+    } else {
+        flash('warning', 'Email failed. Share this reset link manually: ' . $resetLink);
+    }
+
+    redirect('/dashboard/admin/pending');
 }
 
 function auth_logout(): void
 {
     session_destroy();
-    // Start a new session for flash messages
     session_start();
     flash('success', 'You have been logged out.');
     redirect('/login');
+}
+
+function auth_registration_options(): array
+{
+    return [
+        'districts' => config('auth_options.districts', []),
+        'gn_divisions' => config('auth_options.gn_divisions', []),
+        'volunteer_preferences' => config('auth_options.volunteer_preferences', []),
+        'volunteer_skills' => config('auth_options.volunteer_skills', []),
+        'genders' => config('auth_options.genders', []),
+    ];
+}
+
+function auth_build_session_user(array $user): array
+{
+    $displayName = auth_resolve_display_name((int) $user['user_id'], (string) $user['role'], (string) $user['username']);
+
+    return [
+        'user_id' => (int) $user['user_id'],
+        'username' => (string) $user['username'],
+        'email' => (string) $user['email'],
+        'role' => (string) $user['role'],
+        'active' => (int) $user['active'],
+        'display_name' => $displayName,
+    ];
+}
+
+function auth_collect_general_fields(array &$errors): array
+{
+    $name = trim((string) request_input('name', ''));
+    $contact = trim((string) request_input('contact_number', ''));
+    $houseNo = trim((string) request_input('house_no', ''));
+    $street = trim((string) request_input('street', ''));
+    $city = trim((string) request_input('city', ''));
+    $district = trim((string) request_input('district', ''));
+    $gnDivision = auth_resolve_gn_division_input();
+
+    if ($name === '') $errors[] = 'Name is required.';
+    if ($contact === '') $errors[] = 'Contact number is required.';
+    if ($houseNo === '') $errors[] = 'House number is required.';
+    if ($street === '') $errors[] = 'Street is required.';
+    if ($city === '') $errors[] = 'City is required.';
+    if ($district === '') $errors[] = 'District is required.';
+    if ($gnDivision === '') $errors[] = 'Grama Niladhari division is required.';
+
+    return [
+        'name' => $name,
+        'contact_number' => $contact,
+        'house_no' => $houseNo,
+        'street' => $street,
+        'city' => $city,
+        'district' => $district,
+        'gn_division' => $gnDivision,
+    ];
+}
+
+function auth_collect_volunteer_fields(array &$errors): array
+{
+    $name = trim((string) request_input('name', ''));
+    $age = trim((string) request_input('age', ''));
+    $gender = trim((string) request_input('gender', ''));
+    $contact = trim((string) request_input('contact_number', ''));
+    $houseNo = trim((string) request_input('house_no', ''));
+    $street = trim((string) request_input('street', ''));
+    $city = trim((string) request_input('city', ''));
+    $district = trim((string) request_input('district', ''));
+    $gnDivision = auth_resolve_gn_division_input();
+
+    $preferences = request_input('preferences', []);
+    $skills = request_input('skills', []);
+
+    if (!is_array($preferences)) $preferences = [];
+    if (!is_array($skills)) $skills = [];
+
+    if ($name === '') $errors[] = 'Name is required.';
+    if ($age === '' || !ctype_digit($age)) $errors[] = 'Valid age is required.';
+    if (!in_array($gender, config('auth_options.genders', []), true)) $errors[] = 'Valid gender is required.';
+    if ($contact === '') $errors[] = 'Contact number is required.';
+    if ($houseNo === '') $errors[] = 'House number is required.';
+    if ($street === '') $errors[] = 'Street is required.';
+    if ($city === '') $errors[] = 'City is required.';
+    if ($district === '') $errors[] = 'District is required.';
+    if ($gnDivision === '') $errors[] = 'Grama Niladhari division is required.';
+
+    return [
+        'name' => $name,
+        'age' => $age,
+        'gender' => $gender,
+        'contact_number' => $contact,
+        'house_no' => $houseNo,
+        'street' => $street,
+        'city' => $city,
+        'district' => $district,
+        'gn_division' => $gnDivision,
+        'preferences' => array_map('strval', $preferences),
+        'skills' => array_map('strval', $skills),
+    ];
+}
+
+function auth_collect_ngo_fields(array &$errors): array
+{
+    $orgName = trim((string) request_input('organization_name', ''));
+    $regNumber = trim((string) request_input('registration_number', ''));
+    $years = trim((string) request_input('years_of_operation', ''));
+    $address = trim((string) request_input('address', ''));
+    $contactName = trim((string) request_input('contact_person_name', ''));
+    $contactEmail = trim((string) request_input('contact_person_email', ''));
+    $contactTel = trim((string) request_input('contact_person_telephone', ''));
+
+    if ($orgName === '') $errors[] = 'Organization name is required.';
+    if ($regNumber === '') $errors[] = 'Registration number is required.';
+    if ($address === '') $errors[] = 'Organization address is required.';
+    if ($contactName === '') $errors[] = 'Contact person name is required.';
+    if ($contactEmail === '' || !filter_var($contactEmail, FILTER_VALIDATE_EMAIL)) {
+        $errors[] = 'Valid contact person email is required.';
+    }
+    if ($contactTel === '') $errors[] = 'Contact person telephone is required.';
+    if ($years !== '' && !ctype_digit($years)) $errors[] = 'Years of operation must be a number.';
+
+    return [
+        'organization_name' => $orgName,
+        'registration_number' => $regNumber,
+        'years_of_operation' => $years,
+        'address' => $address,
+        'contact_person_name' => $contactName,
+        'contact_person_email' => $contactEmail,
+        'contact_person_telephone' => $contactTel,
+        'email' => $contactEmail,
+    ];
+}
+
+function auth_collect_grama_niladhari_fields(array &$errors): array
+{
+    $name = trim((string) request_input('name', ''));
+    $contact = trim((string) request_input('contact_number', ''));
+    $address = trim((string) request_input('address', ''));
+    $gnDivision = auth_resolve_gn_division_input();
+    $serviceNumber = trim((string) request_input('service_number', ''));
+    $gnDivisionNumber = trim((string) request_input('gn_division_number', ''));
+
+    if ($name === '') $errors[] = 'Name is required.';
+    if ($contact === '') $errors[] = 'Contact number is required.';
+    if ($address === '') $errors[] = 'Address is required.';
+    if ($gnDivision === '') $errors[] = 'Grama Niladhari division is required.';
+    if ($serviceNumber === '') $errors[] = 'Service number is required.';
+    if ($gnDivisionNumber === '') $errors[] = 'GN division number is required.';
+
+    return [
+        'name' => $name,
+        'contact_number' => $contact,
+        'address' => $address,
+        'gn_division' => $gnDivision,
+        'service_number' => $serviceNumber,
+        'gn_division_number' => $gnDivisionNumber,
+    ];
+}
+
+function auth_resolve_gn_division_input(): string
+{
+    $selected = trim((string) request_input('gn_division', ''));
+    $other = trim((string) request_input('gn_division_other', ''));
+
+    if ($selected === '__other__') {
+        return $other;
+    }
+
+    if ($selected === '' && $other !== '') {
+        return $other;
+    }
+
+    return $selected;
 }
