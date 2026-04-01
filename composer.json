@@ -12,6 +12,9 @@
       "Composer\\Config::disableProcessTimeout",
       "@php -S localhost:8001 -t public"
     ],
+    "db:seed": [
+      "@php database/seed.php"
+    ],
     "start": [
       "@serve"
     ]
