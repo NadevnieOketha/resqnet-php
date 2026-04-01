@@ -134,6 +134,29 @@ const SAFE_LOCATIONS = [
     ['location_name' => 'Matara Relief Center', 'latitude' => 5.9549, 'longitude' => 80.5549],
 ];
 
+const REQUIRED_SCHEMA_COLUMNS = [
+    'users' => ['user_id', 'username', 'password_hash', 'email', 'role', 'active'],
+    'general_user' => ['user_id', 'name', 'contact_number', 'house_no', 'street', 'city', 'district', 'gn_division', 'sms_alert'],
+    'volunteers' => ['user_id', 'name', 'age', 'gender', 'contact_number', 'house_no', 'street', 'city', 'district', 'gn_division'],
+    'ngos' => [
+        'user_id',
+        'organization_name',
+        'registration_number',
+        'years_of_operation',
+        'address',
+        'contact_person_name',
+        'contact_person_telephone',
+        'contact_person_email',
+    ],
+    'grama_niladhari' => ['user_id', 'name', 'contact_number', 'address', 'gn_division', 'service_number', 'gn_division_number'],
+    'skills' => ['skill_id', 'skill_name'],
+    'skills_volunteers' => ['user_id', 'skill_id'],
+    'volunteer_preferences' => ['preference_id', 'preference_name'],
+    'volunteer_preference_volunteers' => ['user_id', 'preference_id'],
+    'donation_items_catalog' => ['item_id', 'item_name', 'category'],
+    'safe_locations' => ['location_id', 'location_name', 'latitude', 'longitude'],
+];
+
 define('BASE_PATH', dirname(__DIR__));
 
 require BASE_PATH . '/vendor/autoload.php';
@@ -144,24 +167,39 @@ require BASE_PATH . '/core/database.php';
 
 function seed_require_tables(): void
 {
-    $requiredTables = [
-        'users',
-        'general_user',
-        'volunteers',
-        'ngos',
-        'grama_niladhari',
-        'skills',
-        'skills_volunteers',
-        'volunteer_preferences',
-        'volunteer_preference_volunteers',
-        'donation_items_catalog',
-        'safe_locations',
-    ];
+    $requiredTables = array_keys(REQUIRED_SCHEMA_COLUMNS);
 
     foreach ($requiredTables as $table) {
-        $exists = db_fetch('SHOW TABLES LIKE ?', [$table]);
+        $exists = db_fetch(
+            'SELECT 1
+             FROM information_schema.tables
+             WHERE table_schema = DATABASE()
+               AND table_name = ?
+             LIMIT 1',
+            [$table]
+        );
         if (!$exists) {
             throw new RuntimeException("Missing required table '{$table}'. Run database/schema.sql first.");
+        }
+
+        $requiredColumns = REQUIRED_SCHEMA_COLUMNS[$table] ?? [];
+        foreach ($requiredColumns as $column) {
+            $columnExists = db_fetch(
+                'SELECT 1
+                 FROM information_schema.columns
+                 WHERE table_schema = DATABASE()
+                   AND table_name = ?
+                   AND column_name = ?
+                 LIMIT 1',
+                [$table, $column]
+            );
+
+            if (!$columnExists) {
+                throw new RuntimeException(
+                    "Schema mismatch in '{$table}': missing required column '{$column}'. " .
+                    "Re-run database/schema.sql to align schema before seeding."
+                );
+            }
         }
     }
 }
