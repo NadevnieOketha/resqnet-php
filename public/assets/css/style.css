@@ -541,9 +541,12 @@ img {
     letter-spacing: 0.05em;
 }
 
+.role-general { background: var(--color-success); color: white; }
 .role-general_public { background: var(--color-success); color: white; }
+.role-volunteer { background: #0ea5a4; color: white; }
 .role-grama_niladhari { background: var(--color-warning); color: white; }
 .role-ngo { background: var(--color-info); color: white; }
+.role-dmc { background: var(--color-danger); color: white; }
 .role-dmc_admin { background: var(--color-danger); color: white; }
 .role-guest { background: #475569; color: white; }
 

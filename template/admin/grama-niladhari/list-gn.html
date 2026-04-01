@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>ResQnet - GN Registry</title>
+    <link rel="stylesheet" href="./styles/core.css" />
+    <link rel="stylesheet" href="./styles/dashboard.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+    <style>
+      h1 { margin:0 0 1.9rem; }
+      .top-actions { display:flex; justify-content:flex-end; margin:0 0 0.75rem; }
+      .add-btn { background:var(--color-accent); color:#000; font-size:0.6rem; font-weight:600; border-radius:999px; padding:0.6rem 1.1rem; border:none; cursor:pointer; }
+      .table-shell { border:1px solid var(--color-border); border-radius:var(--radius-lg); overflow:hidden; background:#fff; }
+      table.registry { width:100%; border-collapse:collapse; font-size:0.65rem; }
+      table.registry thead th { text-align:left; padding:0.75rem 0.85rem; background:#fafafa; font-weight:600; border-bottom:1px solid var(--color-border); }
+      table.registry tbody td { padding:0.9rem 0.85rem; border-bottom:1px solid var(--color-border); vertical-align:middle; }
+      table.registry tbody tr:last-child td { border-bottom:none; }
+      .actions-cell { display:flex; gap:0.55rem; }
+      .pill { all:unset; cursor:pointer; font-size:0.55rem; font-weight:600; padding:0.5rem 1.05rem; border-radius:999px; background:#e3e3e3; display:inline-flex; align-items:center; gap:0.35rem; }
+      .pill-danger { background:#d91e18; color:#fff; }
+      .pill svg { width:14px; height:14px; }
+      .empty-row { text-align:center; padding:2rem !important; font-style:italic; color:#666; }
+      @media (max-width:780px){ table.registry thead { display:none; } table.registry tbody td { display:block; padding:0.6rem 0.85rem; } table.registry tbody tr { border-bottom:1px solid var(--color-border); } table.registry tbody td::before { content:attr(data-label); display:block; font-weight:600; margin-bottom:0.25rem; } .actions-cell { flex-wrap:wrap; } }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar" aria-label="Primary">
+        <div class="brand"><img class="logo-img" src="./assets/img/logo.svg" alt="ResQnet Logo" width="120" height="32" /><span class="brand-name sr-only">ResQnet</span></div>
+        <nav class="nav">
+          <button class="nav-item" data-section="overview"><span class="icon" data-lucide="home"></span><span>Overview</span></button>
+          <button class="nav-item" data-section="forecast"><span class="icon" data-lucide="line-chart"></span><span>Forecast Dashboard</span></button>
+          <button class="nav-item" data-section="disaster-reports"><span class="icon" data-lucide="file-text"></span><span>Disaster Reports</span></button>
+          <button class="nav-item" data-section="volunteer-apps"><span class="icon" data-lucide="users"></span><span>Volunteer Applications</span></button>
+          <button class="nav-item" data-section="delivery-confirmations"><span class="icon" data-lucide="check-square"></span><span>Delivery Confirmations</span></button>
+          <button class="nav-item" data-section="safe-locations"><span class="icon" data-lucide="map-pin"></span><span>Safe Locations</span></button>
+          <button class="nav-item active" data-section="gn-registry"><span class="icon" data-lucide="list"></span><span>GN Registry</span></button>
+          <button class="nav-item" data-section="forum"><span class="icon" data-lucide="message-circle"></span><span>Forum</span></button>
+          <button class="nav-item" data-section="profile-settings"><span class="icon" data-lucide="user"></span><span>Profile Settings</span></button>
+        </nav>
+        <div class="sidebar-footer"><button class="logout" aria-label="Logout">↩ Logout</button></div>
+      </aside>
+      <header class="topbar">
+        <div class="breadcrumb">DMC Dashboard / <span>GN Registry</span></div>
+        <div class="topbar-right">
+          <div class="hotline" role="button" tabindex="0" aria-label="Hotline 117"><span class="hotline-icon" data-lucide="phone"></span>Hotline: <strong>117</strong></div>
+          <div class="user-avatar" aria-label="User Menu" role="button"><img src="https://via.placeholder.com/40x40.png?text=U" alt="User Avatar" /></div>
+          <button class="menu-toggle" aria-label="Open Menu"><span data-lucide="menu"></span></button>
+        </div>
+      </header>
+      <main class="content" id="mainContent" tabindex="-1">
+        <h1>Registered Grama Niladharis</h1>
+        <div class="top-actions"><button class="add-btn" type="button" id="addGnBtn">Add new GN</button></div>
+        <div class="table-shell">
+          <table class="registry" aria-describedby="mainContent">
+            <thead><tr><th>Name</th><th>Division</th><th>Contact Info</th><th>Username</th><th>Actions</th></tr></thead>
+            <tbody id="gnBody"></tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+    <template id="rowTemplate"><tr><td class="c-name"></td><td class="c-division"></td><td class="c-contact"></td><td class="c-user"></td><td class="c-actions"></td></tr></template>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        if(window.lucide) lucide.createIcons();
+        let gnData=[
+          { id:1,name:'Aravinda Perera', division:'Colombo Central', contact:'+94 77 123 4567', username:'aravinda.p', active:true },
+          { id:2,name:'Nadeesha Silva', division:'Kandy North', contact:'+94 71 987 6543', username:'nadeesha.s', active:true },
+          { id:3,name:'Chamara Fernando', division:'Galle South', contact:'+94 75 555 1212', username:'chamara.f', active:true },
+          { id:4,name:'Chamara Fernando', division:'Galle South', contact:'+94 75 555 1212', username:'chamara.f', active:true },
+          { id:5,name:'Chamara Fernando', division:'Galle South', contact:'+94 75 555 1212', username:'chamara.f', active:true },
+          { id:6,name:'Tharushi Rajapakse', division:'Jaffna East', contact:'+94 72 333 4444', username:'tharushi.r', active:true },
+          { id:7,name:'Tharushi Rajapakse', division:'Jaffna East', contact:'+94 72 333 4444', username:'tharushi.r', active:true },
+          { id:8,name:'Tharushi Rajapakse', division:'Jaffna East', contact:'+94 72 333 4444', username:'tharushi.r', active:true },
+          { id:9,name:'Rohan De Silva', division:'Matara West', contact:'+94 78 222 9999', username:'rohan.d', active:true }
+        ];
+        const body=document.getElementById('gnBody');
+        const tmpl=document.getElementById('rowTemplate');
+        function render(){
+          body.innerHTML='';
+          if(!gnData.length){ const tr=document.createElement('tr'); const td=document.createElement('td'); td.colSpan=5; td.className='empty-row'; td.textContent='No GN records found.'; tr.appendChild(td); body.appendChild(tr); return; }
+          gnData.forEach(r=>{ const node=tmpl.content.firstElementChild.cloneNode(true); node.dataset.id=r.id; node.querySelector('.c-name').textContent=r.name; node.querySelector('.c-division').textContent=r.division; node.querySelector('.c-contact').textContent=r.contact; node.querySelector('.c-user').textContent=r.username; const act=node.querySelector('.c-actions'); const edit=document.createElement('button'); edit.className='pill'; edit.type='button'; edit.textContent='Edit'; edit.addEventListener('click',()=>{ alert('Edit GN: '+r.name); console.log('Edit GN', r); }); const deactivate=document.createElement('button'); deactivate.className='pill pill-danger'; deactivate.type='button'; deactivate.textContent=r.active?'Deactivate':'Activate'; deactivate.addEventListener('click',()=>{ r.active=!r.active; deactivate.textContent=r.active?'Deactivate':'Activate'; console.log('Toggled active', { id:r.id, active:r.active }); }); act.appendChild(edit); act.appendChild(deactivate); body.appendChild(node); });
+        }
+        document.getElementById('addGnBtn').addEventListener('click',()=>{ const name=prompt('GN Name?'); if(!name) return; gnData.push({ id:Date.now(), name, division:'Unknown', contact:'', username:name.toLowerCase().replace(/\s+/g,'.'), active:true }); render(); });
+        render();
+      });
+    </script>
+  </body>
+</html>

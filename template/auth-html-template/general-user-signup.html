@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Sign Up – ResQnet</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles/core.css" />
+    <link rel="icon" type="image/svg+xml" href="./assets/img/logo.svg" />
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+    <style>
+      /* Page specific layout (kept minimal & token-driven) */
+      /* header styles consumed from core.css */
+      .signup-container {
+        max-width: var(--layout-max-width);
+        margin: 0 auto;
+        padding: 0 var(--space-4) 3.5rem;
+      }
+      @media (max-width: 680px) {
+        .signup-container {
+          padding: 0 var(--space-3) 3rem;
+        }
+      }
+
+      .signup-heading {
+        margin: 0 0 var(--space-2);
+        font-size: clamp(1.55rem, 2.3vw, 1.9rem);
+        font-weight: 600;
+        line-height: 1.15;
+      }
+      .signup-subheading {
+        margin: 0 0 var(--space-6);
+        font-size: var(--font-size-sm);
+        color: var(--color-text-subtle);
+        max-width: 640px;
+      }
+
+      .form-sections {
+        display: grid;
+        gap: var(--space-8);
+        grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+        margin-bottom: var(--space-6);
+      }
+      @media (max-width: 760px) {
+        .form-sections {
+          grid-template-columns: 1fr;
+          gap: var(--space-6);
+        }
+      }
+
+      .form-section h2 {
+        font-size: var(--font-size-sm);
+        text-transform: none;
+        letter-spacing: 0.5px;
+        font-weight: 600;
+        margin: 0 0 var(--space-4);
+      }
+
+      .form-actions {
+        margin-top: var(--space-2);
+        display: flex;
+        gap: var(--space-4);
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .form-actions .btn {
+        flex: 1;
+        min-width: 180px;
+      }
+      @media (max-width: 600px) {
+        .form-actions {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        .form-actions .btn {
+          width: 100%;
+          flex: unset;
+        }
+      }
+      .wide-btn {
+        width: 100%;
+        padding: 16px 26px;
+        font-size: var(--font-size-sm);
+      }
+
+      /* Helper for 2-up alignment similarity to screenshot */
+      .form-section .form-field:last-of-type {
+        margin-bottom: 0;
+      }
+
+      .role-badge {
+        background: var(--color-surface-alt-2);
+        border: 1px solid var(--color-border);
+        padding: 4px 10px;
+        border-radius: var(--radius-pill);
+        font-size: var(--font-size-xs);
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        margin-left: 0.5rem;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header" role="banner">
+      <div class="site-header__inner">
+        <a href="index.html" class="brand-inline" aria-label="ResQnet home">
+          <img src="./assets/img/logo.svg" alt="ResQnet logo" />
+          <span class="sr-only">ResQnet</span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary navigation">
+          <ul>
+            <li><a href="index.html">Forecast Dashboard</a></li>
+            <li><a href="#">Community Forum</a></li>
+            <li><a href="roles.html">Become a Volunteer</a></li>
+            <li><a href="roles.html">Join as a NGO</a></li>
+          </ul>
+        </nav>
+        <div class="header-actions">
+          <a href="signup.html" class="btn" aria-current="page">Sign Up</a>
+          <a href="login.html" class="btn btn-primary">Login</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="signup-container" id="mainContent" tabindex="-1">
+      <h1 class="signup-heading">
+        Sign up<span id="roleBadge" class="role-badge hidden"></span>
+      </h1>
+      <p class="signup-subheading">
+        Create your account to access disaster response resources
+      </p>
+      <form id="signupForm" novalidate autocomplete="off">
+        <div class="form-sections">
+          <section class="form-section" aria-labelledby="personalInfoHeading">
+            <h2 id="personalInfoHeading">Personal information</h2>
+            <div class="form-field">
+              <label for="fullName">Name</label>
+              <input
+                id="fullName"
+                name="fullName"
+                type="text"
+                class="input"
+                placeholder="Enter your full name"
+                required
+              />
+              <p class="form-help hidden" data-help-for="fullName">
+                Name is required.
+              </p>
+            </div>
+            <div class="form-field">
+              <label for="contactNo">Contact No</label>
+              <input
+                id="contactNo"
+                name="contactNo"
+                type="tel"
+                class="input"
+                placeholder="Enter your contact number"
+                required
+                pattern="[0-9+\-() ]{7,}"
+              />
+              <p class="form-help hidden" data-help-for="contactNo">
+                Enter a valid contact number.
+              </p>
+            </div>
+            <div class="form-field">
+              <label for="username">Username</label>
+              <input
+                id="username"
+                name="username"
+                type="text"
+                class="input"
+                placeholder="Choose a username"
+                minlength="3"
+                required
+              />
+              <p class="form-help hidden" data-help-for="username">
+                Username must be at least 3 characters.
+              </p>
+            </div>
+            <div class="form-field">
+              <label for="password">Password</label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                class="input"
+                placeholder="Create a password"
+                minlength="6"
+                required
+                autocomplete="new-password"
+              />
+              <p class="form-help hidden" data-help-for="password">
+                Password must be at least 6 characters.
+              </p>
+            </div>
+            <div class="form-field">
+              <label for="confirmPassword">Confirm Password</label>
+              <input
+                id="confirmPassword"
+                name="confirmPassword"
+                type="password"
+                class="input"
+                placeholder="Confirm your password"
+                minlength="6"
+                required
+                autocomplete="new-password"
+              />
+              <p class="form-help hidden" data-help-for="confirmPassword">
+                Passwords must match.
+              </p>
+            </div>
+            <div class="form-field">
+              <label for="email">Email</label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                class="input"
+                placeholder="Enter your email address"
+                required
+              />
+              <p class="form-help hidden" data-help-for="email">
+                Enter a valid email address.
+              </p>
+            </div>
+          </section>
+
+          <section class="form-section" aria-labelledby="addressInfoHeading">
+            <h2 id="addressInfoHeading">Address</h2>
+            <div class="form-field">
+              <label for="houseNo">House No</label>
+              <input
+                id="houseNo"
+                name="houseNo"
+                type="text"
+                class="input"
+                placeholder="Enter your house number"
+                required
+              />
+              <p class="form-help hidden" data-help-for="houseNo">
+                House number is required.
+              </p>
+            </div>
+            <div class="form-field">
+              <label for="street">Street</label>
+              <input
+                id="street"
+                name="street"
+                type="text"
+                class="input"
+                placeholder="Enter your street name"
+                required
+              />
+              <p class="form-help hidden" data-help-for="street">
+                Street is required.
+              </p>
+            </div>
+            <div class="form-field">
+              <label for="city">City</label>
+              <input
+                id="city"
+                name="city"
+                type="text"
+                class="input"
+                placeholder="Enter your city"
+                required
+              />
+              <p class="form-help hidden" data-help-for="city">
+                City is required.
+              </p>
+            </div>
+            <div class="form-field">
+              <label for="district">District</label>
+              <select id="district" name="district" class="input" required>
+                <option value="" disabled selected>Select your district</option>
+                <option value="Colombo">Colombo</option>
+                <option value="Gampaha">Gampaha</option>
+                <option value="Kalutara">Kalutara</option>
+                <option value="Kandy">Kandy</option>
+                <option value="Galle">Galle</option>
+                <option value="Matara">Matara</option>
+              </select>
+              <p class="form-help hidden" data-help-for="district">
+                Please select a district.
+              </p>
+            </div>
+            <div class="form-field">
+              <label for="gnDivision">Grama Niladari Division</label>
+              <input
+                id="gnDivision"
+                name="gnDivision"
+                type="text"
+                class="input"
+                placeholder="Enter your Grama Niladari Division"
+                required
+              />
+              <p class="form-help hidden" data-help-for="gnDivision">
+                This field is required.
+              </p>
+            </div>
+            <input type="hidden" name="role" id="roleInput" />
+          </section>
+        </div>
+
+        <div class="form-actions">
+          <a
+            href="roles.html"
+            class="btn"
+            id="backRolesBtn"
+            aria-label="Back to role selection"
+            >Back</a
+          >
+          <button type="submit" class="btn btn-primary" id="signupBtn">
+            Sign Up
+          </button>
+        </div>
+      </form>
+    </main>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        if (window.lucide) window.lucide.createIcons();
+        const form = document.getElementById("signupForm");
+        const password = document.getElementById("password");
+        const confirmPassword = document.getElementById("confirmPassword");
+        const roleInput = document.getElementById("roleInput");
+        const roleBadge = document.getElementById("roleBadge");
+
+        // Parse role from query string (e.g., ?role=volunteer)
+        const params = new URLSearchParams(window.location.search);
+        const role = params.get("role");
+        if (role) {
+          roleInput.value = role;
+          roleBadge.textContent = role.charAt(0).toUpperCase() + role.slice(1);
+          roleBadge.classList.remove("hidden");
+        }
+
+        function show(el) {
+          el.classList.remove("hidden");
+        }
+        function hide(el) {
+          el.classList.add("hidden");
+        }
+        function helpElFor(id) {
+          return document.querySelector(`[data-help-for="${id}"]`);
+        }
+        function validateField(input) {
+          const help = helpElFor(input.id);
+          if (!input.checkValidity()) {
+            input.classList.add("is-invalid");
+            if (help) show(help);
+            return false;
+          }
+          if (help) hide(help);
+          input.classList.remove("is-invalid");
+          return true;
+        }
+
+        form.querySelectorAll(".input[required]").forEach((inp) => {
+          inp.addEventListener("input", () => validateField(inp));
+          inp.addEventListener("blur", () => validateField(inp));
+        });
+
+        function validatePasswords() {
+          let ok = true;
+          if (password.value.length < 6) {
+            validateField(password);
+            ok = false;
+          }
+          if (
+            confirmPassword.value !== password.value ||
+            confirmPassword.value.length < 6
+          ) {
+            const help = helpElFor("confirmPassword");
+            confirmPassword.classList.add("is-invalid");
+            show(help);
+            ok = false;
+          } else {
+            confirmPassword.classList.remove("is-invalid");
+            hide(helpElFor("confirmPassword"));
+          }
+          return ok;
+        }
+
+        confirmPassword.addEventListener("input", validatePasswords);
+
+        form.addEventListener("submit", (e) => {
+          e.preventDefault();
+          let allValid = true;
+          form.querySelectorAll(".input[required]").forEach((inp) => {
+            if (!validateField(inp)) allValid = false;
+          });
+          if (!validatePasswords()) allValid = false;
+          if (!allValid) return;
+
+          const btn = document.getElementById("signupBtn");
+          btn.disabled = true;
+          btn.textContent = "Creating account...";
+          // Simulate network latency then redirect to login
+          setTimeout(() => {
+            window.location.href = "login.html";
+          }, 1100);
+        });
+      });
+    </script>
+  </body>
+</html>

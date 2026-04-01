@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>ResQnet - Manage Collection Points</title>
+    <link rel="stylesheet" href="./styles/core.css" />
+    <link rel="stylesheet" href="./styles/dashboard.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+    <style>
+      h1 { margin:0 0 2rem; }
+      .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:1rem 1.25rem; }
+      .grid span.full { grid-column:1/-1; }
+      .form-actions-inline { display:flex; justify-content:space-between; align-items:center; margin-top:0.9rem; }
+      .btn-reset { background:#e6e6e6; color:#111; }
+      .btn-primary { background:var(--color-accent); color:#000; }
+      table { width:100%; border-collapse:collapse; font-size:0.7rem; }
+      thead th { text-align:left; font-weight:600; padding:0.75rem 0.85rem; border-bottom:1px solid var(--color-border); background:#fafafa; }
+      tbody td { padding:0.85rem; border-bottom:1px solid var(--color-border); }
+      tbody tr:last-child td { border-bottom:none; }
+      .table-wrap { margin-top:1.75rem; border:1px solid var(--color-border); border-radius:var(--radius-lg); overflow:hidden; background:#fff; }
+      .actions { display:flex; gap:0.5rem; }
+      .chip { all:unset; cursor:pointer; font-size:0.55rem; font-weight:600; padding:0.45rem 0.9rem; border-radius:999px; background:#e3e3e3; display:inline-flex; align-items:center; gap:0.35rem; }
+      .chip-danger { background:#d91e18; color:#fff; }
+      .empty-row { text-align:center; padding:2rem !important; color:#666; font-style:italic; }
+      @media (max-width:720px){ .grid { grid-template-columns:1fr; } .form-actions-inline { flex-wrap:wrap; gap:0.75rem; } }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar" aria-label="Primary">
+        <div class="brand"><img class="logo-img" src="./assets/img/logo.svg" alt="ResQnet Logo" width="120" height="32" /><span class="brand-name sr-only">ResQnet</span></div>
+        <nav class="nav">
+          <button class="nav-item" data-section="overview"><span class="icon" data-lucide="home"></span><span>Overview</span></button>
+          <button class="nav-item" data-section="forecast"><span class="icon" data-lucide="line-chart"></span><span>Forecast Dashboard</span></button>
+          <button class="nav-item" data-section="safe-locations"><span class="icon" data-lucide="map-pin"></span><span>Safe Locations</span></button>
+          <button class="nav-item" data-section="donation-requests"><span class="icon" data-lucide="gift"></span><span>Donation Requests</span></button>
+          <button class="nav-item" data-section="manage-inventory"><span class="icon" data-lucide="boxes"></span><span>Manage Inventory</span></button>
+          <button class="nav-item active" data-section="manage-collection"><span class="icon" data-lucide="map"></span><span>Manage Collection Points</span></button>
+          <button class="nav-item" data-section="forum"><span class="icon" data-lucide="message-circle"></span><span>Forum</span></button>
+          <button class="nav-item" data-section="profile-settings"><span class="icon" data-lucide="user"></span><span>Profile Settings</span></button>
+        </nav>
+        <div class="sidebar-footer"><button class="logout" aria-label="Logout">↩ Logout</button></div>
+      </aside>
+      <header class="topbar">
+        <div class="breadcrumb">NGO Dashboard / <span>Overview</span></div>
+        <div class="topbar-right">
+          <div class="hotline" role="button" tabindex="0" aria-label="Hotline 117"><span class="hotline-icon" data-lucide="phone"></span>Hotline: <strong>117</strong></div>
+          <div class="user-avatar" aria-label="User Menu" role="button"><img src="https://via.placeholder.com/40x40.png?text=U" alt="User Avatar" /></div>
+          <button class="menu-toggle" aria-label="Open Menu"><span data-lucide="menu"></span></button>
+        </div>
+      </header>
+      <main class="content" id="mainContent" tabindex="-1">
+        <h1>Manage Collection Points</h1>
+        <section aria-labelledby="add-heading">
+          <h2 id="add-heading" style="font-size:0.85rem; margin:0 0 0.9rem;">Add New Collection Point</h2>
+          <form id="cpForm" novalidate>
+            <div class="grid">
+              <div class="form-group">
+                <label for="cpName">Collection Point Name</label>
+                <input id="cpName" name="name" type="text" placeholder="e.g., Community Center" required />
+              </div>
+              <div class="form-group">
+                <label for="cpLandmark">Location Name/Landmark</label>
+                <input id="cpLandmark" name="landmark" type="text" placeholder="e.g., Near the old library" required />
+              </div>
+              <span class="full form-group">
+                <label for="cpAddress">Full Address</label>
+                <input id="cpAddress" name="address" type="text" placeholder="e.g., 123 Main Street, Anytown" required />
+              </span>
+              <div class="form-group">
+                <label for="cpContact">Contact Person (Optional)</label>
+                <input id="cpContact" name="contact" type="text" placeholder="e.g., Sarah Johnson" />
+              </div>
+              <div class="form-group">
+                <label for="cpPhone">Phone Number (Optional)</label>
+                <input id="cpPhone" name="phone" type="tel" pattern="[0-9()+\-\s]{7,}" placeholder="e.g., (555)123-4567" />
+              </div>
+            </div>
+            <div class="form-actions-inline">
+              <button type="reset" class="btn btn-reset">Reset</button>
+              <button type="submit" class="btn btn-primary">Add Collection Point</button>
+            </div>
+          </form>
+        </section>
+        <section aria-labelledby="current-heading" class="table-section">
+          <h2 id="current-heading" style="font-size:0.85rem;margin:2rem 0 0.9rem;">Current Collection Points</h2>
+          <div class="table-wrap">
+            <table aria-describedby="current-heading">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Location/Landmark</th>
+                  <th>Full Address</th>
+                  <th style="width:140px;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="cpBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+    <template id="rowTmpl">
+      <tr>
+        <td class="c-name"></td>
+        <td class="c-landmark"></td>
+        <td class="c-address"></td>
+        <td><div class="actions"><button class="chip chip-edit" type="button"><span data-lucide="edit"></span> Edit</button><button class="chip chip-danger chip-del" type="button"><span data-lucide="trash-2"></span> Delete</button></div></td>
+      </tr>
+    </template>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        if (window.lucide) lucide.createIcons();
+        const form = document.getElementById('cpForm');
+        const body = document.getElementById('cpBody');
+        const tmpl = document.getElementById('rowTmpl');
+        let editingId = null;
+        let rows = [
+          { id:1, name:'Community Center', landmark:'Near the old library', address:'123 Main Street, Anytown', contact:'Sarah Johnson', phone:'(555)123-4567' },
+          { id:2, name:'Community Center', landmark:'Near the old library', address:'123 Main Street, Anytown', contact:'Sarah Johnson', phone:'(555)123-4567' },
+          { id:3, name:'Community Center', landmark:'Near the old library', address:'123 Main Street, Anytown', contact:'Sarah Johnson', phone:'(555)123-4567' }
+        ];
+        function render(){
+          body.innerHTML='';
+          if(!rows.length){ const tr=document.createElement('tr'); const td=document.createElement('td'); td.colSpan=4; td.className='empty-row'; td.textContent='No collection points added yet.'; tr.appendChild(td); body.appendChild(tr); return; }
+          rows.forEach(r => {
+            const node = tmpl.content.firstElementChild.cloneNode(true);
+            node.dataset.id=r.id;
+            node.querySelector('.c-name').textContent=r.name;
+            node.querySelector('.c-landmark').textContent=r.landmark;
+            node.querySelector('.c-address').textContent=r.address;
+            node.querySelector('.chip-edit').addEventListener('click', () => startEdit(r.id));
+            node.querySelector('.chip-del').addEventListener('click', () => del(r.id));
+            body.appendChild(node);
+          });
+        }
+        function startEdit(id){
+          const item=rows.find(x=>x.id===id); if(!item) return;
+          editingId=id;
+          form.name.value=item.name; form.landmark.value=item.landmark; form.address.value=item.address; form.contact.value=item.contact||''; form.phone.value=item.phone||'';
+          form.querySelector('[type=submit]').textContent='Update Collection Point';
+        }
+        function del(id){ rows=rows.filter(r=>r.id!==id); render(); }
+        form.addEventListener('reset',()=>{ editingId=null; form.querySelector('[type=submit]').textContent='Add Collection Point'; });
+        form.addEventListener('submit',e=>{
+          e.preventDefault(); if(!form.reportValidity()) return; const fd=new FormData(form); const entry=Object.fromEntries(fd.entries());
+          if(editingId){ rows=rows.map(r=>r.id===editingId?{...r,...entry}:r); } else { rows.push({ id:Date.now(), ...entry }); }
+          form.reset(); editingId=null; form.querySelector('[type=submit]').textContent='Add Collection Point'; render();
+        });
+        render();
+      });
+    </script>
+  </body>
+</html>

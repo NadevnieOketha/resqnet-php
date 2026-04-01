@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ResQnet Volunteer Registration</title>
+    <link rel="stylesheet" href="./styles/core.css" />
+    <link rel="stylesheet" href="./styles/dashboard.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+    <style>
+      .registration-wrapper { background:#fff; border:1px solid var(--color-border); border-radius:var(--radius-lg); padding:2.25rem clamp(1.25rem,2.5vw,2.75rem); box-shadow:var(--shadow-sm); max-width:1180px; }
+      .form-layout { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:2.25rem 3rem; }
+      .col-left, .col-right { display:flex; flex-direction:column; gap:1.25rem; }
+      .field-group { display:flex; flex-direction:column; }
+      .checkbox-group { display:flex; flex-direction:column; gap:0.65rem; margin-top:0.35rem; }
+      .checkbox-group label { font-weight:400; font-size:0.75rem; display:flex; align-items:center; gap:0.5rem; margin:0; }
+      .checkbox-group input[type=checkbox] { accent-color: var(--color-accent); width:14px; height:14px; }
+      h2.section-title { font-size:0.85rem; letter-spacing:.25px; font-weight:600; margin:0 0 .4rem; }
+      .account-section { display:flex; flex-direction:column; gap:1.25rem; margin-top:1.25rem; }
+      .consent-row { display:flex; align-items:flex-start; gap:0.5rem; font-size:0.65rem; margin-top:1.5rem; }
+      .consent-row input { margin-top:2px; accent-color: var(--color-accent); }
+      .actions { margin-top:1.2rem; }
+      .actions .btn-primary { width:100%; }
+      .two-col-inline { display:grid; gap:1rem 1.25rem; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); }
+      @media (max-width:860px){ .form-layout { grid-template-columns:1fr; } }
+      .error { color:var(--color-danger); font-size:var(--font-size-xs); margin-top:4px; display:none; }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <!-- Sidebar copy -->
+      <aside class="sidebar" aria-label="Primary">
+        <div class="brand">
+          <img class="logo-img" src="./assets/img/logo.svg" alt="ResQnet Logo" width="120" height="32" />
+          <span class="brand-name sr-only">ResQnet</span>
+        </div>
+        <nav class="nav">
+          <button class="nav-item" data-section="overview"><span class="icon" data-lucide="home"></span><span>Overview</span></button>
+          <button class="nav-item" data-section="forecast"><span class="icon" data-lucide="line-chart"></span><span>Forecast Dashboard</span></button>
+          <button class="nav-item" data-section="make-donation"><span class="icon" data-lucide="gift"></span><span>Make a Donation</span></button>
+          <button class="nav-item" data-section="request-donation"><span class="icon" data-lucide="package"></span><span>Request a Donation</span></button>
+          <button class="nav-item" data-section="report-disaster"><span class="icon" data-lucide="alert-triangle"></span><span>Report a Disaster</span></button>
+          <button class="nav-item active" data-section="be-volunteer"><span class="icon" data-lucide="user-plus"></span><span>Be a Volunteer</span></button>
+          <button class="nav-item" data-section="forum"><span class="icon" data-lucide="message-circle"></span><span>Forum</span></button>
+          <button class="nav-item" data-section="profile-settings"><span class="icon" data-lucide="user"></span><span>Profile Settings</span></button>
+        </nav>
+        <div class="sidebar-footer">
+          <button class="logout" aria-label="Logout">↩ Logout</button>
+        </div>
+      </aside>
+
+      <!-- Topbar copy -->
+      <header class="topbar">
+        <div class="breadcrumb">General Public Dashboard / <span>Volunteer Registration</span></div>
+        <div class="topbar-right">
+          <div class="hotline" role="button" tabindex="0" aria-label="Hotline 117"><span class="hotline-icon" data-lucide="phone"></span>Hotline: <strong>117</strong></div>
+          <div class="user-avatar" aria-label="User Menu" role="button"><img src="https://via.placeholder.com/40x40.png?text=U" alt="User Avatar" /></div>
+          <button class="menu-toggle" aria-label="Open Menu"><span data-lucide="menu"></span></button>
+        </div>
+      </header>
+
+      <main class="content" id="mainContent" tabindex="-1">
+        <h1>Volunteer Registration</h1>
+        <div class="registration-wrapper">
+          <form id="volunteerForm" novalidate>
+            <div class="form-layout">
+              <!-- Left column: personal + address -->
+              <div class="col-left">
+                <div class="field-group">
+                  <label for="fullName">Name</label>
+                  <input class="input" type="text" id="fullName" name="fullName" placeholder="Enter your full name" required />
+                </div>
+                <div class="two-col-inline">
+                  <div class="field-group">
+                    <label for="age">Age</label>
+                    <input class="input" type="number" min="16" id="age" name="age" placeholder="Enter your age" required />
+                  </div>
+                  <div class="field-group">
+                    <label for="gender">Gender</label>
+                    <select class="input" id="gender" name="gender" required>
+                      <option value="">Select your gender</option>
+                      <option>Male</option>
+                      <option>Female</option>
+                      <option>Other</option>
+                      <option>Prefer not to say</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="field-group">
+                  <label for="contactNo">Contact No</label>
+                  <input class="input" type="tel" id="contactNo" name="contactNo" placeholder="Enter your contact number" required />
+                </div>
+                <h2 class="section-title" style="margin-top:0.75rem;">Address</h2>
+                <div class="field-group">
+                  <label for="houseNo">House No</label>
+                  <input class="input" type="text" id="houseNo" name="houseNo" placeholder="Enter your house number" />
+                </div>
+                <div class="field-group">
+                  <label for="street">Street</label>
+                  <input class="input" type="text" id="street" name="street" placeholder="Enter your street name" />
+                </div>
+                <div class="field-group">
+                  <label for="city">City</label>
+                  <input class="input" type="text" id="city" name="city" placeholder="Enter your city" />
+                </div>
+                <div class="field-group">
+                  <label for="district">District</label>
+                  <select class="input" id="district" name="district">
+                    <option value="">Select your district</option>
+                    <option>Colombo</option>
+                    <option>Gampaha</option>
+                    <option>Kalutara</option>
+                    <option>Kandy</option>
+                    <option>Galle</option>
+                  </select>
+                </div>
+                <div class="field-group">
+                  <label for="gnDivision">Grama Niladhari Division</label>
+                  <input class="input" type="text" id="gnDivision" name="gnDivision" placeholder="Enter your Grama Niladhari Division" />
+                </div>
+              </div>
+
+              <!-- Right column: preferences / skills / account -->
+              <div class="col-right">
+                <div>
+                  <h2 class="section-title">Volunteer Preferences</h2>
+                  <div class="checkbox-group" id="preferencesGroup">
+                    <label><input type="checkbox" name="preferences" value="Search & Rescue" /> Search & Rescue</label>
+                    <label><input type="checkbox" name="preferences" value="Medical Aid" /> Medical Aid</label>
+                    <label><input type="checkbox" name="preferences" value="Logistics Support" /> Logistics Support</label>
+                    <label><input type="checkbox" name="preferences" value="Technical Support" /> Technical Support</label>
+                    <label><input type="checkbox" name="preferences" value="Shelter Management" /> Shelter Management</label>
+                    <label><input type="checkbox" name="preferences" value="Food Preparation & Distribution" /> Food Preparation & Distribution</label>
+                    <label><input type="checkbox" name="preferences" value="Childcare Support" /> Childcare Support</label>
+                    <label><input type="checkbox" name="preferences" value="Elderly Assistance" /> Elderly Assistance</label>
+                  </div>
+                </div>
+                <div style="margin-top:1.25rem;">
+                  <h2 class="section-title">Specialized Skills</h2>
+                  <div class="checkbox-group" id="skillsGroup">
+                    <label><input type="checkbox" name="skills" value="First Aid Certified" /> First Aid Certified</label>
+                    <label><input type="checkbox" name="skills" value="Medical Professional" /> Medical Professional</label>
+                    <label><input type="checkbox" name="skills" value="Firefighting" /> Firefighting</label>
+                    <label><input type="checkbox" name="skills" value="Swimming / Lifesaving" /> Swimming / Lifesaving</label>
+                    <label><input type="checkbox" name="skills" value="Rescue & Handling" /> Rescue & Handling</label>
+                    <label><input type="checkbox" name="skills" value="Disaster Management Training" /> Disaster Management Training</label>
+                  </div>
+                </div>
+                <div class="account-section">
+                  <h2 class="section-title">Account Details</h2>
+                  <div class="field-group">
+                    <label for="username">Username</label>
+                    <input class="input" type="text" id="username" name="username" placeholder="Choose a username" required />
+                  </div>
+                  <div class="field-group">
+                    <label for="password">Password</label>
+                    <input class="input" type="password" id="password" name="password" placeholder="Create a password" minlength="8" required />
+                    <div class="form-help">Minimum 8 characters.</div>
+                  </div>
+                  <div class="field-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input class="input" type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required />
+                    <div class="error" id="pwError">Passwords do not match.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="consent-row">
+              <input type="checkbox" id="consent" required />
+              <label for="consent">I agree to provide emergency contact information and understand my responsibilities as a volunteer.</label>
+            </div>
+            <div class="actions">
+              <button type="submit" class="btn btn-primary" style="font-weight:600;">Register</button>
+            </div>
+          </form>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        if (window.lucide) lucide.createIcons();
+        const form = document.getElementById('volunteerForm');
+        const password = document.getElementById('password');
+        const confirmPassword = document.getElementById('confirmPassword');
+        const pwError = document.getElementById('pwError');
+
+        function checkPwMatch() {
+          const mismatch = password.value && confirmPassword.value && password.value !== confirmPassword.value;
+          pwError.style.display = mismatch ? 'block' : 'none';
+          confirmPassword.classList.toggle('is-invalid', mismatch);
+          return !mismatch;
+        }
+        password.addEventListener('input', checkPwMatch);
+        confirmPassword.addEventListener('input', checkPwMatch);
+
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          if (!form.reportValidity()) return;
+          if (!checkPwMatch()) return;
+          const data = new FormData(form);
+          const payload = Object.fromEntries(data.entries());
+          payload.preferences = data.getAll('preferences');
+          payload.skills = data.getAll('skills');
+          delete payload.preferences; // remove singular if present (prevent duplicates)
+          delete payload.skills; // ensure arrays only
+          const output = {
+            ...Object.fromEntries(new FormData(form).entries()),
+            preferences: form.querySelectorAll('input[name="preferences"]:checked').length ? Array.from(form.querySelectorAll('input[name="preferences"]:checked')).map(i=>i.value) : [],
+            skills: form.querySelectorAll('input[name="skills"]:checked').length ? Array.from(form.querySelectorAll('input[name="skills"]:checked')).map(i=>i.value) : []
+          };
+          console.log('Volunteer registration submitted', output);
+          alert('Volunteer registration submitted! (See console for payload)');
+          form.reset();
+          pwError.style.display='none';
+        });
+      });
+    </script>
+  </body>
+</html>

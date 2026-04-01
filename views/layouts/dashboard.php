@@ -17,7 +17,14 @@
 
         <?php
         $role = user_role();
-        $sidebarFile = BASE_PATH . '/views/layouts/partials/sidebar_' . $role . '.php';
+        $sidebarRole = match ($role) {
+            'general' => 'general_public',
+            'dmc' => 'dmc_admin',
+            'volunteer' => 'general_public',
+            default => $role,
+        };
+
+        $sidebarFile = BASE_PATH . '/views/layouts/partials/sidebar_' . $sidebarRole . '.php';
         if (file_exists($sidebarFile)) {
             require $sidebarFile;
         }

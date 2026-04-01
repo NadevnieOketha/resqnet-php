@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>ResQnet - Register GN</title>
+    <link rel="stylesheet" href="./styles/core.css" />
+    <link rel="stylesheet" href="./styles/dashboard.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+    <style>
+      h1 { margin:0 0 1.4rem; }
+      form#registerForm { max-width:1180px; display:flex; flex-direction:column; gap:1.6rem; }
+      .grid-2 { display:grid; gap:1.1rem 2rem; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); }
+      .input { background:#fcf8ef; }
+      select.input { appearance:auto; }
+      .actions { display:flex; justify-content:space-between; align-items:center; max-width:1180px; margin-top:0.25rem; }
+      .actions-right { margin-left:auto; display:flex; gap:1.2rem; align-items:center; }
+      .btn-muted { background:#efefef; border-color:#dedede; color:#444; }
+      .btn-muted:hover { background:#e7e7e7; }
+      .btn-primary { background:var(--color-accent); color:#000; }
+      @media (max-width:640px){ .grid-2 { grid-template-columns:1fr; } .actions { flex-wrap:wrap; gap:0.8rem; } }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar" aria-label="Primary">
+        <div class="brand"><img class="logo-img" src="./assets/img/logo.svg" alt="ResQnet Logo" width="120" height="32" /><span class="brand-name sr-only">ResQnet</span></div>
+        <nav class="nav">
+          <button class="nav-item" data-section="overview"><span class="icon" data-lucide="home"></span><span>Overview</span></button>
+          <button class="nav-item" data-section="forecast"><span class="icon" data-lucide="line-chart"></span><span>Forecast Dashboard</span></button>
+          <button class="nav-item active" data-section="gn-registry"><span class="icon" data-lucide="list"></span><span>GN Registry</span></button>
+          <button class="nav-item" data-section="disaster-reports"><span class="icon" data-lucide="file-text"></span><span>Disaster Reports</span></button>
+          <button class="nav-item" data-section="volunteer-apps"><span class="icon" data-lucide="users"></span><span>Volunteer Applications</span></button>
+          <button class="nav-item" data-section="delivery-confirmations"><span class="icon" data-lucide="check-square"></span><span>Delivery Confirmations</span></button>
+          <button class="nav-item" data-section="safe-locations"><span class="icon" data-lucide="map-pin"></span><span>Safe Locations</span></button>
+          <button class="nav-item" data-section="forum"><span class="icon" data-lucide="message-circle"></span><span>Forum</span></button>
+          <button class="nav-item" data-section="profile-settings"><span class="icon" data-lucide="user"></span><span>Profile Settings</span></button>
+        </nav>
+        <div class="sidebar-footer"><button class="logout" aria-label="Logout">↩ Logout</button></div>
+      </aside>
+      <header class="topbar">
+        <div class="breadcrumb">DMC Dashboard / GN Registry / <span>Add New GN</span></div>
+        <div class="topbar-right">
+          <div class="hotline" role="button" tabindex="0" aria-label="Hotline 117"><span class="hotline-icon" data-lucide="phone"></span>Hotline: <strong>117</strong></div>
+          <div class="user-avatar" aria-label="User Menu" role="button"><img src="https://via.placeholder.com/40x40.png?text=U" alt="User Avatar" /></div>
+          <button class="menu-toggle" aria-label="Open Menu"><span data-lucide="menu"></span></button>
+        </div>
+      </header>
+      <main class="content" id="mainContent" tabindex="-1">
+        <h1>Register Grama Niladhari</h1>
+        <form id="registerForm" novalidate>
+          <div class="grid-2">
+            <div class="form-field">
+              <label for="divisionName">Division Name</label>
+              <input class="input" id="divisionName" name="divisionName" type="text" placeholder="Enter Division Name" required />
+            </div>
+            <div class="form-field">
+              <label for="divisionNumber">Division Number</label>
+              <input class="input" id="divisionNumber" name="divisionNumber" type="text" placeholder="Enter Division Number" required />
+            </div>
+            <div class="form-field">
+              <label for="fullName">Full Name</label>
+              <input class="input" id="fullName" name="fullName" type="text" placeholder="Enter Full Name" required />
+            </div>
+            <div class="form-field">
+              <label for="serviceNumber">Service Number</label>
+              <input class="input" id="serviceNumber" name="serviceNumber" type="text" placeholder="Enter Service Number" />
+            </div>
+            <div class="form-field">
+              <label for="contactNumber">Contact Number</label>
+              <input class="input" id="contactNumber" name="contactNumber" type="tel" placeholder="Enter Contact Number" required />
+            </div>
+            <div class="form-field">
+              <label for="address">Address</label>
+              <input class="input" id="address" name="address" type="text" placeholder="Enter Address" />
+            </div>
+            <div class="form-field">
+              <label for="email">Email</label>
+              <input class="input" id="email" name="email" type="email" placeholder="Enter Email" required />
+            </div>
+            <div class="form-field">
+              <label for="username">Username</label>
+              <input class="input" id="username" name="username" type="text" placeholder="Auto-generated or Manual" />
+            </div>
+          </div>
+          <div class="form-field">
+            <label for="password">Password</label>
+            <div class="input-group" style="display:flex; gap:0.75rem; align-items:center;">
+              <input class="input" id="password" name="password" type="text" placeholder="Manual or Generated (Show/Hide)" autocomplete="new-password" />
+              <button type="button" class="btn btn-muted" id="generateBtn" style="white-space:nowrap;">Generate</button>
+            </div>
+          </div>
+          <div class="actions">
+            <button type="button" class="btn btn-muted" id="cancelBtn">Cancel</button>
+            <div class="actions-right">
+              <button type="submit" class="btn btn-primary">Register GN</button>
+            </div>
+          </div>
+        </form>
+      </main>
+    </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        if(window.lucide) lucide.createIcons();
+        const form=document.getElementById('registerForm');
+        const cancelBtn=document.getElementById('cancelBtn');
+        const generateBtn=document.getElementById('generateBtn');
+        const passwordInput=document.getElementById('password');
+        cancelBtn.addEventListener('click',()=>{ window.location.href='gn-registry.html'; });
+        generateBtn.addEventListener('click',()=>{
+          const generated=Math.random().toString(36).slice(2,10);
+          passwordInput.value=generated;
+          passwordInput.type='text';
+        });
+        form.addEventListener('submit',event=>{
+          event.preventDefault();
+          const data=Object.fromEntries(new FormData(form).entries());
+          console.log('Registering GN', data);
+          alert('GN registered! (Check console for payload)');
+          window.location.href='gn-registry.html';
+        });
+      });
+    </script>
+  </body>
+</html>

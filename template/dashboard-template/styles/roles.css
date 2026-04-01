@@ -1,0 +1,100 @@
+/* Role selection component styles (builds on core.css tokens) */
+.role-layout {
+  max-width: var(--layout-max-width);
+  margin: 0 auto;
+  padding: clamp(2.25rem, 4vw, 3.5rem) var(--space-4);
+}
+.role-heading-wrap {
+  max-width: 760px;
+  margin: 0 auto var(--space-8);
+  text-align: center;
+}
+.role-heading-wrap h1 {
+  font-size: clamp(1.9rem, 2.6vw, 2.15rem);
+  line-height: 1.15;
+  margin: 0 0 var(--space-3);
+  font-weight: 600;
+}
+.role-heading-wrap p {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-subtle);
+}
+
+.choice-grid {
+  display: grid;
+  gap: clamp(2rem, 3vw, 3rem);
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  align-items: stretch;
+}
+
+.choice-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-4);
+  background: var(--color-surface);
+  padding: var(--space-6) var(--space-4) var(--space-5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  position: relative;
+  isolation: isolate;
+  transition: background-color var(--transition-fast),
+    border-color var(--transition-fast);
+}
+.choice-card:focus-within,
+.choice-card:hover {
+  background: var(--color-surface-alt);
+  border-color: var(--color-border-strong);
+}
+.choice-card h2 {
+  font-size: var(--font-size-sm);
+  letter-spacing: 0.3px;
+  margin: 0;
+  font-weight: 600;
+}
+.choice-card p {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  line-height: 1.4;
+  color: var(--color-text-subtle);
+}
+
+.choice-icon {
+  width: 94px;
+  height: 94px;
+  border-radius: 50%;
+  background: var(--color-surface-alt);
+  display: grid;
+  place-items: center;
+}
+.choice-icon svg {
+  width: 46px;
+  height: 46px;
+  stroke-width: 1.6;
+}
+
+.choice-actions {
+  margin-top: auto;
+  width: 100%;
+}
+.choice-actions .btn {
+  width: 100%;
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-sm);
+}
+
+@media (max-width: 680px) {
+  .choice-card {
+    padding: var(--space-5) var(--space-3) var(--space-4);
+  }
+  .choice-icon {
+    width: 80px;
+    height: 80px;
+  }
+  .choice-icon svg {
+    width: 40px;
+    height: 40px;
+  }
+}

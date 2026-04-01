@@ -21,6 +21,7 @@ function dashboard_index(): void
     }
 
     switch ($role) {
+        case 'dmc':
         case 'dmc_admin':
             try {
                 $data['user_count'] = db_count('users');
@@ -58,6 +59,18 @@ function dashboard_index(): void
             $viewName = 'ngo';
             break;
 
+        case 'volunteer':
+            try {
+                $data['warnings'] = warnings_recent(6, null, 'published');
+                $data['requests'] = donations_recent_requests(6, 'open');
+            } catch (\PDOException) {
+                $data['warnings'] = [];
+                $data['requests'] = [];
+            }
+            $viewName = 'general_public';
+            break;
+
+        case 'general':
         default: // general_public
             try {
                 $data['warnings'] = warnings_recent(6, null, 'published');

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>ResQnet - Safe Locations (GN)</title>
+    <link rel="stylesheet" href="./styles/core.css" />
+    <link rel="stylesheet" href="./styles/dashboard.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+    <style>
+      h1 { margin:0 0 0.6rem; }
+      .subtitle { color:#9a8b5a; font-size:0.75rem; margin-bottom:1.2rem; }
+      .search-wrap { position:relative; max-width:680px; margin-bottom:1rem; }
+      .search-wrap input { width:100%; padding:0.65rem 0.9rem 0.65rem 2.2rem; border:1px solid var(--color-border); border-radius:999px; font-size:0.75rem; background:#f6f6f6; }
+      .search-wrap .icon { position:absolute; left:0.8rem; top:50%; transform:translateY(-50%); color:#777; width:18px; height:18px; }
+      .table-shell { border:1px solid var(--color-border); border-radius:var(--radius-lg); overflow:hidden; background:#fff; }
+      table.safe-table { width:100%; border-collapse:collapse; font-size:0.65rem; }
+      table.safe-table thead th { text-align:left; padding:0.75rem 0.85rem; background:#fafafa; font-weight:600; border-bottom:1px solid var(--color-border); }
+      table.safe-table tbody td { padding:0.9rem 0.85rem; border-bottom:1px solid var(--color-border); vertical-align:top; }
+      table.safe-table tbody tr:last-child td { border-bottom:none; }
+      .pill { all:unset; cursor:pointer; font-size:0.55rem; font-weight:600; padding:0.5rem 1.05rem; border-radius:999px; background:#e3e3e3; display:inline-flex; align-items:center; gap:0.35rem; }
+      .pill svg { width:14px; height:14px; }
+      @media (max-width:780px){ table.safe-table thead { display:none; } table.safe-table tbody td { display:block; padding:0.6rem 0.85rem; } table.safe-table tbody tr { border-bottom:1px solid var(--color-border); } table.safe-table tbody td::before { content:attr(data-label); display:block; font-weight:600; margin-bottom:0.25rem; } }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar" aria-label="Primary">
+        <div class="brand"><img class="logo-img" src="./assets/img/logo.svg" alt="ResQnet Logo" width="120" height="32" /><span class="brand-name sr-only">ResQnet</span></div>
+        <nav class="nav">
+          <button class="nav-item" data-section="overview"><span class="icon" data-lucide="home"></span><span>Overview</span></button>
+          <button class="nav-item" data-section="forecast"><span class="icon" data-lucide="line-chart"></span><span>Forecast Dashboard</span></button>
+          <button class="nav-item" data-section="donation-requests"><span class="icon" data-lucide="gift"></span><span>Donation Requests</span></button>
+          <button class="nav-item" data-section="disaster-reports"><span class="icon" data-lucide="file-text"></span><span>Disaster Reports</span></button>
+          <button class="nav-item active" data-section="safe-locations"><span class="icon" data-lucide="map-pin"></span><span>Safe Locations</span></button>
+          <button class="nav-item" data-section="forum"><span class="icon" data-lucide="message-circle"></span><span>Forum</span></button>
+          <button class="nav-item" data-section="profile-settings"><span class="icon" data-lucide="user"></span><span>Profile Settings</span></button>
+        </nav>
+        <div class="sidebar-footer"><button class="logout" aria-label="Logout">↩ Logout</button></div>
+      </aside>
+      <header class="topbar">
+        <div class="breadcrumb">GN Dashboard / <span>Safe Locations</span></div>
+        <div class="topbar-right">
+          <div class="hotline" role="button" tabindex="0" aria-label="Hotline 117"><span class="hotline-icon" data-lucide="phone"></span>Hotline: <strong>117</strong></div>
+          <div class="user-avatar" aria-label="User Menu" role="button"><img src="https://via.placeholder.com/40x40.png?text=U" alt="User Avatar" /></div>
+          <button class="menu-toggle" aria-label="Open Menu"><span data-lucide="menu"></span></button>
+        </div>
+      </header>
+      <main class="content" id="mainContent" tabindex="-1">
+        <h1>Safe Locations – Green Valley Division</h1>
+        <div class="search-wrap">
+          <i class="icon" data-lucide="search"></i>
+          <input id="search" type="search" placeholder="Search safe locations" aria-label="Search safe locations" />
+        </div>
+        <div class="table-shell">
+          <table class="safe-table" aria-describedby="mainContent">
+            <thead>
+              <tr>
+                <th>Safe Location Name</th>
+                <th>Address/Landmark</th>
+                <th>Capacity</th>
+                <th>Contact Person</th>
+                <th>Update</th>
+              </tr>
+            </thead>
+            <tbody id="safeBody"></tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+
+    <template id="row-tmpl">
+      <tr>
+        <td class="c-name"></td>
+        <td class="c-address"></td>
+        <td class="c-capacity"></td>
+        <td class="c-contact"></td>
+        <td class="c-actions"></td>
+      </tr>
+    </template>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        if(window.lucide) lucide.createIcons();
+        const data=[
+          { name:'Community Center', address:'123 Oak Street, Near the Park', total:200, current:150, contact:'Sarah Miller' },
+          { name:'School Gymnasium', address:'456 Elm Avenue, Next to the Library', total:300, current:250, contact:'David Lee' },
+          { name:'Temple Hall', address:'789 Pine Road, Opposite the Post Office', total:150, current:100, contact:'Emily Chen' },
+          { name:'Temple Hall', address:'789 Pine Road, Opposite the Post Office', total:150, current:100, contact:'Emily Chen' },
+          { name:'Temple Hall', address:'789 Pine Road, Opposite the Post Office', total:150, current:100, contact:'Emily Chen' },
+          { name:'Temple Hall', address:'789 Pine Road, Opposite the Post Office', total:150, current:100, contact:'Emily Chen' },
+          { name:'Youth Center', address:'101 Maple Drive, Behind the Supermarket', total:100, current:75, contact:'Michael Brown' },
+          { name:'Retirement Home', address:'222 Cedar Lane, Beside the Hospital', total:50, current:40, contact:'Jessica White' }
+        ];
+        const body=document.getElementById('safeBody'); const tmpl=document.getElementById('row-tmpl');
+        function render(list){
+          body.innerHTML='';
+          list.forEach(r=>{
+            const node=tmpl.content.firstElementChild.cloneNode(true);
+            node.querySelector('.c-name').textContent=r.name;
+            node.querySelector('.c-address').textContent=r.address;
+            node.querySelector('.c-capacity').textContent=`Total: ${r.total}, Current: ${r.current}`;
+            node.querySelector('.c-contact').textContent=r.contact;
+            const act=node.querySelector('.c-actions'); const btn=document.createElement('button'); btn.className='pill'; btn.innerHTML='<span data-lucide="edit-2"></span><span>Edit</span>'; btn.type='button'; btn.addEventListener('click',()=>{ window.location.href='update-safe-location-gn.html'; }); act.appendChild(btn);
+            // responsive labels
+            node.children[0].setAttribute('data-label','Safe Location Name');
+            node.children[1].setAttribute('data-label','Address/Landmark');
+            node.children[2].setAttribute('data-label','Capacity');
+            node.children[3].setAttribute('data-label','Contact Person');
+            node.children[4].setAttribute('data-label','Update');
+            body.appendChild(node);
+          });
+          if(window.lucide) lucide.createIcons();
+        }
+        render(data);
+        const search=document.getElementById('search');
+        search.addEventListener('input',()=>{
+          const q=search.value.toLowerCase();
+          const filtered=data.filter(d=>[d.name,d.address,d.contact].join(' ').toLowerCase().includes(q));
+          render(filtered);
+        });
+      });
+    </script>
+  </body>
+</html>

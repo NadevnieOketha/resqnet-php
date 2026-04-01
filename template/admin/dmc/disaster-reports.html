@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>ResQnet - Disaster Reports</title>
+    <link rel="stylesheet" href="./styles/core.css" />
+    <link rel="stylesheet" href="./styles/dashboard.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+    <style>
+      h1 { margin:0 0 1.4rem; }
+      .tabs { display:flex; gap:2.75rem; border-bottom:1px solid var(--color-border); margin-bottom:1rem; position:relative; }
+      .tab-btn { all:unset; cursor:pointer; font-size:0.7rem; font-weight:600; padding:0.9rem 0; color:#222; }
+      .tab-btn[aria-selected='true'] { color:#000; }
+      .tab-indicator { position:absolute; bottom:-1px; height:2px; background:var(--color-accent); width:220px; transition:transform .25s ease, width .25s ease; }
+      .table-shell { border:1px solid var(--color-border); border-radius:var(--radius-lg); overflow:hidden; background:#fff; }
+      table.report-table { width:100%; border-collapse:collapse; font-size:0.65rem; }
+      table.report-table thead th { text-align:left; padding:0.75rem 0.85rem; background:#fafafa; font-weight:600; border-bottom:1px solid var(--color-border); }
+      table.report-table tbody td { padding:0.9rem 0.85rem; border-bottom:1px solid var(--color-border); vertical-align:top; }
+      table.report-table tbody tr:last-child td { border-bottom:none; }
+  .hidden { display:none !important; }
+      .reported-by { color:#666; }
+      .date-time { display:flex; flex-direction:column; gap:0.2rem; color:#666; }
+      .type-strong { font-weight:700; }
+  /* action pills (reuse pattern from other pages) */
+  .action-pills { display:flex; gap:0.55rem; align-items:center; }
+  .pill { all:unset; cursor:pointer; font-size:0.55rem; font-weight:600; padding:0.5rem 1.05rem; border-radius:999px; background:#e3e3e3; display:inline-flex; align-items:center; gap:0.35rem; }
+  .pill-danger { background:#d91e18; color:#fff; }
+  .pill svg { width:14px; height:14px; }
+  @media (max-width:780px){ table.report-table thead { display:none; } table.report-table tbody td { display:block; padding:0.6rem 0.85rem; } table.report-table tbody tr { border-bottom:1px solid var(--color-border); } table.report-table tbody td::before { content:attr(data-label); display:block; font-weight:600; margin-bottom:0.25rem; } .action-pills{ flex-wrap:wrap; } }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar" aria-label="Primary">
+        <div class="brand"><img class="logo-img" src="./assets/img/logo.svg" alt="ResQnet Logo" width="120" height="32" /><span class="brand-name sr-only">ResQnet</span></div>
+        <nav class="nav">
+          <button class="nav-item" data-section="overview"><span class="icon" data-lucide="home"></span><span>Overview</span></button>
+          <button class="nav-item" data-section="forecast"><span class="icon" data-lucide="line-chart"></span><span>Forecast Dashboard</span></button>
+          <button class="nav-item active" data-section="disaster-reports"><span class="icon" data-lucide="file-text"></span><span>Disaster Reports</span></button>
+          <button class="nav-item" data-section="volunteer-apps"><span class="icon" data-lucide="users"></span><span>Volunteer Applications</span></button>
+          <button class="nav-item" data-section="delivery-confirmations"><span class="icon" data-lucide="check-square"></span><span>Delivery Confirmations</span></button>
+          <button class="nav-item" data-section="safe-locations"><span class="icon" data-lucide="map-pin"></span><span>Safe Locations</span></button>
+          <button class="nav-item" data-section="gn-registry"><span class="icon" data-lucide="list"></span><span>GN Registry</span></button>
+          <button class="nav-item" data-section="forum"><span class="icon" data-lucide="message-circle"></span><span>Forum</span></button>
+          <button class="nav-item" data-section="profile-settings"><span class="icon" data-lucide="user"></span><span>Profile Settings</span></button>
+        </nav>
+        <div class="sidebar-footer"><button class="logout" aria-label="Logout">↩ Logout</button></div>
+      </aside>
+      <header class="topbar">
+        <div class="breadcrumb">DMC Dashboard / <span>Disaster Reports</span></div>
+        <div class="topbar-right">
+          <div class="hotline" role="button" tabindex="0" aria-label="Hotline 117"><span class="hotline-icon" data-lucide="phone"></span>Hotline: <strong>117</strong></div>
+          <div class="user-avatar" aria-label="User Menu" role="button"><img src="https://via.placeholder.com/40x40.png?text=U" alt="User Avatar" /></div>
+          <button class="menu-toggle" aria-label="Open Menu"><span data-lucide="menu"></span></button>
+        </div>
+      </header>
+      <main class="content" id="mainContent" tabindex="-1">
+        <h1>Disaster Reports</h1>
+        <div class="tabs" role="tablist">
+          <button class="tab-btn" id="tab-approved" role="tab" aria-controls="panel-approved" aria-selected="true">Approved Disaster Reports</button>
+          <button class="tab-btn" id="tab-pending" role="tab" aria-controls="panel-pending" aria-selected="false">Pending Disaster Reports</button>
+          <span class="tab-indicator" aria-hidden="true"></span>
+        </div>
+        <section id="panel-approved" role="tabpanel" aria-labelledby="tab-approved">
+          <div class="table-shell">
+    <table class="report-table" aria-describedby="mainContent">
+              <thead>
+                <tr>
+                  <th>Report ID</th>
+                  <th>Reported By</th>
+                  <th>Date/Time</th>
+                  <th>Location</th>
+                  <th>Disaster Type</th>
+                  <th>Description/Notes</th>
+                </tr>
+              </thead>
+              <tbody id="approvedBody"></tbody>
+            </table>
+          </div>
+        </section>
+        <section id="panel-pending" role="tabpanel" aria-labelledby="tab-pending" class="hidden">
+          <div class="table-shell">
+    <table class="report-table" aria-describedby="mainContent">
+              <thead>
+                <tr>
+                  <th>Report ID</th>
+                  <th>Reported By</th>
+                  <th>Date/Time</th>
+                  <th>Location</th>
+                  <th>Disaster Type</th>
+                  <th>Description/Notes</th>
+      <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="pendingBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <template id="rowTemplate">
+      <tr>
+        <td class="c-id"></td>
+        <td class="c-reportedBy reported-by"></td>
+        <td class="c-dateTime"></td>
+        <td class="c-location"></td>
+        <td class="c-type type-strong"></td>
+        <td class="c-notes"></td>
+      </tr>
+    </template>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        if(window.lucide) lucide.createIcons();
+        const tabs = Array.from(document.querySelectorAll('.tab-btn'));
+        const indicator = document.querySelector('.tab-indicator');
+        function moveIndicator(idx){ const b=tabs[idx]; indicator.style.width=b.offsetWidth+'px'; indicator.style.transform=`translateX(${b.offsetLeft}px)`; }
+        moveIndicator(0);
+        window.addEventListener('resize', ()=>moveIndicator(tabs.findIndex(t=>t.getAttribute('aria-selected')==='true')));
+        tabs.forEach((btn,idx)=>btn.addEventListener('click',()=>{ if(btn.getAttribute('aria-selected')==='true') return; tabs.forEach(t=>t.setAttribute('aria-selected','false')); btn.setAttribute('aria-selected','true'); document.querySelectorAll('[role=tabpanel]').forEach(p=>p.classList.add('hidden')); document.getElementById(btn.getAttribute('aria-controls')).classList.remove('hidden'); moveIndicator(idx); }));
+
+        const approvedReports = [
+          { id:'#12345', by:'Sarah Johnson', date:'2024-03-15', time:'14:30', location:'Coastal City', type:'Flood', notes:'Heavy rainfall causing widespread flooding in low-lying areas.' },
+          { id:'#12346', by:'Michael Chen', date:'2024-03-16', time:'09:15', location:'Mountain Village', type:'Landslide', notes:'Landslide blocking the main road, isolating the village.' },
+          { id:'#12347', by:'Emily Rodriguez', date:'2024-03-17', time:'18:45', location:'Forest Area', type:'Fire', notes:'Wildfire spreading rapidly in the forest, threatening nearby communities.' },
+          { id:'#12348', by:'David Lee', date:'2024-03-18', time:'11:00', location:'Rural Town', type:'Earthquake', notes:'Moderate earthquake causing structural damage to buildings.' },
+          { id:'#12349', by:'Maria Garcia', date:'2024-03-19', time:'07:20', location:'Coastal City', type:'Flood', notes:'Continued flooding, water levels rising in residential areas.' }
+        ];
+
+        const pendingReports = [
+          { id:'#12401', by:'John Doe', date:'2024-03-20', time:'10:10', location:'River Bend', type:'Flood', notes:'River overflow observed; nearby farms inundated.' },
+          { id:'#12402', by:'Aisha Khan', date:'2024-03-20', time:'16:40', location:'Hillside', type:'Landslide', notes:'Cracks on hillside; potential landslide risk reported by locals.' },
+          { id:'#12403', by:'Kenji Sato', date:'2024-03-21', time:'08:05', location:'Industrial Zone', type:'Chemical Spill', notes:'Strange odor and discoloration in runoff near plant.' }
+        ];
+
+        const tmpl = document.getElementById('rowTemplate');
+        function renderRows(bodyId, data){
+          const body = document.getElementById(bodyId);
+          body.innerHTML = '';
+          data.forEach(r => {
+            const node = tmpl.content.firstElementChild.cloneNode(true);
+            node.querySelector('.c-id').textContent = r.id;
+            node.querySelector('.c-reportedBy').textContent = r.by;
+            node.querySelector('.c-dateTime').innerHTML = `<span>${r.date}</span><span>${r.time}</span>`;
+            node.querySelector('.c-dateTime').classList.add('date-time');
+            node.querySelector('.c-location').textContent = r.location;
+            node.querySelector('.c-type').textContent = r.type;
+            node.querySelector('.c-notes').textContent = r.notes;
+            // responsive labels
+            node.children[0].setAttribute('data-label','Report ID');
+            node.children[1].setAttribute('data-label','Reported By');
+            node.children[2].setAttribute('data-label','Date/Time');
+            node.children[3].setAttribute('data-label','Location');
+            node.children[4].setAttribute('data-label','Disaster Type');
+            node.children[5].setAttribute('data-label','Description/Notes');
+            body.appendChild(node);
+          });
+        }
+
+        function renderPending(){
+          const body=document.getElementById('pendingBody');
+          body.innerHTML='';
+          pendingReports.forEach(r=>{
+            const node = tmpl.content.firstElementChild.cloneNode(true);
+            node.querySelector('.c-id').textContent = r.id;
+            node.querySelector('.c-reportedBy').textContent = r.by;
+            const dt=node.querySelector('.c-dateTime');
+            dt.innerHTML = `<span>${r.date}</span><span>${r.time}</span>`; dt.classList.add('date-time');
+            node.querySelector('.c-location').textContent = r.location;
+            node.querySelector('.c-type').textContent = r.type;
+            node.querySelector('.c-notes').textContent = r.notes;
+            // labels
+            node.children[0].setAttribute('data-label','Report ID');
+            node.children[1].setAttribute('data-label','Reported By');
+            node.children[2].setAttribute('data-label','Date/Time');
+            node.children[3].setAttribute('data-label','Location');
+            node.children[4].setAttribute('data-label','Disaster Type');
+            node.children[5].setAttribute('data-label','Description/Notes');
+            // actions column
+            const actionsTd=document.createElement('td');
+            actionsTd.className='c-actions';
+            actionsTd.setAttribute('data-label','Actions');
+            const group=document.createElement('div');
+            group.className='action-pills';
+            const verify=document.createElement('button');
+            verify.type='button'; verify.className='pill';
+            verify.innerHTML='<span data-lucide="check"></span><span>Verify</span>';
+            verify.addEventListener('click',()=>verifyReport(r.id));
+            const reject=document.createElement('button');
+            reject.type='button'; reject.className='pill pill-danger';
+            reject.innerHTML='<span data-lucide="trash-2"></span><span>Reject</span>';
+            reject.addEventListener('click',()=>rejectReport(r.id));
+            group.appendChild(verify); group.appendChild(reject);
+            actionsTd.appendChild(group);
+            node.appendChild(actionsTd);
+            body.appendChild(node);
+          });
+          if(window.lucide) lucide.createIcons();
+        }
+
+        function verifyReport(id){
+          const idx = pendingReports.findIndex(x=>x.id===id);
+          if(idx>-1){ const [it]=pendingReports.splice(idx,1); approvedReports.push(it); rerender(); }
+        }
+        function rejectReport(id){
+          pendingReports = pendingReports.filter(x=>x.id!==id); rerender();
+        }
+        function rerender(){
+          renderRows('approvedBody', approvedReports);
+          renderPending();
+          if(window.lucide) lucide.createIcons();
+        }
+
+        rerender();
+      });
+    </script>
+  </body>
+</html>

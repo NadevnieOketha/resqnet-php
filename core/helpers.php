@@ -223,7 +223,23 @@ function is_role(string $role): bool
     $user = auth_user();
     if (!$user) return false;
 
-    return ($user['role'] ?? null) === $role;
+    $currentRole = (string) ($user['role'] ?? '');
+    if ($currentRole === $role) {
+        return true;
+    }
+
+    $aliases = [
+        'general' => ['general_public'],
+        'general_public' => ['general'],
+        'dmc' => ['dmc_admin'],
+        'dmc_admin' => ['dmc'],
+    ];
+
+    if (in_array($role, $aliases[$currentRole] ?? [], true)) {
+        return true;
+    }
+
+    return in_array($currentRole, $aliases[$role] ?? [], true);
 }
 
 /**
@@ -231,10 +247,13 @@ function is_role(string $role): bool
  */
 function is_any_role(array $roles): bool
 {
-    $user = auth_user();
-    if (!$user) return false;
+    foreach ($roles as $role) {
+        if (is_role((string) $role)) {
+            return true;
+        }
+    }
 
-    return in_array($user['role'] ?? '', $roles, true);
+    return false;
 }
 
 /**
@@ -243,9 +262,12 @@ function is_any_role(array $roles): bool
 function role_label(?string $role): string
 {
     return match ($role) {
+        'general'         => 'General User',
         'general_public'  => 'General Public',
+        'volunteer'       => 'Volunteer',
         'grama_niladhari' => 'Grama Niladhari',
         'ngo'             => 'NGO',
+        'dmc'             => 'DMC Admin',
         'dmc_admin'       => 'DMC Admin',
         default           => 'Guest',
     };
