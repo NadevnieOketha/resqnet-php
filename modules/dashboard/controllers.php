@@ -17,6 +17,7 @@ function dashboard_index(): void
     $data = [
         'user' => $user,
         'profile' => $profile,
+        'breadcrumb' => 'Overview',
     ];
 
     switch ($role) {

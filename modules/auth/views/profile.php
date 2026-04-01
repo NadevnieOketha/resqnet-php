@@ -28,13 +28,6 @@ if (
     <p>Update your account details and role profile.</p>
 </div>
 
-<?php if ($error = get_flash('error')): ?>
-    <div class="alert alert-error"><?= e($error) ?></div>
-<?php endif; ?>
-<?php if ($warning = get_flash('warning')): ?>
-    <div class="alert alert-warning"><?= e($warning) ?></div>
-<?php endif; ?>
-
 <div class="card">
     <div class="card-header">
         <h2>Account Details</h2>

@@ -6,7 +6,10 @@
 
 function auth_login(): void
 {
-    view('auth::login', [], 'main');
+    view('auth::login', [
+        'hide_header' => true,
+        'page_title' => 'Login',
+    ], 'main');
 }
 
 function auth_login_post(): void
@@ -52,7 +55,9 @@ function auth_login_post(): void
 function auth_register(): void
 {
     $options = auth_registration_options();
-    view('auth::register', $options, 'main');
+    view('auth::register', array_merge($options, [
+        'page_title' => 'Register',
+    ]), 'main');
 }
 
 function auth_register_post(): void
@@ -142,7 +147,10 @@ function auth_register_post(): void
 
 function auth_forgot_password(): void
 {
-    view('auth::forgot_password', [], 'main');
+    view('auth::forgot_password', [
+        'hide_header' => true,
+        'page_title' => 'Forgot Password',
+    ], 'main');
 }
 
 function auth_forgot_password_post(): void
@@ -189,6 +197,8 @@ function auth_reset_password(): void
     $tokenData = $token === '' ? null : auth_find_valid_password_reset_token($token);
 
     view('auth::reset_password', [
+        'hide_header' => true,
+        'page_title' => 'Reset Password',
         'token' => $token,
         'token_valid' => $tokenData !== null,
     ], 'main');
@@ -234,6 +244,7 @@ function auth_profile(): void
     view('auth::profile', array_merge(auth_registration_options(), [
         'profile' => $profile,
         'role' => $role,
+        'breadcrumb' => 'Profile',
     ]), 'dashboard');
 }
 
@@ -344,6 +355,7 @@ function auth_dmc_pending_approvals(): void
     view('auth::dmc_pending', [
         'pending_users' => $pendingUsers,
         'gn_users' => $gnUsers,
+        'breadcrumb' => 'Pending Approvals',
     ], 'dashboard');
 }
 
@@ -363,7 +375,9 @@ function auth_dmc_approve_user_action(string $userId): void
 
 function auth_dmc_create_gn_form(): void
 {
-    view('auth::dmc_create_gn', auth_registration_options(), 'dashboard');
+    view('auth::dmc_create_gn', array_merge(auth_registration_options(), [
+        'breadcrumb' => 'Create GN Account',
+    ]), 'dashboard');
 }
 
 function auth_dmc_create_gn_post(): void
