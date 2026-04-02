@@ -6,10 +6,28 @@
 
 function disaster_reports_create_form(): void
 {
+    $user = auth_user();
+    $role = (string) ($user['role'] ?? '');
+    $profile = auth_get_profile((int) auth_id(), $role) ?? [];
+
+    $prefilledReporterName = trim((string) (
+        $profile['name']
+        ?? $user['display_name']
+        ?? $user['username']
+        ?? ''
+    ));
+
+    $prefilledContactNumber = trim((string) (
+        $profile['contact_number']
+        ?? ''
+    ));
+
     view('disaster_reports::report_form', [
         'breadcrumb' => 'Report a Disaster',
         'districts' => disaster_reports_district_list(),
         'district_map' => disaster_reports_district_map(),
+        'prefilled_reporter_name' => $prefilledReporterName,
+        'prefilled_contact_number' => $prefilledContactNumber,
     ], 'dashboard');
 }
 

@@ -2,6 +2,8 @@
 $oldInput = $_SESSION['_old_input'] ?? [];
 $districtMap = $district_map ?? [];
 $districts = $districts ?? [];
+$prefilledReporterName = (string) ($prefilled_reporter_name ?? '');
+$prefilledContactNumber = (string) ($prefilled_contact_number ?? '');
 
 $oldValue = static function (string $key, string $default = '') use ($oldInput): string {
     return e((string) ($oldInput[$key] ?? $default));
@@ -38,11 +40,11 @@ $typeOther = (string) ($oldInput['other_disaster_type'] ?? '');
   <div class="two-col-grid">
     <div class="form-field">
       <label for="reporter_name">Reporter's Name</label>
-      <input class="input" type="text" id="reporter_name" name="reporter_name" placeholder="Enter your name" value="<?= $oldValue('reporter_name') ?>" required />
+      <input class="input" type="text" id="reporter_name" name="reporter_name" placeholder="Enter your name" value="<?= $oldValue('reporter_name', $prefilledReporterName) ?>" required />
     </div>
     <div class="form-field">
       <label for="contact_number">Contact Number</label>
-      <input class="input" type="tel" id="contact_number" name="contact_number" placeholder="Enter your contact number" value="<?= $oldValue('contact_number') ?>" required />
+      <input class="input" type="tel" id="contact_number" name="contact_number" placeholder="Enter your contact number" value="<?= $oldValue('contact_number', $prefilledContactNumber) ?>" required />
     </div>
 
     <div class="form-field" style="grid-row: span 8;">
