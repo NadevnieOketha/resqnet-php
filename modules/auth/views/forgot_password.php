@@ -1,28 +1,24 @@
-<div class="auth-container">
-    <div class="auth-card" style="max-width: 460px;">
-        <h2>Forgot Password</h2>
-        <p class="auth-subtitle">Enter your username or email to generate a reset link.</p>
+<div class="auth-panel panel" role="form" aria-labelledby="forgotHeading">
+    <div class="auth-brand">
+        <img src="<?= asset('img/logo.svg') ?>" alt="<?= e(config('app.name')) ?> logo">
+        <span class="sr-only"><?= e(config('app.name')) ?></span>
+    </div>
 
-        <?php if ($error = get_flash('error')): ?>
-            <div class="alert alert-error"><?= e($error) ?></div>
-        <?php endif; ?>
-        <?php if ($info = get_flash('info')): ?>
-            <div class="alert alert-info" style="word-break: break-word;"><?= e($info) ?></div>
-        <?php endif; ?>
+    <h1 id="forgotHeading" class="auth-heading">Forgot password</h1>
+    <p class="auth-subtitle">Enter your username or email to receive a reset link.</p>
 
-        <form method="POST" action="/forgot-password">
-            <?= csrf_field() ?>
+    <form method="POST" action="/forgot-password" novalidate>
+        <?= csrf_field() ?>
 
-            <div class="form-group">
-                <label for="identifier">Username or Email</label>
-                <input type="text" id="identifier" name="identifier" value="<?= old('identifier') ?>" required autofocus>
-            </div>
+        <div class="form-field">
+            <label for="identifier">Username or Email</label>
+            <input id="identifier" name="identifier" type="text" class="input" value="<?= old('identifier') ?>" placeholder="Enter your username or email" required autofocus>
+        </div>
 
-            <button type="submit" class="btn btn-primary btn-block">Generate Reset Link</button>
-        </form>
+        <button type="submit" class="btn btn-primary btn-block">Send Reset Link</button>
+    </form>
 
-        <p class="auth-link">
-            Back to <a href="/login">Sign in</a>
-        </p>
+    <div class="auth-links">
+        <a href="/login" class="underline-link">Back to login</a>
     </div>
 </div>

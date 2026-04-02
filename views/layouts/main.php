@@ -1,45 +1,80 @@
+<?php
+$hideHeader = !empty($hide_header);
+$pageTitle = $page_title ?? config('app.name');
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= e(config('app.name')) ?></title>
-    <meta name="description" content="resqnet — Disaster early warning and post-disaster donation management">
-    <link rel="stylesheet" href="<?= asset('css/style.css') ?>">
+    <title><?= e($pageTitle) ?> - <?= e(config('app.name')) ?></title>
+    <meta name="description" content="resqnet - Disaster early warning and post-disaster donation management system">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="<?= asset('img/logo.svg') ?>">
+    <link rel="stylesheet" href="<?= asset('css/style.css') ?>">
+    <script src="https://unpkg.com/lucide@latest" defer></script>
 </head>
 <body>
-    <header class="main-header">
-        <div class="container">
-            <a href="/" class="logo"><?= e(config('app.name')) ?></a>
-            <nav class="main-nav">
-                <a href="/warnings">Warnings</a>
-                <a href="/donations">Donations</a>
-                <?php if (auth_check()): ?>
-                    <a href="/dashboard">Dashboard</a>
-                    <a href="/logout" class="btn btn-sm btn-outline">Logout</a>
-                <?php else: ?>
-                    <a href="/login">Sign In</a>
-                    <a href="/register" class="btn btn-sm btn-primary">Get Started</a>
-                <?php endif; ?>
+<?php if (!$hideHeader): ?>
+    <header class="site-header" role="banner">
+        <div class="site-header__inner">
+            <a href="/" class="brand-inline" aria-label="<?= e(config('app.name')) ?> home">
+                <img src="<?= asset('img/logo.svg') ?>" alt="<?= e(config('app.name')) ?> logo">
+                <span><?= e(config('app.name')) ?></span>
+            </a>
+            <nav class="primary-nav" aria-label="Primary navigation">
+                <ul>
+                    <li><a href="/" <?= is_current_url('/') ? 'aria-current="page"' : '' ?>>Home</a></li>
+                    <?php if (auth_check()): ?>
+                        <li><a href="/dashboard" <?= is_current_url('/dashboard') ? 'aria-current="page"' : '' ?>>Dashboard</a></li>
+                        <li><a href="/profile" <?= is_current_url('/profile') ? 'aria-current="page"' : '' ?>>Profile</a></li>
+                    <?php else: ?>
+                        <li><a href="/register?role=volunteer">Become a Volunteer</a></li>
+                        <li><a href="/register?role=ngo">Join as NGO</a></li>
+                    <?php endif; ?>
+                </ul>
             </nav>
+            <div class="header-actions">
+                <?php if (auth_check()): ?>
+                    <a href="/logout" class="btn">Logout</a>
+                    <a href="/dashboard" class="btn btn-primary">Open Dashboard</a>
+                <?php else: ?>
+                    <a href="/register" class="btn" <?= is_current_url('/register') ? 'aria-current="page"' : '' ?>>Sign Up</a>
+                    <a href="/login" class="btn btn-primary" <?= is_current_url('/login') ? 'aria-current="page"' : '' ?>>Login</a>
+                <?php endif; ?>
+            </div>
         </div>
     </header>
+<?php endif; ?>
 
-    <main class="main-content">
-        <div class="container">
-            <?php if ($success = get_flash('success')): ?>
-                <div class="alert alert-success"><?= e($success) ?></div>
-            <?php endif; ?>
-            <?= $content ?>
-        </div>
-    </main>
+<main class="app-main <?= $hideHeader ? 'auth-shell' : '' ?>">
+    <div class="container">
+        <?php
+        $error = get_flash('error');
+        $warning = get_flash('warning');
+        $success = get_flash('success');
+        ?>
 
-    <footer class="main-footer">
-        <div class="container">
-            <p>&copy; <?= date('Y') ?> <?= e(config('app.name')) ?>. All rights reserved.</p>
-        </div>
-    </footer>
+        <?php if ($error || $warning || $success): ?>
+            <div class="flash-stack">
+                <?php if ($error): ?><div class="app-flash app-flash-error"><?= e($error) ?></div><?php endif; ?>
+                <?php if ($warning): ?><div class="app-flash app-flash-warning"><?= e($warning) ?></div><?php endif; ?>
+                <?php if ($success): ?><div class="app-flash app-flash-success"><?= e($success) ?></div><?php endif; ?>
+            </div>
+        <?php endif; ?>
+
+        <?= $content ?>
+    </div>
+</main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        if (window.lucide) {
+            window.lucide.createIcons();
+        }
+    });
+</script>
 </body>
 </html>

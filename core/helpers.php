@@ -2,20 +2,16 @@
 
 /**
  * Core Helpers
- * 
+ *
  * Utility functions available globally via Composer autoload.
  */
 
-// ──────────────────────────────────────
 // Environment
-// ──────────────────────────────────────
-
 function env(string $key, mixed $default = null): mixed
 {
     $value = $_ENV[$key] ?? getenv($key);
     if ($value === false) return $default;
 
-    // Cast common string booleans
     return match (strtolower((string) $value)) {
         'true', '(true)'   => true,
         'false', '(false)' => false,
@@ -24,10 +20,7 @@ function env(string $key, mixed $default = null): mixed
     };
 }
 
-// ──────────────────────────────────────
 // Config
-// ──────────────────────────────────────
-
 function config(string $key, mixed $default = null): mixed
 {
     static $configs = [];
@@ -42,17 +35,12 @@ function config(string $key, mixed $default = null): mixed
     return $configs[$file][$parts[1] ?? null] ?? $default;
 }
 
-// ──────────────────────────────────────
 // Views & Layouts
-// ──────────────────────────────────────
-
 function view(string $path, array $data = [], ?string $layout = null): void
 {
     extract($data);
 
-    // Determine full path — check modules first, then global views
     if (str_contains($path, '::')) {
-        // module::view format → modules/{module}/views/{view}.php
         [$module, $viewName] = explode('::', $path);
         $viewFile = BASE_PATH . '/modules/' . $module . '/views/' . $viewName . '.php';
     } else {
@@ -64,7 +52,6 @@ function view(string $path, array $data = [], ?string $layout = null): void
     }
 
     if ($layout) {
-        // Capture view content, then wrap in layout
         ob_start();
         require $viewFile;
         $content = ob_get_clean();
@@ -74,15 +61,13 @@ function view(string $path, array $data = [], ?string $layout = null): void
             abort(500, "Layout not found: {$layout}");
         }
         require $layoutFile;
-    } else {
-        require $viewFile;
+        return;
     }
+
+    require $viewFile;
 }
 
-// ──────────────────────────────────────
 // HTTP Helpers
-// ──────────────────────────────────────
-
 function redirect(string $url): never
 {
     header('Location: ' . $url);
@@ -98,7 +83,8 @@ function abort(int $code, string $message = ''): never
         500 => 'Server Error',
         default => 'Error',
     };
-    if (empty($message)) $message = $title;
+
+    if ($message === '') $message = $title;
     require BASE_PATH . '/views/layouts/error.php';
     exit;
 }
@@ -119,10 +105,12 @@ function request_input(string $key, mixed $default = null): mixed
     return $_POST[$key] ?? $_GET[$key] ?? $default;
 }
 
-// ──────────────────────────────────────
-// CSRF Protection
-// ──────────────────────────────────────
+function request_query(string $key, mixed $default = null): mixed
+{
+    return $_GET[$key] ?? $default;
+}
 
+// CSRF
 function csrf_token(): string
 {
     if (empty($_SESSION['_csrf_token'])) {
@@ -142,14 +130,11 @@ function csrf_check(): void
     if (!hash_equals(csrf_token(), $token)) {
         abort(403, 'Invalid CSRF token.');
     }
-    // Regenerate after successful check
+
     unset($_SESSION['_csrf_token']);
 }
 
-// ──────────────────────────────────────
-// Session Flash Messages
-// ──────────────────────────────────────
-
+// Flash messages
 function flash(string $key, mixed $value): void
 {
     $_SESSION['_flash'][$key] = $value;
@@ -167,10 +152,7 @@ function has_flash(string $key): bool
     return isset($_SESSION['_flash'][$key]);
 }
 
-// ──────────────────────────────────────
-// Old Input (form repopulation)
-// ──────────────────────────────────────
-
+// Old input
 function old(string $key, string $default = ''): string
 {
     return htmlspecialchars($_SESSION['_old_input'][$key] ?? $default, ENT_QUOTES, 'UTF-8');
@@ -186,19 +168,13 @@ function clear_old_input(): void
     unset($_SESSION['_old_input']);
 }
 
-// ──────────────────────────────────────
 // Asset URL
-// ──────────────────────────────────────
-
 function asset(string $path): string
 {
     return config('app.url') . '/assets/' . ltrim($path, '/');
 }
 
-// ──────────────────────────────────────
 // Auth Helpers
-// ──────────────────────────────────────
-
 function auth_user(): ?array
 {
     return $_SESSION['user'] ?? null;
@@ -211,64 +187,41 @@ function auth_check(): bool
 
 function auth_id(): ?int
 {
-    return $_SESSION['user']['id'] ?? null;
+    return $_SESSION['user']['user_id'] ?? null;
 }
 
-/**
- * Check if the current user has the given role.
- * Roles are treated as separate access levels.
- */
+function auth_display_name(): string
+{
+    $user = auth_user();
+    if (!$user) return 'Guest';
+
+    return (string) ($user['display_name'] ?? $user['username'] ?? 'User');
+}
+
 function is_role(string $role): bool
 {
     $user = auth_user();
     if (!$user) return false;
 
-    $currentRole = (string) ($user['role'] ?? '');
-    if ($currentRole === $role) {
-        return true;
-    }
-
-    $aliases = [
-        'general' => ['general_public'],
-        'general_public' => ['general'],
-        'dmc' => ['dmc_admin'],
-        'dmc_admin' => ['dmc'],
-    ];
-
-    if (in_array($role, $aliases[$currentRole] ?? [], true)) {
-        return true;
-    }
-
-    return in_array($currentRole, $aliases[$role] ?? [], true);
+    return ($user['role'] ?? null) === $role;
 }
 
-/**
- * Check if current user belongs to any role in the given list.
- */
 function is_any_role(array $roles): bool
 {
-    foreach ($roles as $role) {
-        if (is_role((string) $role)) {
-            return true;
-        }
-    }
+    $user = auth_user();
+    if (!$user) return false;
 
-    return false;
+    return in_array((string) ($user['role'] ?? ''), $roles, true);
 }
 
-/**
- * Human-friendly role labels for UI.
- */
 function role_label(?string $role): string
 {
     return match ($role) {
-        'general'         => 'General User',
-        'general_public'  => 'General Public',
+        'general'         => 'General Public',
         'volunteer'       => 'Volunteer',
-        'grama_niladhari' => 'Grama Niladhari',
         'ngo'             => 'NGO',
+        'grama_niladhari' => 'Grama Niladhari',
         'dmc'             => 'DMC Admin',
-        'dmc_admin'       => 'DMC Admin',
         default           => 'Guest',
     };
 }
@@ -278,10 +231,7 @@ function user_role(): ?string
     return auth_user()['role'] ?? null;
 }
 
-// ──────────────────────────────────────
 // Misc
-// ──────────────────────────────────────
-
 function e(string $value): string
 {
     return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
@@ -295,5 +245,5 @@ function base_url(string $path = ''): string
 function is_current_url(string $path): bool
 {
     $current = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-    return rtrim($current, '/') === rtrim($path, '/');
+    return rtrim((string) $current, '/') === rtrim($path, '/');
 }
