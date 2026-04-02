@@ -102,6 +102,43 @@ function disaster_reports_list_approved(): array
     );
 }
 
+function disaster_reports_list_gn_active_notifications(string $gnDivision): array
+{
+    $trimmed = trim($gnDivision);
+    if ($trimmed === '') {
+        return [];
+    }
+
+    return db_fetch_all(
+        "SELECT dr.report_id,
+                dr.disaster_type,
+                dr.other_disaster_type,
+                dr.district,
+                dr.gn_division,
+                dr.location,
+                dr.verified_at,
+                COUNT(vt.id) AS total_tasks,
+                SUM(CASE WHEN vt.status = 'Verified' THEN 1 ELSE 0 END) AS verified_tasks
+         FROM disaster_reports dr
+         LEFT JOIN volunteer_task vt ON vt.disaster_id = dr.report_id
+         WHERE dr.status = 'Approved'
+           AND dr.gn_division = ?
+         GROUP BY dr.report_id,
+                  dr.disaster_type,
+                  dr.other_disaster_type,
+                  dr.district,
+                  dr.gn_division,
+                  dr.location,
+                  dr.verified_at
+         HAVING NOT (
+             COUNT(vt.id) > 0
+             AND COUNT(vt.id) = SUM(CASE WHEN vt.status = 'Verified' THEN 1 ELSE 0 END)
+         )
+         ORDER BY dr.verified_at DESC, dr.report_id DESC",
+        [$trimmed]
+    );
+}
+
 function disaster_reports_update_status(int $reportId, string $status): int
 {
     if (!in_array($status, ['Approved', 'Rejected'], true)) {

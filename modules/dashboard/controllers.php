@@ -34,6 +34,9 @@ function dashboard_index(): void
             break;
 
         case 'grama_niladhari':
+            $gnDivision = trim((string) ($profile['gn_division'] ?? ''));
+            $data['gn_disaster_notifications'] = disaster_reports_list_gn_active_notifications($gnDivision);
+            $data['gn_disaster_notification_count'] = count((array) ($data['gn_disaster_notifications'] ?? []));
             $viewName = 'grama_niladhari';
             break;
 
