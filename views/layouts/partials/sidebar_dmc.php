@@ -3,6 +3,10 @@
         <span class="icon" data-lucide="home"></span>
         <span>Overview</span>
     </a>
+    <a href="/dashboard/reports" class="nav-item <?= is_current_url('/dashboard/reports') ? 'active' : '' ?>" data-section="disaster-reports">
+        <span class="icon" data-lucide="file-text"></span>
+        <span>Disaster Reports</span>
+    </a>
     <a href="/dashboard/admin/pending" class="nav-item <?= is_current_url('/dashboard/admin/pending') ? 'active' : '' ?>" data-section="approvals">
         <span class="icon" data-lucide="users"></span>
         <span>Pending Approvals</span>

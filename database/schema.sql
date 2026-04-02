@@ -142,24 +142,39 @@ CREATE TABLE IF NOT EXISTS `collection_points` (
 -- 4. CORE MODULE TABLES (Depend on Profiles and Infrastructure)
 -- ---------------------------------------------------------
 
-CREATE TABLE IF NOT EXISTS `disaster_reports` (
-  `report_id` int NOT NULL AUTO_INCREMENT,
-  `user_id` int NOT NULL,
-  `reporter_name` varchar(100) NOT NULL,
-  `contact_number` varchar(20) NOT NULL,
-  `disaster_type` enum('Flood','Landslide','Fire','Earthquake','Tsunami','Other') NOT NULL,
-  `other_disaster_type` varchar(100) DEFAULT NULL,
-  `disaster_datetime` datetime NOT NULL,
-  `location` varchar(255) NOT NULL,
-  `proof_image_path` varchar(255) DEFAULT NULL,
-  `confirmation` tinyint(1) NOT NULL DEFAULT '1',
-  `status` enum('Pending','Approved','Rejected') DEFAULT 'Pending',
-  `description` text,
-  `submitted_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `verified_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`report_id`),
-  CONSTRAINT `fk_disaster_report_user` FOREIGN KEY (`user_id`) REFERENCES `general_user` (`user_id`) ON DELETE CASCADE
-) ENGINE=InnoDB;
+CREATE TABLE IF NOT EXISTS disaster_reports (
+  report_id INT NOT NULL AUTO_INCREMENT,
+  user_id INT NOT NULL,
+
+  reporter_name VARCHAR(100) NOT NULL,
+  contact_number VARCHAR(20) NOT NULL,
+
+  disaster_type ENUM('Flood','Landslide','Fire','Earthquake','Tsunami','Other') NOT NULL,
+  other_disaster_type VARCHAR(100) DEFAULT NULL,
+
+  disaster_datetime DATETIME NOT NULL,
+
+  location VARCHAR(255),
+  district VARCHAR(100) NOT NULL,
+  gn_division VARCHAR(150) NOT NULL,
+
+  proof_image_path VARCHAR(255) DEFAULT NULL,
+
+  confirmation TINYINT(1) NOT NULL DEFAULT 1,
+  status ENUM('Pending','Approved','Rejected') DEFAULT 'Pending',
+
+  description TEXT,
+
+  submitted_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  verified_at TIMESTAMP NULL DEFAULT NULL,
+
+  PRIMARY KEY (report_id),
+
+  CONSTRAINT fk_disaster_report_user 
+  FOREIGN KEY (user_id) REFERENCES general_user(user_id) 
+  ON DELETE CASCADE
+) ENGINE=INNODB;
+
 
 CREATE TABLE IF NOT EXISTS `donations` (
   `donation_id` int NOT NULL AUTO_INCREMENT,
