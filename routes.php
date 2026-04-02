@@ -27,8 +27,8 @@ route('POST', '/profile',             'auth_profile_post',       ['middleware_au
 route('POST', '/profile/sms-alert',   'auth_profile_sms_toggle', ['middleware_auth']);
 
 // Disaster reporting
-route('GET',  '/report-disaster',                 'disaster_reports_create_form',   ['middleware_auth', fn() => middleware_roles(['general', 'volunteer'])]);
-route('POST', '/report-disaster',                 'disaster_reports_store_action',  ['middleware_auth', fn() => middleware_roles(['general', 'volunteer'])]);
+route('GET',  '/report-disaster',                 'disaster_reports_create_form',   ['middleware_auth', fn() => middleware_roles(['general', 'volunteer', 'grama_niladhari'])]);
+route('POST', '/report-disaster',                 'disaster_reports_store_action',  ['middleware_auth', fn() => middleware_roles(['general', 'volunteer', 'grama_niladhari'])]);
 route('GET',  '/dashboard/reports',               'disaster_reports_review_index',  ['middleware_auth', fn() => middleware_role('dmc')]);
 route('POST', '/dashboard/reports/{reportId}/verify', 'disaster_reports_verify_action', ['middleware_auth', fn() => middleware_role('dmc')]);
 route('POST', '/dashboard/reports/{reportId}/reject', 'disaster_reports_reject_action', ['middleware_auth', fn() => middleware_role('dmc')]);

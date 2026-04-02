@@ -14,6 +14,24 @@ function disaster_reports_district_list(): array
     return array_keys(disaster_reports_district_map());
 }
 
+function disaster_reports_find_district_for_gn_division(string $gnDivision): string
+{
+    $target = trim($gnDivision);
+    if ($target === '') {
+        return '';
+    }
+
+    foreach (disaster_reports_district_map() as $district => $divisions) {
+        foreach ((array) $divisions as $division) {
+            if ((string) $division === $target) {
+                return (string) $district;
+            }
+        }
+    }
+
+    return '';
+}
+
 function disaster_reports_insert(array $payload): int
 {
     return (int) db_insert('disaster_reports', [

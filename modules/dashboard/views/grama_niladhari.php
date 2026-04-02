@@ -8,6 +8,11 @@
 
 <section class="quick-actions" aria-label="Quick actions">
     <article class="action-card">
+        <h3>Report a Disaster</h3>
+        <p>Submit a verified incident from your GN area directly to DMC.</p>
+        <a href="/report-disaster" class="btn btn-primary">Create Report</a>
+    </article>
+    <article class="action-card">
         <h3>GN Profile</h3>
         <p>Update GN division details and service information.</p>
         <a href="/profile" class="btn btn-primary">Edit Profile</a>

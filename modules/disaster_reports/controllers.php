@@ -9,6 +9,10 @@ function disaster_reports_create_form(): void
     $user = auth_user();
     $role = (string) ($user['role'] ?? '');
     $profile = auth_get_profile((int) auth_id(), $role) ?? [];
+    $isGn = $role === 'grama_niladhari';
+
+    $lockedGnDivision = $isGn ? trim((string) ($profile['gn_division'] ?? '')) : '';
+    $lockedDistrict = $isGn ? disaster_reports_find_district_for_gn_division($lockedGnDivision) : '';
 
     $prefilledReporterName = trim((string) (
         $profile['name']
@@ -28,6 +32,9 @@ function disaster_reports_create_form(): void
         'district_map' => disaster_reports_district_map(),
         'prefilled_reporter_name' => $prefilledReporterName,
         'prefilled_contact_number' => $prefilledContactNumber,
+        'is_gn_area_locked' => $isGn,
+        'locked_district' => $lockedDistrict,
+        'locked_gn_division' => $lockedGnDivision,
     ], 'dashboard');
 }
 
@@ -36,8 +43,8 @@ function disaster_reports_store_action(): void
     csrf_check();
 
     $role = (string) (user_role() ?? '');
-    if (!in_array($role, ['general', 'volunteer'], true)) {
-        abort(403, 'Only general users and volunteers can submit reports.');
+    if (!in_array($role, ['general', 'volunteer', 'grama_niladhari'], true)) {
+        abort(403, 'Only general users, volunteers, and Grama Niladhari users can submit reports.');
     }
 
     $reporterName = trim((string) request_input('reporter_name', ''));
@@ -61,6 +68,17 @@ function disaster_reports_store_action(): void
         $gnDivision = $gnDivisionOther;
     }
 
+    if ($role === 'grama_niladhari') {
+        $profile = auth_get_profile((int) auth_id(), 'grama_niladhari') ?? [];
+        $profileGnDivision = trim((string) ($profile['gn_division'] ?? ''));
+        $profileDistrict = disaster_reports_find_district_for_gn_division($profileGnDivision);
+
+        $gnDivision = $profileGnDivision;
+        $district = $profileDistrict;
+        $districtOther = '';
+        $gnDivisionOther = '';
+    }
+
     $allowedTypes = ['Flood', 'Landslide', 'Fire', 'Earthquake', 'Tsunami', 'Other'];
 
     $errors = [];
@@ -80,6 +98,12 @@ function disaster_reports_store_action(): void
     }
     if ($district === '') $errors[] = 'District is required.';
     if ($gnDivision === '') $errors[] = 'GN division is required.';
+    if ($role === 'grama_niladhari' && $gnDivision === '') {
+        $errors[] = 'Your GN profile must include a GN division before you can submit reports.';
+    }
+    if ($role === 'grama_niladhari' && $district === '') {
+        $errors[] = 'Unable to map your GN division to a district. Please contact DMC.';
+    }
     if (!$confirmed) $errors[] = 'You must confirm that the information is accurate.';
 
     $proofImagePath = '';

@@ -4,14 +4,17 @@ $districtMap = $district_map ?? [];
 $districts = $districts ?? [];
 $prefilledReporterName = (string) ($prefilled_reporter_name ?? '');
 $prefilledContactNumber = (string) ($prefilled_contact_number ?? '');
+$isGnAreaLocked = (bool) ($is_gn_area_locked ?? false);
+$lockedDistrict = trim((string) ($locked_district ?? ''));
+$lockedGnDivision = trim((string) ($locked_gn_division ?? ''));
 
 $oldValue = static function (string $key, string $default = '') use ($oldInput): string {
     return e((string) ($oldInput[$key] ?? $default));
 };
 
 $selectedType = (string) ($oldInput['disaster_type'] ?? 'Flood');
-$selectedDistrict = (string) ($oldInput['district'] ?? '');
-$selectedGn = (string) ($oldInput['gn_division'] ?? '');
+$selectedDistrict = (string) ($oldInput['district'] ?? ($isGnAreaLocked ? $lockedDistrict : ''));
+$selectedGn = (string) ($oldInput['gn_division'] ?? ($isGnAreaLocked ? $lockedGnDivision : ''));
 $districtOther = (string) ($oldInput['district_other'] ?? '');
 $gnOther = (string) ($oldInput['gn_division_other'] ?? '');
 $typeOther = (string) ($oldInput['other_disaster_type'] ?? '');
@@ -75,28 +78,38 @@ $typeOther = (string) ($oldInput['other_disaster_type'] ?? '');
 
     <div class="form-field">
       <label for="district">District</label>
-      <select class="input" id="district" name="district" required>
+      <select class="input" id="district" name="district" required <?= $isGnAreaLocked ? 'disabled' : '' ?>>
         <option value="">Select district</option>
         <?php foreach ($districts as $district): ?>
           <option value="<?= e($district) ?>" <?= $selectedDistrict === $district ? 'selected' : '' ?>><?= e($district) ?></option>
         <?php endforeach; ?>
-        <option value="__other__" <?= $selectedDistrict === '__other__' ? 'selected' : '' ?>>Other</option>
+        <?php if (!$isGnAreaLocked): ?>
+          <option value="__other__" <?= $selectedDistrict === '__other__' ? 'selected' : '' ?>>Other</option>
+        <?php endif; ?>
       </select>
+      <?php if ($isGnAreaLocked): ?>
+        <input type="hidden" name="district" value="<?= e($lockedDistrict) ?>">
+        <p class="helper-muted">District is locked to your GN area.</p>
+      <?php endif; ?>
     </div>
 
-    <div class="form-field <?= ($selectedDistrict === '__other__') ? '' : 'hidden' ?>" id="district_other_wrap">
+    <div class="form-field <?= ($selectedDistrict === '__other__' && !$isGnAreaLocked) ? '' : 'hidden' ?>" id="district_other_wrap">
       <label for="district_other">If district is not listed, type it</label>
       <input class="input" type="text" id="district_other" name="district_other" value="<?= e($districtOther) ?>" placeholder="Enter district" />
     </div>
 
     <div class="form-field">
       <label for="gn_division">Grama Niladhari Division</label>
-      <select class="input" id="gn_division" name="gn_division" required>
+      <select class="input" id="gn_division" name="gn_division" required <?= $isGnAreaLocked ? 'disabled' : '' ?>>
         <option value="">Select district first</option>
       </select>
+      <?php if ($isGnAreaLocked): ?>
+        <input type="hidden" name="gn_division" value="<?= e($lockedGnDivision) ?>">
+        <p class="helper-muted">GN division is locked to your profile.</p>
+      <?php endif; ?>
     </div>
 
-    <div class="form-field <?= ($selectedGn === '__other__') ? '' : 'hidden' ?>" id="gn_other_wrap">
+    <div class="form-field <?= ($selectedGn === '__other__' && !$isGnAreaLocked) ? '' : 'hidden' ?>" id="gn_other_wrap">
       <label for="gn_division_other">If GN division is not listed, type it</label>
       <input class="input" type="text" id="gn_division_other" name="gn_division_other" value="<?= e($gnOther) ?>" placeholder="Enter GN division" />
     </div>
@@ -134,6 +147,9 @@ $typeOther = (string) ($oldInput['other_disaster_type'] ?? '');
     const gnOtherWrap = document.getElementById('gn_other_wrap');
     const gnOtherInput = document.getElementById('gn_division_other');
     const otherTypeInput = document.getElementById('other_disaster_type');
+    const isGnAreaLocked = <?= $isGnAreaLocked ? 'true' : 'false' ?>;
+    const lockedDistrict = <?= json_encode($lockedDistrict, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
+    const lockedGnDivision = <?= json_encode($lockedGnDivision, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
 
     const selectedGn = <?= json_encode($selectedGn, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
 
@@ -168,14 +184,46 @@ $typeOther = (string) ($oldInput['other_disaster_type'] ?? '');
       });
 
       const otherOption = document.createElement('option');
-      otherOption.value = '__other__';
-      otherOption.textContent = 'Other';
-      if (selectedGn === '__other__') {
-        otherOption.selected = true;
+      if (!isGnAreaLocked) {
+        otherOption.value = '__other__';
+        otherOption.textContent = 'Other';
+        if (selectedGn === '__other__') {
+          otherOption.selected = true;
+        }
+        gnEl.appendChild(otherOption);
       }
-      gnEl.appendChild(otherOption);
 
       setGnOtherState();
+    }
+
+    function lockGnAreaSelection() {
+      if (!lockedDistrict || !lockedGnDivision) {
+        return;
+      }
+
+      districtEl.innerHTML = '';
+      const districtOption = document.createElement('option');
+      districtOption.value = lockedDistrict;
+      districtOption.textContent = lockedDistrict;
+      districtOption.selected = true;
+      districtEl.appendChild(districtOption);
+      districtEl.disabled = true;
+
+      gnEl.innerHTML = '';
+      const gnOption = document.createElement('option');
+      gnOption.value = lockedGnDivision;
+      gnOption.textContent = lockedGnDivision;
+      gnOption.selected = true;
+      gnEl.appendChild(gnOption);
+      gnEl.disabled = true;
+
+      districtOtherWrap.classList.add('hidden');
+      districtOtherInput.disabled = true;
+      districtOtherInput.value = '';
+
+      gnOtherWrap.classList.add('hidden');
+      gnOtherInput.disabled = true;
+      gnOtherInput.value = '';
     }
 
     function setDistrictOtherState() {
@@ -196,18 +244,23 @@ $typeOther = (string) ($oldInput['other_disaster_type'] ?? '');
       }
     }
 
-    districtEl.addEventListener('change', function () {
+    if (isGnAreaLocked) {
+      lockGnAreaSelection();
+    } else {
+      districtEl.addEventListener('change', function () {
+        setDistrictOtherState();
+        renderGnOptions();
+      });
+
+      gnEl.addEventListener('change', setGnOtherState);
       setDistrictOtherState();
       renderGnOptions();
-    });
+    }
 
-    gnEl.addEventListener('change', setGnOtherState);
     document.querySelectorAll('input[name="disaster_type"]').forEach((input) => {
       input.addEventListener('change', setDisasterTypeState);
     });
 
     setDisasterTypeState();
-    setDistrictOtherState();
-    renderGnOptions();
   })();
 </script>
