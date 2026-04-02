@@ -78,10 +78,13 @@
               <?php else: ?>
                 <div class="actions">
                   <?php foreach ($actions as $nextStatus): ?>
+                    <?php
+                      $notePlaceholder = 'Optional note for ' . $nextStatus;
+                    ?>
                     <form method="POST" action="/dashboard/volunteer-tasks/<?= (int) ($task['id'] ?? 0) ?>/status">
                       <?= csrf_field() ?>
                       <input type="hidden" name="next_status" value="<?= e($nextStatus) ?>">
-                      <textarea name="update_note" class="input" placeholder="Optional field update note"></textarea>
+                      <textarea name="update_note" class="input" placeholder="<?= e($notePlaceholder) ?>"></textarea>
                       <button type="submit" class="btn btn-primary btn-sm">Mark <?= e($nextStatus) ?></button>
                     </form>
                   <?php endforeach; ?>

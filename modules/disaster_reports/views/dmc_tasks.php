@@ -11,6 +11,10 @@
   table.task-table thead th { text-align:left; padding:0.75rem 0.85rem; background:#fafafa; border-bottom:1px solid var(--color-border); }
   table.task-table tbody td { padding:0.85rem; border-bottom:1px solid var(--color-border); vertical-align:top; }
   .status-badge { display:inline-flex; border-radius:999px; padding:0.2rem 0.55rem; font-weight:600; font-size:0.62rem; border:1px solid var(--color-border); background:#f4f4f4; }
+  .note-list { margin:0; padding-left:1rem; display:grid; gap:0.25rem; }
+  .note-list li { line-height:1.35; }
+  .note-stage { font-weight:600; }
+  .note-empty { color:#777; font-size:0.62rem; }
   .cell-actions { display:grid; gap:0.45rem; }
   .cell-actions form { display:flex; gap:0.35rem; align-items:center; }
   .cell-actions select { min-width:180px; }
@@ -54,17 +58,19 @@
         <th>Location</th>
         <th>Assigned</th>
         <th>Status</th>
+        <th>Volunteer Notes</th>
         <th>DMC Actions</th>
       </tr>
     </thead>
     <tbody>
       <?php if (empty($tasks ?? [])): ?>
-        <tr><td colspan="7" class="empty-state">No tasks available for this filter.</td></tr>
+        <tr><td colspan="8" class="empty-state">No tasks available for this filter.</td></tr>
       <?php else: ?>
         <?php foreach (($tasks ?? []) as $task): ?>
           <?php
             $district = (string) ($task['district'] ?? '');
             $availableVolunteers = disaster_reports_list_active_volunteers($district);
+            $notes = (array) (($task_notes ?? [])[(int) ($task['id'] ?? 0)] ?? []);
           ?>
           <tr>
             <td>
@@ -86,6 +92,26 @@
             </td>
             <td><?= e((string) ($task['date_assigned'] ?? '-')) ?></td>
             <td><span class="status-badge"><?= e((string) ($task['status'] ?? '-')) ?></span></td>
+            <td>
+              <?php if (empty($notes)): ?>
+                <span class="note-empty">No notes shared yet.</span>
+              <?php else: ?>
+                <ul class="note-list">
+                  <?php foreach ($notes as $note): ?>
+                    <?php $text = trim((string) ($note['update_text'] ?? '')); ?>
+                    <?php if ($text === '') continue; ?>
+                    <?php
+                      $stage = trim((string) ($note['stage_status'] ?? ''));
+                      $stageLabel = $stage !== '' ? $stage : 'Update';
+                    ?>
+                    <li>
+                      <span class="note-stage"><?= e($stageLabel) ?>:</span>
+                      <?= e($text) ?>
+                    </li>
+                  <?php endforeach; ?>
+                </ul>
+              <?php endif; ?>
+            </td>
             <td>
               <div class="cell-actions">
                 <form method="POST" action="/dashboard/admin/volunteer-tasks/<?= (int) ($task['id'] ?? 0) ?>/reassign">

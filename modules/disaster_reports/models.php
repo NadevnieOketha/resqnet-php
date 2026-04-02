@@ -226,7 +226,7 @@ function disaster_reports_fetch_assignment_candidates(string $district = ''): ar
     );
 }
 
-function disaster_reports_assign_volunteers_to_report(int $reportId, int $limit = 3): array
+function disaster_reports_assign_volunteers_to_report(int $reportId, int $minimumTotal = 5): array
 {
     $report = disaster_reports_find_by_id($reportId);
     if (!$report) {
@@ -240,6 +240,19 @@ function disaster_reports_assign_volunteers_to_report(int $reportId, int $limit 
     $existing = db_fetch_all('SELECT volunteer_id FROM volunteer_task WHERE disaster_id = ?', [$reportId]);
     $existingIds = array_map(static fn(array $row): int => (int) ($row['volunteer_id'] ?? 0), $existing);
     $existingIds = array_values(array_filter($existingIds, static fn(int $id): bool => $id > 0));
+
+    $minimumTotal = max(1, $minimumTotal);
+    $existingCount = count($existingIds);
+    $needed = $minimumTotal - $existingCount;
+    if ($needed <= 0) {
+        return [
+            'assigned' => [],
+            'message' => 'This report already has ' . $existingCount . ' volunteer(s) assigned.',
+            'report' => $report,
+            'total_assigned' => $existingCount,
+            'required_minimum' => $minimumTotal,
+        ];
+    }
 
     $district = (string) ($report['district'] ?? '');
     $gnDivision = (string) ($report['gn_division'] ?? '');
@@ -303,9 +316,15 @@ function disaster_reports_assign_volunteers_to_report(int $reportId, int $limit 
         return ((int) ($a['user_id'] ?? 0)) <=> ((int) ($b['user_id'] ?? 0));
     });
 
-    $selected = array_slice($scored, 0, max(1, $limit));
+    $selected = array_slice($scored, 0, $needed);
     if (empty($selected)) {
-        return ['assigned' => [], 'message' => 'No eligible volunteers were found for assignment.'];
+        return [
+            'assigned' => [],
+            'message' => 'No eligible volunteers were found for assignment.',
+            'report' => $report,
+            'total_assigned' => $existingCount,
+            'required_minimum' => $minimumTotal,
+        ];
     }
 
     $assignmentRole = disaster_reports_assignment_role_for_type((string) ($report['disaster_type'] ?? ''));
@@ -330,10 +349,21 @@ function disaster_reports_assign_volunteers_to_report(int $reportId, int $limit 
         ];
     }
 
+    $totalAssigned = $existingCount + count($assigned);
+    $message = count($assigned) . ' volunteer(s) assigned automatically.';
+    if ($totalAssigned >= $minimumTotal) {
+        $message .= ' Total assigned: ' . $totalAssigned . '.';
+    } else {
+        $remaining = $minimumTotal - $totalAssigned;
+        $message .= ' Total assigned: ' . $totalAssigned . '. Still need ' . $remaining . ' more when volunteers become available.';
+    }
+
     return [
         'assigned' => $assigned,
-        'message' => count($assigned) . ' volunteer(s) assigned successfully.',
+        'message' => $message,
         'report' => $report,
+        'total_assigned' => $totalAssigned,
+        'required_minimum' => $minimumTotal,
     ];
 }
 
@@ -358,6 +388,114 @@ function disaster_reports_list_tasks_for_volunteer(int $volunteerId): array
          ORDER BY vt.date_assigned DESC, vt.id DESC",
         [$volunteerId]
     );
+}
+
+function disaster_reports_list_assignments_by_report_ids(array $reportIds): array
+{
+    $ids = array_values(array_unique(array_map(
+        static fn($id): int => (int) $id,
+        $reportIds
+    )));
+    $ids = array_values(array_filter($ids, static fn(int $id): bool => $id > 0));
+
+    if (empty($ids)) {
+        return [];
+    }
+
+    $placeholders = implode(', ', array_fill(0, count($ids), '?'));
+    $rows = db_fetch_all(
+        "SELECT vt.id AS task_id,
+                vt.disaster_id AS report_id,
+                vt.volunteer_id,
+                vt.status,
+                vt.date_assigned,
+                v.name AS volunteer_name
+         FROM volunteer_task vt
+         INNER JOIN volunteers v ON v.user_id = vt.volunteer_id
+         WHERE vt.disaster_id IN ({$placeholders})
+         ORDER BY vt.disaster_id ASC, vt.date_assigned ASC, vt.id ASC",
+        $ids
+    );
+
+    $taskIds = array_map(static fn(array $row): int => (int) ($row['task_id'] ?? 0), $rows);
+    $notesByTask = disaster_reports_list_notes_by_task_ids($taskIds);
+
+    $grouped = [];
+    foreach ($ids as $id) {
+        $grouped[$id] = [];
+    }
+
+    foreach ($rows as $row) {
+        $taskId = (int) ($row['task_id'] ?? 0);
+        $reportId = (int) ($row['report_id'] ?? 0);
+        if ($taskId <= 0 || $reportId <= 0) {
+            continue;
+        }
+
+        $entry = [
+            'task_id' => $taskId,
+            'volunteer_id' => (int) ($row['volunteer_id'] ?? 0),
+            'volunteer_name' => (string) ($row['volunteer_name'] ?? 'Volunteer'),
+            'status' => (string) ($row['status'] ?? ''),
+            'date_assigned' => (string) ($row['date_assigned'] ?? ''),
+            'notes' => $notesByTask[$taskId] ?? [],
+        ];
+
+        if (!array_key_exists($reportId, $grouped)) {
+            $grouped[$reportId] = [];
+        }
+        $grouped[$reportId][] = $entry;
+    }
+
+    return $grouped;
+}
+
+function disaster_reports_list_notes_by_task_ids(array $taskIds): array
+{
+    $ids = array_values(array_unique(array_map(
+        static fn($id): int => (int) $id,
+        $taskIds
+    )));
+    $ids = array_values(array_filter($ids, static fn(int $id): bool => $id > 0));
+
+    if (empty($ids)) {
+        return [];
+    }
+
+    if (!disaster_reports_table_exists('volunteer_field_updates')) {
+        return [];
+    }
+
+    $hasStageStatus = disaster_reports_table_has_column('volunteer_field_updates', 'stage_status');
+    $hasCreatedAt = disaster_reports_table_has_column('volunteer_field_updates', 'created_at');
+
+    $stageExpr = $hasStageStatus ? 'stage_status' : "'' AS stage_status";
+    $createdExpr = $hasCreatedAt ? 'created_at' : 'NULL AS created_at';
+    $orderSql = $hasCreatedAt ? ' ORDER BY created_at ASC' : '';
+
+    $placeholders = implode(', ', array_fill(0, count($ids), '?'));
+    $rows = db_fetch_all(
+        "SELECT task_id, {$stageExpr}, update_text, {$createdExpr}
+         FROM volunteer_field_updates
+         WHERE task_id IN ({$placeholders}){$orderSql}",
+        $ids
+    );
+
+    $grouped = [];
+    foreach ($rows as $row) {
+        $taskId = (int) ($row['task_id'] ?? 0);
+        if ($taskId <= 0) {
+            continue;
+        }
+
+        $grouped[$taskId][] = [
+            'stage_status' => trim((string) ($row['stage_status'] ?? '')),
+            'update_text' => trim((string) ($row['update_text'] ?? '')),
+            'created_at' => (string) ($row['created_at'] ?? ''),
+        ];
+    }
+
+    return $grouped;
 }
 
 function disaster_reports_task_status_counters(array $rows): array
@@ -534,9 +672,13 @@ function disaster_reports_verify_task_completion(int $taskId): array
     return ['ok' => true, 'message' => 'Task marked as Verified.'];
 }
 
-function disaster_reports_table_exists(string $tableName): bool
+function disaster_reports_table_exists(string $tableName, bool $forceRefresh = false): bool
 {
     static $cache = [];
+
+    if ($forceRefresh) {
+        unset($cache[$tableName]);
+    }
 
     if (array_key_exists($tableName, $cache)) {
         return $cache[$tableName];
@@ -556,14 +698,74 @@ function disaster_reports_table_exists(string $tableName): bool
     return $exists;
 }
 
-function disaster_reports_log_field_update(int $taskId, int $volunteerId, string $note): void
+function disaster_reports_table_has_column(string $tableName, string $columnName, bool $forceRefresh = false): bool
+{
+    static $cache = [];
+
+    $key = $tableName . '.' . $columnName;
+    if ($forceRefresh) {
+        unset($cache[$key]);
+    }
+
+    if (array_key_exists($key, $cache)) {
+        return $cache[$key];
+    }
+
+    $row = db_fetch(
+        'SELECT COUNT(*) AS cnt
+         FROM information_schema.COLUMNS
+         WHERE TABLE_SCHEMA = DATABASE()
+           AND TABLE_NAME = ?
+           AND COLUMN_NAME = ?',
+        [$tableName, $columnName]
+    );
+
+    $exists = ((int) ($row['cnt'] ?? 0)) > 0;
+    $cache[$key] = $exists;
+    return $exists;
+}
+
+function disaster_reports_ensure_volunteer_updates_table(): bool
+{
+    if (!disaster_reports_table_exists('volunteer_field_updates')) {
+        db_query(
+            "CREATE TABLE IF NOT EXISTS volunteer_field_updates (
+                id INT NOT NULL AUTO_INCREMENT,
+                task_id INT NOT NULL,
+                volunteer_id INT NOT NULL,
+                stage_status VARCHAR(50) DEFAULT NULL,
+                update_text TEXT NOT NULL,
+                created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (id),
+                KEY idx_vfu_task (task_id),
+                KEY idx_vfu_volunteer (volunteer_id)
+            ) ENGINE=InnoDB"
+        );
+    }
+
+    return disaster_reports_table_exists('volunteer_field_updates', true);
+}
+
+function disaster_reports_log_field_update(int $taskId, int $volunteerId, string $stageStatus, string $note): void
 {
     $trimmed = trim($note);
     if ($trimmed === '') {
         return;
     }
 
-    if (!disaster_reports_table_exists('volunteer_field_updates')) {
+    if (!disaster_reports_ensure_volunteer_updates_table()) {
+        return;
+    }
+
+    $cleanStatus = trim($stageStatus);
+    $hasStageStatus = disaster_reports_table_has_column('volunteer_field_updates', 'stage_status', true);
+
+    if ($hasStageStatus) {
+        db_query(
+            'INSERT INTO volunteer_field_updates (task_id, volunteer_id, stage_status, update_text)
+             VALUES (?, ?, ?, ?)',
+            [$taskId, $volunteerId, $cleanStatus !== '' ? $cleanStatus : null, $trimmed]
+        );
         return;
     }
 

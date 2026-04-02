@@ -223,6 +223,18 @@ CREATE TABLE IF NOT EXISTS `volunteer_task` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS `volunteer_field_updates` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `task_id` int NOT NULL,
+  `volunteer_id` int NOT NULL,
+  `stage_status` varchar(50) DEFAULT NULL,
+  `update_text` text NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_vfu_task` (`task_id`),
+  KEY `idx_vfu_volunteer` (`volunteer_id`)
+) ENGINE=InnoDB;
+
 
 -- 5. MAPPING & LOG TABLES (Many-to-Many Relationships)
 -- ---------------------------------------------------------

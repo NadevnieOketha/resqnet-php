@@ -17,6 +17,15 @@
   .pill { all:unset; cursor:pointer; font-size:0.55rem; font-weight:600; padding:0.5rem 1.05rem; border-radius:999px; background:#e3e3e3; display:inline-flex; align-items:center; gap:0.35rem; }
   .pill-danger { background:#d91e18; color:#fff; }
   .pill svg { width:14px; height:14px; }
+  .volunteer-stack { display:grid; gap:0.55rem; min-width:250px; }
+  .volunteer-item { border:1px solid var(--color-border); border-radius:10px; padding:0.5rem 0.6rem; background:#fafafa; }
+  .volunteer-head { display:flex; justify-content:space-between; gap:0.45rem; align-items:center; }
+  .volunteer-name { font-weight:600; }
+  .volunteer-status { font-size:0.58rem; padding:0.18rem 0.5rem; border-radius:999px; border:1px solid var(--color-border); background:#fff; }
+  .volunteer-notes { margin:0.4rem 0 0; padding-left:1rem; color:#444; }
+  .volunteer-notes li { margin-bottom:0.2rem; }
+  .volunteer-notes strong { font-size:0.6rem; }
+  .no-notes { color:#777; font-size:0.6rem; margin-top:0.35rem; }
   .empty-state { padding: 1rem; color: var(--color-text-subtle); }
   @media (max-width:780px){
     table.report-table thead { display:none; }
@@ -98,15 +107,17 @@
           <th>Disaster Type</th>
           <th>Description/Notes</th>
           <th>Verified At</th>
+          <th>Assigned Volunteers</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
       <?php if (empty($approved_reports ?? [])): ?>
-        <tr><td colspan="8" class="empty-state">No approved reports yet.</td></tr>
+        <tr><td colspan="9" class="empty-state">No approved reports yet.</td></tr>
       <?php else: ?>
         <?php foreach (($approved_reports ?? []) as $report): ?>
           <?php $assignedCount = (int) (($assigned_counts ?? [])[(int) ($report['report_id'] ?? 0)] ?? 0); ?>
+          <?php $assignedVolunteers = (array) (($assigned_volunteers_by_report ?? [])[(int) ($report['report_id'] ?? 0)] ?? []); ?>
           <tr>
             <td data-label="Report ID">#<?= (int) $report['report_id'] ?></td>
             <td data-label="Reported By" class="reported-by">
@@ -121,13 +132,49 @@
             <td data-label="Disaster Type" class="type-strong"><?= e(disaster_reports_disaster_label($report)) ?></td>
             <td data-label="Description/Notes"><?= e((string) ($report['description'] ?? '-')) ?></td>
             <td data-label="Verified At"><?= e((string) ($report['verified_at'] ?? '-')) ?></td>
+            <td data-label="Assigned Volunteers">
+              <?php if (empty($assignedVolunteers)): ?>
+                <small style="color:#666;">No volunteers assigned yet.</small>
+              <?php else: ?>
+                <div class="volunteer-stack">
+                  <?php foreach ($assignedVolunteers as $volunteer): ?>
+                    <?php $notes = (array) ($volunteer['notes'] ?? []); ?>
+                    <div class="volunteer-item">
+                      <div class="volunteer-head">
+                        <span class="volunteer-name"><?= e((string) ($volunteer['volunteer_name'] ?? 'Volunteer')) ?></span>
+                        <span class="volunteer-status"><?= e((string) ($volunteer['status'] ?? '-')) ?></span>
+                      </div>
+
+                      <?php if (empty($notes)): ?>
+                        <div class="no-notes">No notes shared yet.</div>
+                      <?php else: ?>
+                        <ul class="volunteer-notes">
+                          <?php foreach ($notes as $note): ?>
+                            <?php $noteText = trim((string) ($note['update_text'] ?? '')); ?>
+                            <?php if ($noteText === '') continue; ?>
+                            <?php
+                              $stage = trim((string) ($note['stage_status'] ?? ''));
+                              $stageLabel = $stage !== '' ? $stage : 'Update';
+                            ?>
+                            <li>
+                              <strong><?= e($stageLabel) ?>:</strong>
+                              <?= e($noteText) ?>
+                            </li>
+                          <?php endforeach; ?>
+                        </ul>
+                      <?php endif; ?>
+                    </div>
+                  <?php endforeach; ?>
+                </div>
+              <?php endif; ?>
+            </td>
             <td data-label="Actions">
               <div class="action-pills" style="flex-direction:column;align-items:flex-start;gap:0.4rem;">
                 <form method="POST" action="/dashboard/reports/<?= (int) $report['report_id'] ?>/assign-volunteers" class="inline-form">
                   <?= csrf_field() ?>
                   <button type="submit" class="pill"><span data-lucide="user-plus"></span><span>Assign volunteers</span></button>
                 </form>
-                <small style="color:#666;">Assigned so far: <?= $assignedCount ?></small>
+                <small style="color:#666;">Assigned so far: <?= $assignedCount ?> / minimum 5</small>
               </div>
             </td>
           </tr>
