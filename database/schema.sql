@@ -7,80 +7,276 @@ CREATE DATABASE IF NOT EXISTS resqnet
 
 USE resqnet;
 
--- Users
-CREATE TABLE IF NOT EXISTS users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    email VARCHAR(150) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    role ENUM('general_public', 'grama_niladhari', 'ngo', 'dmc_admin') DEFAULT 'general_public',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+-- 1. BASE TABLES (No Foreign Key Dependencies)
+-- ---------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS `users` (
+  `user_id` int NOT NULL AUTO_INCREMENT,
+  `username` varchar(100) NOT NULL,
+  `password_hash` varchar(255) NOT NULL,
+  `email` varchar(150) NOT NULL,
+  `role` enum('general','volunteer','ngo','grama_niladhari','dmc') NOT NULL,
+  `active` tinyint(1) DEFAULT '1',
+  PRIMARY KEY (`user_id`),
+  UNIQUE KEY `uq_users_username` (`username`),
+  UNIQUE KEY `uq_users_email` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE IF NOT EXISTS `donation_items_catalog` (
+  `item_id` int NOT NULL AUTO_INCREMENT,
+  `item_name` varchar(100) NOT NULL,
+  `category` enum('Medicine','Food','Shelter') NOT NULL,
+  PRIMARY KEY (`item_id`),
+  UNIQUE KEY `uq_item_name` (`item_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE IF NOT EXISTS `skills` (
+  `skill_id` int NOT NULL AUTO_INCREMENT,
+  `skill_name` varchar(100) NOT NULL,
+  PRIMARY KEY (`skill_id`),
+  UNIQUE KEY `uq_skills_name` (`skill_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE IF NOT EXISTS `volunteer_preferences` (
+  `preference_id` int NOT NULL AUTO_INCREMENT,
+  `preference_name` varchar(100) NOT NULL,
+  PRIMARY KEY (`preference_id`),
+  UNIQUE KEY `uq_preferences_name` (`preference_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE IF NOT EXISTS `safe_locations` (
+  `location_id` int NOT NULL AUTO_INCREMENT,
+  `location_name` varchar(255) NOT NULL,
+  `latitude` decimal(10,8) NOT NULL,
+  `longitude` decimal(11,8) NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`location_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+-- 2. USER PROFILE TABLES (Depend on 'users')
+-- ---------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS `general_user` (
+  `user_id` int NOT NULL,
+  `name` varchar(150) NOT NULL,
+  `contact_number` varchar(20) DEFAULT NULL,
+  `house_no` varchar(50) DEFAULT NULL,
+  `street` varchar(100) DEFAULT NULL,
+  `city` varchar(100) DEFAULT NULL,
+  `district` varchar(100) DEFAULT NULL,
+  `gn_division` varchar(100) DEFAULT NULL,
+  `sms_alert` tinyint(1) DEFAULT '0',
+  PRIMARY KEY (`user_id`),
+  CONSTRAINT `fk_general_user_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
--- Early warnings
-CREATE TABLE IF NOT EXISTS warnings (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(180) NOT NULL,
-    message TEXT NOT NULL,
-    location VARCHAR(180) NOT NULL,
-    severity ENUM('low', 'medium', 'high', 'critical') DEFAULT 'medium',
-    status ENUM('draft', 'published') DEFAULT 'draft',
-    issued_by INT NULL,
-    issued_at DATETIME NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (issued_by) REFERENCES users(id) ON DELETE SET NULL
+CREATE TABLE IF NOT EXISTS `ngos` (
+  `user_id` int NOT NULL,
+  `organization_name` varchar(150) NOT NULL,
+  `registration_number` varchar(100) NOT NULL,
+  `years_of_operation` int DEFAULT NULL,
+  `address` varchar(255) DEFAULT NULL,
+  `contact_person_name` varchar(100) DEFAULT NULL,
+  `contact_person_telephone` varchar(20) DEFAULT NULL,
+  `contact_person_email` varchar(150) DEFAULT NULL,
+  PRIMARY KEY (`user_id`),
+  CONSTRAINT `fk_ngos_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
--- Donation appeals
-CREATE TABLE IF NOT EXISTS donation_requests (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(200) NOT NULL,
-    description TEXT NOT NULL,
-    needed_location VARCHAR(180) NOT NULL,
-    target_amount DECIMAL(12, 2) NOT NULL DEFAULT 0,
-    collected_amount DECIMAL(12, 2) NOT NULL DEFAULT 0,
-    status ENUM('open', 'closed', 'fulfilled') DEFAULT 'open',
-    created_by INT NULL,
-    assigned_ngo INT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL,
-    FOREIGN KEY (assigned_ngo) REFERENCES users(id) ON DELETE SET NULL
+CREATE TABLE IF NOT EXISTS `volunteers` (
+  `user_id` int NOT NULL,
+  `name` varchar(150) NOT NULL,
+  `age` int DEFAULT NULL,
+  `gender` enum('male','female','other') DEFAULT NULL,
+  `contact_number` varchar(20) DEFAULT NULL,
+  `house_no` varchar(50) DEFAULT NULL,
+  `street` varchar(100) DEFAULT NULL,
+  `city` varchar(100) DEFAULT NULL,
+  `district` varchar(100) DEFAULT NULL,
+  `gn_division` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`user_id`),
+  CONSTRAINT `fk_volunteers_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
--- Individual contributions
-CREATE TABLE IF NOT EXISTS donations (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    donation_request_id INT NOT NULL,
-    donor_id INT NULL,
-    donor_name VARCHAR(120) NOT NULL,
-    donor_email VARCHAR(150) NULL,
-    amount DECIMAL(12, 2) NOT NULL,
-    message VARCHAR(255) NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (donation_request_id) REFERENCES donation_requests(id) ON DELETE CASCADE,
-    FOREIGN KEY (donor_id) REFERENCES users(id) ON DELETE SET NULL
+CREATE TABLE IF NOT EXISTS `grama_niladhari` (
+  `user_id` int NOT NULL,
+  `name` varchar(150) NOT NULL,
+  `contact_number` varchar(20) DEFAULT NULL,
+  `address` varchar(255) DEFAULT NULL,
+  `gn_division` varchar(100) DEFAULT NULL,
+  `service_number` varchar(50) DEFAULT NULL,
+  `gn_division_number` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`user_id`),
+  CONSTRAINT `fk_gn_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
--- Seed data (optional, for testing)
--- Shared password for all seeded users below: admin123
-INSERT INTO users (name, email, password, role) VALUES
-('DMC Administrator', 'dmc@resqnet.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'dmc_admin'),
-('Grama Niladhari Officer', 'gn@resqnet.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'grama_niladhari'),
-('Relief NGO Coordinator', 'ngo@resqnet.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'ngo'),
-('Registered Public User', 'public@resqnet.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'general_public');
+CREATE TABLE IF NOT EXISTS `password_reset_tokens` (
+  `token` varchar(64) NOT NULL,
+  `user_id` int NOT NULL,
+  `expires_at` timestamp NOT NULL,
+  `used` tinyint(1) DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`token`),
+  KEY `idx_prt_user_expires` (`user_id`,`expires_at`),
+  CONSTRAINT `fk_password_reset_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
 
-INSERT INTO warnings (title, message, location, severity, status, issued_by, issued_at) VALUES
-('Heavy Rain Alert', 'Expect severe rainfall and possible flash floods in low-lying areas.', 'Kalutara District', 'high', 'published', 2, NOW()),
-('Landslide Watch', 'Ground instability observed near slope-side settlements. Stay alert.', 'Badulla District', 'medium', 'published', 2, NOW()),
-('Reservoir Spill Notice', 'Controlled spill release expected. Keep away from riverbanks.', 'Kandy District', 'critical', 'published', 1, NOW());
 
-INSERT INTO donation_requests (title, description, needed_location, target_amount, collected_amount, status, created_by, assigned_ngo) VALUES
-('Flood Relief Essentials', 'Immediate support needed for dry rations, hygiene kits, and temporary bedding for displaced families.', 'Kalutara District', 500000.00, 25000.00, 'open', 1, 3),
-('School Recovery Kits', 'Support children affected by recent floods with books, uniforms, and school supplies.', 'Gampaha District', 300000.00, 15000.00, 'open', 3, 3);
+-- 3. INFRASTRUCTURE TABLES (Depend on 'ngos')
+-- ---------------------------------------------------------
 
-INSERT INTO donations (donation_request_id, donor_id, donor_name, donor_email, amount, message) VALUES
-(1, 4, 'Registered Public User', 'public@resqnet.com', 25000.00, 'Stay strong. We are with you.'),
-(2, NULL, 'Anonymous Supporter', 'supporter@example.com', 15000.00, 'For affected children.');
+CREATE TABLE IF NOT EXISTS `collection_points` (
+  `collection_point_id` int NOT NULL AUTO_INCREMENT,
+  `ngo_id` int NOT NULL,
+  `name` varchar(150) NOT NULL,
+  `location_landmark` varchar(150) DEFAULT NULL,
+  `full_address` varchar(255) NOT NULL,
+  `contact_person` varchar(100) DEFAULT NULL,
+  `contact_number` varchar(20) DEFAULT NULL,
+  PRIMARY KEY (`collection_point_id`),
+  CONSTRAINT `fk_collection_point_ngo` FOREIGN KEY (`ngo_id`) REFERENCES `ngos` (`user_id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+
+-- 4. CORE MODULE TABLES (Depend on Profiles and Infrastructure)
+-- ---------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS `disaster_reports` (
+  `report_id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `reporter_name` varchar(100) NOT NULL,
+  `contact_number` varchar(20) NOT NULL,
+  `disaster_type` enum('Flood','Landslide','Fire','Earthquake','Tsunami','Other') NOT NULL,
+  `other_disaster_type` varchar(100) DEFAULT NULL,
+  `disaster_datetime` datetime NOT NULL,
+  `location` varchar(255) NOT NULL,
+  `proof_image_path` varchar(255) DEFAULT NULL,
+  `confirmation` tinyint(1) NOT NULL DEFAULT '1',
+  `status` enum('Pending','Approved','Rejected') DEFAULT 'Pending',
+  `description` text,
+  `submitted_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `verified_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`report_id`),
+  CONSTRAINT `fk_disaster_report_user` FOREIGN KEY (`user_id`) REFERENCES `general_user` (`user_id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `donations` (
+  `donation_id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int DEFAULT NULL,
+  `collection_point_id` int NOT NULL,
+  `name` varchar(150) NOT NULL,
+  `contact_number` varchar(20) NOT NULL,
+  `email` varchar(150) NOT NULL,
+  `address` varchar(255) NOT NULL,
+  `collection_date` date NOT NULL,
+  `time_slot` enum('9am–12pm','12pm–4pm','6pm–9pm') NOT NULL,
+  `special_notes` text,
+  `confirmation` tinyint(1) NOT NULL DEFAULT '1',
+  `status` enum('Pending','Received','Cancelled','Delivered') DEFAULT 'Pending',
+  `submitted_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `received_at` timestamp NULL DEFAULT NULL,
+  `cancelled_at` timestamp NULL DEFAULT NULL,
+  `delivered_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`donation_id`),
+  CONSTRAINT `fk_donations_collection_point` FOREIGN KEY (`collection_point_id`) REFERENCES `collection_points` (`collection_point_id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_donations_user` FOREIGN KEY (`user_id`) REFERENCES `general_user` (`user_id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `donation_requests` (
+  `request_id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `relief_center_name` varchar(150) NOT NULL,
+  `status` enum('Pending','Approved') DEFAULT 'Pending',
+  `special_notes` text,
+  `submitted_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `approved_at` timestamp NULL DEFAULT NULL,
+  `location` varchar(255) DEFAULT NULL,
+  `contact_number` varchar(20) DEFAULT NULL,
+  `situation` text,
+  PRIMARY KEY (`request_id`),
+  CONSTRAINT `fk_donation_request_user` FOREIGN KEY (`user_id`) REFERENCES `general_user` (`user_id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `volunteer_task` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `volunteer_id` int NOT NULL,
+  `disaster_id` int NOT NULL,
+  `role` varchar(100) DEFAULT NULL,
+  `date_assigned` datetime DEFAULT CURRENT_TIMESTAMP,
+  `status` varchar(50) DEFAULT 'assigned',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+
+-- 5. MAPPING & LOG TABLES (Many-to-Many Relationships)
+-- ---------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS `inventory` (
+  `inventory_id` int NOT NULL AUTO_INCREMENT,
+  `ngo_id` int NOT NULL,
+  `collection_point_id` int NOT NULL,
+  `item_id` int NOT NULL,
+  `quantity` int DEFAULT '0',
+  `status` enum('In Stock','Low on Stock','Out of Stock') GENERATED ALWAYS AS (
+    (case when (`quantity` = 0) then _utf8mb4'Out of Stock' 
+          when (`quantity` < 20) then _utf8mb4'Low on Stock' 
+          else _utf8mb4'In Stock' end)
+  ) STORED,
+  `last_updated` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`inventory_id`),
+  UNIQUE KEY `uq_inventory_ngo_cp_item` (`ngo_id`,`collection_point_id`,`item_id`),
+  CONSTRAINT `fk_inventory_collection_point` FOREIGN KEY (`collection_point_id`) REFERENCES `collection_points` (`collection_point_id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_inventory_item` FOREIGN KEY (`item_id`) REFERENCES `donation_items_catalog` (`item_id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_inventory_ngo` FOREIGN KEY (`ngo_id`) REFERENCES `ngos` (`user_id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `donation_inventory_log` (
+  `log_id` int NOT NULL AUTO_INCREMENT,
+  `donation_id` int NOT NULL,
+  `item_id` int NOT NULL,
+  `collection_point_id` int NOT NULL,
+  `quantity` int NOT NULL,
+  `action` enum('Received','Updated') NOT NULL,
+  `logged_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`log_id`),
+  CONSTRAINT `fk_log_collection` FOREIGN KEY (`collection_point_id`) REFERENCES `collection_points` (`collection_point_id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_log_donation` FOREIGN KEY (`donation_id`) REFERENCES `donations` (`donation_id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_log_item` FOREIGN KEY (`item_id`) REFERENCES `donation_items_catalog` (`item_id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `donation_items` (
+  `donation_item_id` int NOT NULL AUTO_INCREMENT,
+  `donation_id` int NOT NULL,
+  `item_id` int NOT NULL,
+  `quantity` int NOT NULL,
+  PRIMARY KEY (`donation_item_id`),
+  CONSTRAINT `fk_donation_items_catalog_item` FOREIGN KEY (`item_id`) REFERENCES `donation_items_catalog` (`item_id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_donation_items_donation` FOREIGN KEY (`donation_id`) REFERENCES `donations` (`donation_id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `donation_request_items` (
+  `request_item_id` int NOT NULL AUTO_INCREMENT,
+  `request_id` int NOT NULL,
+  `item_id` int NOT NULL,
+  `quantity` int DEFAULT '1',
+  PRIMARY KEY (`request_item_id`),
+  CONSTRAINT `fk_donation_items_catalog` FOREIGN KEY (`item_id`) REFERENCES `donation_items_catalog` (`item_id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_donation_items_request` FOREIGN KEY (`request_id`) REFERENCES `donation_requests` (`request_id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `skills_volunteers` (
+  `user_id` int NOT NULL,
+  `skill_id` int NOT NULL,
+  PRIMARY KEY (`user_id`,`skill_id`),
+  CONSTRAINT `fk_skills_volunteers_skill` FOREIGN KEY (`skill_id`) REFERENCES `skills` (`skill_id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_skills_volunteers_volunteer` FOREIGN KEY (`user_id`) REFERENCES `volunteers` (`user_id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `volunteer_preference_volunteers` (
+  `user_id` int NOT NULL,
+  `preference_id` int NOT NULL,
+  PRIMARY KEY (`user_id`,`preference_id`),
+  CONSTRAINT `fk_vpv_preference` FOREIGN KEY (`preference_id`) REFERENCES `volunteer_preferences` (`preference_id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_vpv_volunteer` FOREIGN KEY (`user_id`) REFERENCES `volunteers` (`user_id`) ON DELETE CASCADE
+) ENGINE=InnoDB;

@@ -1,60 +1,31 @@
-<div class="dashboard-header">
-    <h1>Grama Niladhari Dashboard</h1>
-    <p>Welcome back, <?= e($user['name']) ?>.</p>
-</div>
+<section class="welcome">
+    <h1>Welcome GN <?= e(auth_display_name()) ?>!</h1>
+    <div class="alert">
+        <span class="alert-icon" data-lucide="map-pin"></span>
+        <p>Your GN account is active. Keep division-level contact and service details current.</p>
+    </div>
+</section>
 
-<div class="stats-grid">
-    <div class="stat-card">
-        <div class="stat-number"><?= (int) $my_warning_count ?></div>
-        <div class="stat-label">Warnings Issued by You</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-number"><?= (int) $published_warning_count ?></div>
-        <div class="stat-label">Published Warnings (System)</div>
-    </div>
-</div>
+<section class="quick-actions" aria-label="Quick actions">
+    <article class="action-card">
+        <h3>GN Profile</h3>
+        <p>Update GN division details and service information.</p>
+        <a href="/profile" class="btn btn-primary">Edit Profile</a>
+    </article>
+    <article class="action-card">
+        <h3>Account Security</h3>
+        <p>Change your login credentials and contact email.</p>
+        <a href="/profile" class="btn">Manage Access</a>
+    </article>
+</section>
 
-<div class="card">
-    <div class="card-header">
-        <h2>Field Operations</h2>
+<section class="section-card" aria-label="GN account">
+    <h2>GN Account</h2>
+    <div class="form-grid-2">
+        <div><strong>Username</strong><br><span class="muted"><?= e($user['username']) ?></span></div>
+        <div><strong>Email</strong><br><span class="muted"><?= e($user['email']) ?></span></div>
+        <div><strong>GN Division</strong><br><span class="muted"><?= e($profile['gn_division'] ?? '-') ?></span></div>
+        <div><strong>Service Number</strong><br><span class="muted"><?= e($profile['service_number'] ?? '-') ?></span></div>
+        <div><strong>GN Division Number</strong><br><span class="muted"><?= e($profile['gn_division_number'] ?? '-') ?></span></div>
     </div>
-    <div class="card-body">
-        <p>Create and update location-specific warnings so communities can react quickly.</p>
-        <div class="quick-actions">
-            <a href="/dashboard/warnings" class="btn btn-primary">Manage Warnings</a>
-            <a href="/dashboard/warnings/create" class="btn btn-outline">Issue New Warning</a>
-        </div>
-    </div>
-</div>
-
-<div class="card">
-    <div class="card-header">
-        <h2>Recent Warnings</h2>
-    </div>
-    <div class="card-body">
-        <?php if (empty($warnings)): ?>
-            <p class="text-muted">No warnings yet.</p>
-        <?php else: ?>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Severity</th>
-                        <th>Location</th>
-                        <th>Title</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($warnings as $warning): ?>
-                        <tr>
-                            <td><span class="badge severity-<?= e($warning['severity']) ?>"><?= strtoupper(e($warning['severity'])) ?></span></td>
-                            <td><?= e($warning['location']) ?></td>
-                            <td><?= e($warning['title']) ?></td>
-                            <td><?= e(ucfirst($warning['status'])) ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        <?php endif; ?>
-    </div>
-</div>
+</section>

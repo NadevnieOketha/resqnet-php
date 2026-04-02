@@ -1,64 +1,32 @@
-<div class="dashboard-header">
-    <h1>NGO Dashboard</h1>
-    <p>Welcome back, <?= e($user['name']) ?>.</p>
-</div>
+<section class="welcome">
+    <h1>Welcome NGO <?= e(auth_display_name()) ?>!</h1>
+    <div class="alert">
+        <span class="alert-icon" data-lucide="building-2"></span>
+        <p>Your NGO account is active. Keep organization and contact details up to date.</p>
+    </div>
+</section>
 
-<div class="stats-grid">
-    <div class="stat-card">
-        <div class="stat-number"><?= (int) $my_request_count ?></div>
-        <div class="stat-label">Your Donation Appeals</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-number">LKR <?= number_format((float) $my_collected_total, 2) ?></div>
-        <div class="stat-label">Funds Collected for Your Appeals</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-number"><?= (int) $open_request_count ?></div>
-        <div class="stat-label">Open Appeals (System)</div>
-    </div>
-</div>
+<section class="quick-actions" aria-label="Quick actions">
+    <article class="action-card">
+        <h3>Organization Profile</h3>
+        <p>Update registration information and contact details.</p>
+        <a href="/profile" class="btn btn-primary">Edit Profile</a>
+    </article>
+    <article class="action-card">
+        <h3>Contact Credentials</h3>
+        <p>Manage login username and credentials safely.</p>
+        <a href="/profile" class="btn">Manage Access</a>
+    </article>
+</section>
 
-<div class="card">
-    <div class="card-header">
-        <h2>Response Coordination</h2>
+<section class="section-card" aria-label="Organization account">
+    <h2>Organization Account</h2>
+    <div class="form-grid-2">
+        <div><strong>Username</strong><br><span class="muted"><?= e($user['username']) ?></span></div>
+        <div><strong>Login Email</strong><br><span class="muted"><?= e($user['email']) ?></span></div>
+        <div><strong>Organization</strong><br><span class="muted"><?= e($profile['organization_name'] ?? '-') ?></span></div>
+        <div><strong>Registration No</strong><br><span class="muted"><?= e($profile['registration_number'] ?? '-') ?></span></div>
+        <div><strong>Years of Operation</strong><br><span class="muted"><?= e((string) ($profile['years_of_operation'] ?? '-')) ?></span></div>
+        <div><strong>Contact Person</strong><br><span class="muted"><?= e($profile['contact_person_name'] ?? '-') ?></span></div>
     </div>
-    <div class="card-body">
-        <p>Publish urgent donation appeals and keep progress transparent to contributors.</p>
-        <div class="quick-actions">
-            <a href="/dashboard/donations/manage" class="btn btn-primary">Manage Donation Appeals</a>
-            <a href="/dashboard/donations/create" class="btn btn-outline">Create New Appeal</a>
-        </div>
-    </div>
-</div>
-
-<div class="card">
-    <div class="card-header">
-        <h2>Recent Appeals</h2>
-    </div>
-    <div class="card-body">
-        <?php if (empty($requests)): ?>
-            <p class="text-muted">No donation appeals yet.</p>
-        <?php else: ?>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Location</th>
-                        <th>Progress</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($requests as $request): ?>
-                        <tr>
-                            <td><?= e($request['title']) ?></td>
-                            <td><?= e($request['needed_location']) ?></td>
-                            <td>LKR <?= number_format((float) $request['collected_amount'], 2) ?> / <?= number_format((float) $request['target_amount'], 2) ?></td>
-                            <td><?= e(ucfirst($request['status'])) ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        <?php endif; ?>
-    </div>
-</div>
+</section>

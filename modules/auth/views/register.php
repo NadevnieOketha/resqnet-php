@@ -1,185 +1,452 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Choose Role - <?= e(config('app.name')) ?></title>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link
-            href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
-            rel="stylesheet"
-        />
-        <script src="https://unpkg.com/lucide@latest" defer></script>
-        <style>
-            :root {
-                --bg: #f4f4f4;
-                --text: #1f1f1f;
-                --muted: #666;
-                --card-radius: 14px;
-                --yellow: #f6c40e;
-            }
-            * {
-                box-sizing: border-box;
-            }
-            body {
-                margin: 0;
-                font-family: "Plus Jakarta Sans", sans-serif;
-                background: var(--bg);
-                color: var(--text);
-            }
-            .page {
-                min-height: 100vh;
-                display: flex;
-                align-items: flex-start;
-                justify-content: center;
-                padding: 90px 24px 40px;
-            }
-            .wrapper {
-                width: 100%;
-                max-width: 1080px;
-            }
-            h1 {
-                text-align: center;
-                margin: 0 0 8px;
-                font-size: clamp(2rem, 3vw, 2.55rem);
-            }
-            .sub {
-                text-align: center;
-                margin: 0 0 48px;
-                color: var(--muted);
-                font-size: 1.1rem;
-            }
-            .flash {
-                max-width: 760px;
-                margin: 0 auto 24px;
-                border-radius: 10px;
-                padding: 12px 14px;
-                font-size: 0.9rem;
-                text-align: center;
-            }
-            .flash-error {
-                background: #fee2e2;
-                border: 1px solid #fecaca;
-                color: #991b1b;
-            }
-            .cards {
-                display: grid;
-                grid-template-columns: repeat(3, minmax(0, 1fr));
-                gap: 48px;
-            }
-            .card {
-                text-align: center;
-            }
-            .icon-wrap {
-                width: 92px;
-                height: 92px;
-                border-radius: 999px;
-                background: #e7e7e7;
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                margin-bottom: 16px;
-            }
-            .icon-wrap svg {
-                width: 42px;
-                height: 42px;
-                stroke-width: 1.75;
-            }
-            .card h2 {
-                margin: 0 0 6px;
-                font-size: 2rem;
-                font-weight: 700;
-            }
-            .card p {
-                margin: 0 auto 18px;
-                color: var(--muted);
-                line-height: 1.45;
-                max-width: 290px;
-                min-height: 64px;
-            }
-            .signup-btn {
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                width: 100%;
-                max-width: 230px;
-                height: 52px;
-                border-radius: 999px;
-                text-decoration: none;
-                background: var(--yellow);
-                color: #111;
-                font-weight: 700;
-                transition: filter 0.15s ease;
-            }
-            .signup-btn:hover {
-                filter: brightness(0.96);
-            }
-            .login-note {
-                margin-top: 28px;
-                text-align: center;
-                color: var(--muted);
-            }
-            .login-note a {
-                color: #111;
-                font-weight: 600;
-            }
-            @media (max-width: 980px) {
-                .cards {
-                    grid-template-columns: 1fr;
-                    gap: 24px;
-                    max-width: 420px;
-                    margin: 0 auto;
-                }
-                .card p {
-                    min-height: 0;
-                }
-            }
-        </style>
-    </head>
-    <body>
-        <main class="page">
-            <div class="wrapper">
-                <h1>Choose your role</h1>
-                <p class="sub">Select the role that best describes you to get started.</p>
+<?php
+$oldInput = $_SESSION["_old_input"] ?? [];
+$queryRole = trim((string) request_query("role", ""));
+$allowedRoles = ["general", "volunteer", "ngo"];
 
-                <?php if ($error = get_flash('error')): ?>
-                    <div class="flash flash-error"><?= e($error) ?></div>
-                <?php endif; ?>
+$selectedRole = null;
+if (
+    isset($oldInput["role"]) &&
+    in_array((string) $oldInput["role"], $allowedRoles, true)
+) {
+    $selectedRole = (string) $oldInput["role"];
+} elseif (in_array($queryRole, $allowedRoles, true)) {
+    $selectedRole = $queryRole;
+}
 
-                <section class="cards" aria-label="Role options">
-                    <article class="card">
-                        <div class="icon-wrap"><i data-lucide="user-round"></i></div>
-                        <h2>General User</h2>
-                        <p>Individuals seeking assistance or resources during a disaster.</p>
-                        <a class="signup-btn" href="/register/general">Sign Up</a>
-                    </article>
+$oldPreferences = is_array($oldInput["preferences"] ?? null)
+    ? array_map("strval", $oldInput["preferences"])
+    : [];
+$oldSkills = is_array($oldInput["skills"] ?? null)
+    ? array_map("strval", $oldInput["skills"])
+    : [];
 
-                    <article class="card">
-                        <div class="icon-wrap"><i data-lucide="building-2"></i></div>
-                        <h2>NGO</h2>
-                        <p>Organizations providing aid and support to affected communities.</p>
-                        <a class="signup-btn" href="/register/ngo">Sign Up</a>
-                    </article>
+$roleTitle = match ($selectedRole) {
+    "general" => "General User",
+    "volunteer" => "Volunteer",
+    "ngo" => "NGO",
+    default => "",
+};
+?>
 
-                    <article class="card">
-                        <div class="icon-wrap"><i data-lucide="users-round"></i></div>
-                        <h2>Volunteer</h2>
-                        <p>Individuals offering their time and skills to support relief efforts.</p>
-                        <a class="signup-btn" href="/register/volunteer">Sign Up</a>
-                    </article>
+<?php if ($selectedRole === null): ?>
+    <section class="role-layout" aria-labelledby="roleChooserHeading">
+        <div class="role-heading-wrap">
+            <h1 id="roleChooserHeading">Choose your role</h1>
+            <p>Select the role that best describes you to get started.</p>
+        </div>
+
+        <div class="choice-grid">
+            <article class="choice-card" aria-label="General User signup option">
+                <div class="choice-icon"><span data-lucide="user"></span></div>
+                <h2>General User</h2>
+                <p>Individuals seeking assistance or resources during a disaster.</p>
+                <div class="choice-actions">
+                    <a href="/register?role=general" class="btn btn-primary">Sign Up</a>
+                </div>
+            </article>
+
+            <article class="choice-card" aria-label="NGO signup option">
+                <div class="choice-icon"><span data-lucide="building-2"></span></div>
+                <h2>NGO</h2>
+                <p>Organizations providing aid and support to affected communities.</p>
+                <div class="choice-actions">
+                    <a href="/register?role=ngo" class="btn btn-primary">Sign Up</a>
+                </div>
+            </article>
+
+            <article class="choice-card" aria-label="Volunteer signup option">
+                <div class="choice-icon"><span data-lucide="users"></span></div>
+                <h2>Volunteer</h2>
+                <p>Individuals offering their time and skills to support relief efforts.</p>
+                <div class="choice-actions">
+                    <a href="/register?role=volunteer" class="btn btn-primary">Sign Up</a>
+                </div>
+            </article>
+        </div>
+    </section>
+<?php else: ?>
+    <div class="auth-panel auth-panel-wide">
+        <h1 class="page-heading">Sign up as <?= e($roleTitle) ?></h1>
+        <p class="page-subheading">Complete your account details to continue.</p>
+
+        <div class="form-actions" style="margin-bottom:1rem;">
+            <a href="/register" class="btn">Change Role</a>
+            <a href="/login" class="btn">Back to Login</a>
+        </div>
+
+        <form method="POST" action="/register" id="register-form"  novalidate>
+            <?= csrf_field() ?>
+            <input type="hidden" name="role" value="<?= e($selectedRole) ?>">
+
+            <?php if ($selectedRole === "general"): ?>
+                <section class="role-section" data-role="general">
+                    <h2>General Public Information</h2>
+
+                    <div class="form-grid-2">
+                        <div class="form-field">
+                            <label for="general_name">Name</label>
+                            <input class="input" type="text" id="general_name" name="name" value="<?= old(
+                                "name",
+                            ) ?>">
+                        </div>
+                        <div class="form-field">
+                            <label for="general_contact">Contact Number</label>
+                            <input class="input" type="text" id="general_contact" name="contact_number" value="<?= old(
+                                "contact_number",
+                            ) ?>">
+                        </div>
+                    </div>
+
+                    <div class="form-grid-3">
+                        <div class="form-field">
+                            <label for="general_house_no">House No</label>
+                            <input class="input" type="text" id="general_house_no" name="house_no" value="<?= old(
+                                "house_no",
+                            ) ?>">
+                        </div>
+                        <div class="form-field">
+                            <label for="general_street">Street</label>
+                            <input class="input" type="text" id="general_street" name="street" value="<?= old(
+                                "street",
+                            ) ?>">
+                        </div>
+                        <div class="form-field">
+                            <label for="general_city">City</label>
+                            <input class="input" type="text" id="general_city" name="city" value="<?= old(
+                                "city",
+                            ) ?>">
+                        </div>
+                    </div>
+
+                    <div class="form-grid-2">
+                        <div class="form-field">
+                            <label for="general_district">District</label>
+                            <select id="general_district" class="input district-select" name="district">
+                                <option value="">Select district</option>
+                                <?php foreach (
+                                    $districts ?? []
+                                    as $district
+                                ): ?>
+                                    <option value="<?= e($district) ?>" <?= old(
+    "district",
+) === $district
+    ? "selected"
+    : "" ?>><?= e($district) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="form-field">
+                            <label for="general_gn">Grama Niladhari Division</label>
+                            <select id="general_gn" class="input gn-select" name="gn_division" data-selected="<?= e(
+                                old("gn_division"),
+                            ) ?>"></select>
+                        </div>
+                    </div>
+
+                    <div class="form-field gn-other-wrapper" style="display:none;">
+                        <label for="general_gn_other">Other GN Division</label>
+                        <input class="input gn-other-input" type="text" id="general_gn_other" name="gn_division_other" value="<?= old(
+                            "gn_division_other",
+                        ) ?>">
+                    </div>
+
+                    <div class="form-field">
+                        <label for="general_email">Email</label>
+                        <input class="input" type="email" id="general_email" name="email" value="<?= old(
+                            "email",
+                        ) ?>">
+                    </div>
                 </section>
+            <?php endif; ?>
 
-                <p class="login-note">Already have an account? <a href="/login">Log in</a></p>
+            <?php if ($selectedRole === "volunteer"): ?>
+                <section class="role-section" data-role="volunteer">
+                    <h2>Volunteer Information</h2>
+
+                    <div class="form-grid-3">
+                        <div class="form-field">
+                            <label for="volunteer_name">Name</label>
+                            <input class="input" type="text" id="volunteer_name" name="name" value="<?= old(
+                                "name",
+                            ) ?>">
+                        </div>
+                        <div class="form-field">
+                            <label for="volunteer_age">Age</label>
+                            <input class="input" type="number" id="volunteer_age" name="age" value="<?= old(
+                                "age",
+                            ) ?>" min="16" max="100">
+                        </div>
+                        <div class="form-field">
+                            <label for="volunteer_gender">Gender</label>
+                            <select id="volunteer_gender" class="input" name="gender">
+                                <option value="">Select gender</option>
+                                <?php foreach ($genders ?? [] as $gender): ?>
+                                    <option value="<?= e($gender) ?>" <?= old(
+    "gender",
+) === $gender
+    ? "selected"
+    : "" ?>><?= ucfirst(e($gender)) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="volunteer_contact">Contact Number</label>
+                        <input class="input" type="text" id="volunteer_contact" name="contact_number" value="<?= old(
+                            "contact_number",
+                        ) ?>">
+                    </div>
+
+                    <div class="form-grid-3">
+                        <div class="form-field">
+                            <label for="volunteer_house_no">House No</label>
+                            <input class="input" type="text" id="volunteer_house_no" name="house_no" value="<?= old(
+                                "house_no",
+                            ) ?>">
+                        </div>
+                        <div class="form-field">
+                            <label for="volunteer_street">Street</label>
+                            <input class="input" type="text" id="volunteer_street" name="street" value="<?= old(
+                                "street",
+                            ) ?>">
+                        </div>
+                        <div class="form-field">
+                            <label for="volunteer_city">City</label>
+                            <input class="input" type="text" id="volunteer_city" name="city" value="<?= old(
+                                "city",
+                            ) ?>">
+                        </div>
+                    </div>
+
+                    <div class="form-grid-2">
+                        <div class="form-field">
+                            <label for="volunteer_district">District</label>
+                            <select id="volunteer_district" class="input district-select" name="district">
+                                <option value="">Select district</option>
+                                <?php foreach (
+                                    $districts ?? []
+                                    as $district
+                                ): ?>
+                                    <option value="<?= e($district) ?>" <?= old(
+    "district",
+) === $district
+    ? "selected"
+    : "" ?>><?= e($district) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="form-field">
+                            <label for="volunteer_gn">Grama Niladhari Division</label>
+                            <select id="volunteer_gn" class="input gn-select" name="gn_division" data-selected="<?= e(
+                                old("gn_division"),
+                            ) ?>"></select>
+                        </div>
+                    </div>
+
+                    <div class="form-field gn-other-wrapper" style="display:none;">
+                        <label for="volunteer_gn_other">Other GN Division</label>
+                        <input class="input gn-other-input" type="text" id="volunteer_gn_other" name="gn_division_other" value="<?= old(
+                            "gn_division_other",
+                        ) ?>">
+                    </div>
+
+                    <div class="form-field">
+                        <label for="volunteer_email">Email</label>
+                        <input class="input" type="email" id="volunteer_email" name="email" value="<?= old(
+                            "email",
+                        ) ?>">
+                    </div>
+
+                    <div class="form-field">
+                        <label>Volunteer Preferences</label>
+                        <div class="checkbox-grid">
+                            <?php foreach (
+                                $volunteer_preferences ?? []
+                                as $preference
+                            ): ?>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="preferences[]" value="<?= e(
+                                        $preference,
+                                    ) ?>" <?= in_array(
+    $preference,
+    $oldPreferences,
+    true,
+)
+    ? "checked"
+    : "" ?>>
+                                    <span><?= e($preference) ?></span>
+                                </label>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label>Specialized Skills</label>
+                        <div class="checkbox-grid">
+                            <?php foreach (
+                                $volunteer_skills ?? []
+                                as $skill
+                            ): ?>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="skills[]" value="<?= e(
+                                        $skill,
+                                    ) ?>" <?= in_array($skill, $oldSkills, true)
+    ? "checked"
+    : "" ?>>
+                                    <span><?= e($skill) ?></span>
+                                </label>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                </section>
+            <?php endif; ?>
+
+            <?php if ($selectedRole === "ngo"): ?>
+                <section class="role-section" data-role="ngo">
+                    <h2>NGO Information</h2>
+
+                    <div class="form-field">
+                        <label for="ngo_org_name">Organization Name</label>
+                        <input class="input" type="text" id="ngo_org_name" name="organization_name" value="<?= old(
+                            "organization_name",
+                        ) ?>">
+                    </div>
+
+                    <div class="form-grid-2">
+                        <div class="form-field">
+                            <label for="ngo_reg_no">Registration Number</label>
+                            <input class="input" type="text" id="ngo_reg_no" name="registration_number" value="<?= old(
+                                "registration_number",
+                            ) ?>">
+                        </div>
+                        <div class="form-field">
+                            <label for="ngo_years">Years of Operation</label>
+                            <input class="input" type="number" id="ngo_years" name="years_of_operation" value="<?= old(
+                                "years_of_operation",
+                            ) ?>" min="0">
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="ngo_address">Organization Address</label>
+                        <textarea class="input" id="ngo_address" name="address" rows="3"><?= old(
+                            "address",
+                        ) ?></textarea>
+                    </div>
+
+                    <div class="form-grid-2">
+                        <div class="form-field">
+                            <label for="ngo_contact_name">Contact Person Name</label>
+                            <input class="input" type="text" id="ngo_contact_name" name="contact_person_name" value="<?= old(
+                                "contact_person_name",
+                            ) ?>">
+                        </div>
+                        <div class="form-field">
+                            <label for="ngo_contact_tel">Contact Person Telephone</label>
+                            <input class="input" type="text" id="ngo_contact_tel" name="contact_person_telephone" value="<?= old(
+                                "contact_person_telephone",
+                            ) ?>">
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="ngo_contact_email">Contact Person Email (Login Email)</label>
+                        <input class="input" type="email" id="ngo_contact_email" name="contact_person_email" value="<?= old(
+                            "contact_person_email",
+                        ) ?>">
+                    </div>
+                </section>
+            <?php endif; ?>
+
+            <section class="role-section" data-role="credentials" style="display:block; margin-top:1rem;">
+                <h2>Account Credentials</h2>
+
+                <div class="form-field">
+                    <label for="username">Username</label>
+                    <input class="input" type="text" id="username" name="username" value="<?= old(
+                        "username",
+                    ) ?>" required>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-field">
+                        <label for="password">Password</label>
+                        <input class="input" type="password" id="password" name="password" minlength="6" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="password_confirmation">Confirm Password</label>
+                        <input class="input" type="password" id="password_confirmation" name="password_confirmation" minlength="6" required>
+                    </div>
+                </div>
+            </section>
+
+            <div class="form-actions" style="margin-top:1.2rem;">
+                <button type="submit" class="btn btn-primary">Sign Up</button>
             </div>
-        </main>
+        </form>
+    </div>
 
+    <?php if (in_array($selectedRole, ["general", "volunteer"], true)): ?>
         <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                if (window.lucide) {
-                    window.lucide.createIcons();
+        (() => {
+            const divisionMap = <?= json_encode(
+                $gn_divisions ?? [],
+                JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES,
+            ) ?>;
+            const districtSelect = document.querySelector('.district-select');
+            const gnSelect = document.querySelector('.gn-select');
+            const gnOtherWrap = document.querySelector('.gn-other-wrapper');
+            const gnOtherInput = document.querySelector('.gn-other-input');
+
+            if (!districtSelect || !gnSelect || !gnOtherWrap || !gnOtherInput) {
+                return;
+            }
+
+            const setOtherVisibility = () => {
+                const showOther = gnSelect.value === '__other__';
+                gnOtherWrap.style.display = showOther ? 'block' : 'none';
+                gnOtherInput.disabled = !showOther;
+            };
+
+            const populateGnDivisions = () => {
+                const district = districtSelect.value;
+                const selected = gnSelect.dataset.selected || '';
+                const options = divisionMap[district] || [];
+
+                gnSelect.innerHTML = '<option value="">Select GN Division</option>';
+
+                options.forEach((name) => {
+                    const option = document.createElement('option');
+                    option.value = name;
+                    option.textContent = name;
+                    if (selected === name) {
+                        option.selected = true;
+                    }
+                    gnSelect.appendChild(option);
+                });
+
+                const otherOption = document.createElement('option');
+                otherOption.value = '__other__';
+                otherOption.textContent = 'Other (type manually)';
+                gnSelect.appendChild(otherOption);
+
+                if (selected && !options.includes(selected)) {
+                    gnSelect.value = '__other__';
+                    gnOtherInput.value = selected;
                 }
+
+                setOtherVisibility();
+            };
+
+            districtSelect.addEventListener('change', () => {
+                gnSelect.dataset.selected = '';
+                populateGnDivisions();
             });
+
+            gnSelect.addEventListener('change', setOtherVisibility);
+            populateGnDivisions();
+        })();
         </script>
-    </body>
-</html>
+    <?php endif; ?>
+<?php endif; ?>
