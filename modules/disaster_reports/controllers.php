@@ -131,10 +131,20 @@ function disaster_reports_store_action(): void
 
 function disaster_reports_review_index(): void
 {
+    $approvedReports = disaster_reports_list_approved();
+    $assignedCounts = [];
+    foreach ($approvedReports as $report) {
+        $reportId = (int) ($report['report_id'] ?? 0);
+        if ($reportId > 0) {
+            $assignedCounts[$reportId] = disaster_reports_assigned_volunteer_count($reportId);
+        }
+    }
+
     view('disaster_reports::review', [
         'breadcrumb' => 'Disaster Reports',
         'pending_reports' => disaster_reports_list_pending(),
-        'approved_reports' => disaster_reports_list_approved(),
+        'approved_reports' => $approvedReports,
+        'assigned_counts' => $assignedCounts,
     ], 'dashboard');
 }
 
@@ -150,7 +160,20 @@ function disaster_reports_verify_action(string $reportId): void
 
     $updated = disaster_reports_update_status($id, 'Approved');
     if ($updated > 0) {
-        flash('success', 'Report verified successfully.');
+        $report = disaster_reports_find_by_id($id);
+        $notifyResult = disaster_reports_notify_grama_niladhari($report ?: []);
+
+        $message = 'Report verified successfully.';
+        if (($notifyResult['sent'] ?? 0) > 0) {
+            $message .= ' ' . (int) $notifyResult['sent'] . ' Grama Niladhari contact(s) notified.';
+        } else {
+            $message .= ' No matching Grama Niladhari contact was notified.';
+        }
+        flash('success', $message);
+
+        if (($notifyResult['failed'] ?? 0) > 0) {
+            flash('warning', (int) $notifyResult['failed'] . ' GN notification email(s) failed to send.');
+        }
     } else {
         flash('warning', 'Unable to verify this report. It may already be reviewed.');
     }
@@ -176,6 +199,188 @@ function disaster_reports_reject_action(string $reportId): void
     }
 
     redirect('/dashboard/reports');
+}
+
+function disaster_reports_assign_volunteers_action(string $reportId): void
+{
+    csrf_check();
+
+    $id = (int) $reportId;
+    if ($id <= 0) {
+        flash('error', 'Invalid report id.');
+        redirect('/dashboard/reports');
+    }
+
+    $result = disaster_reports_assign_volunteers_to_report($id, 3);
+    $assigned = $result['assigned'] ?? [];
+
+    if (!empty($assigned)) {
+        $report = $result['report'] ?? disaster_reports_find_by_id($id);
+        $notified = 0;
+
+        foreach ($assigned as $volunteer) {
+            $email = trim((string) ($volunteer['email'] ?? ''));
+            if ($email === '') {
+                continue;
+            }
+
+            $subject = 'resqnet volunteer task assignment';
+            $html = '<p>Hello ' . e((string) ($volunteer['name'] ?? 'Volunteer')) . ',</p>'
+                . '<p>You have been assigned a disaster response task.</p>'
+                . '<p>Report ID: <strong>#' . (int) $id . '</strong></p>'
+                . '<p>Type: <strong>' . e(disaster_reports_disaster_label((array) $report)) . '</strong></p>'
+                . '<p>Location: <strong>' . e((string) (($report['district'] ?? '') . ' / ' . ($report['gn_division'] ?? ''))) . '</strong></p>'
+                . '<p>Please check your dashboard tasks page.</p>';
+
+            if (mail_send($email, $subject, $html)) {
+                $notified++;
+            }
+        }
+
+        $message = (string) ($result['message'] ?? 'Volunteers assigned.');
+        if ($notified > 0) {
+            $message .= ' ' . $notified . ' volunteer notification email(s) sent.';
+        }
+        flash('success', $message);
+    } else {
+        flash('warning', (string) ($result['message'] ?? 'No volunteers were assigned.'));
+    }
+
+    redirect('/dashboard/reports');
+}
+
+function disaster_reports_volunteer_tasks_index(): void
+{
+    $volunteerId = (int) auth_id();
+    $tasks = disaster_reports_list_tasks_for_volunteer($volunteerId);
+
+    view('disaster_reports::volunteer_tasks', [
+        'breadcrumb' => 'Assigned Tasks',
+        'tasks' => $tasks,
+        'task_counts' => disaster_reports_task_status_counters($tasks),
+    ], 'dashboard');
+}
+
+function disaster_reports_volunteer_task_status_action(string $taskId): void
+{
+    csrf_check();
+
+    $id = (int) $taskId;
+    $nextStatus = trim((string) request_input('next_status', ''));
+    $note = trim((string) request_input('update_note', ''));
+
+    $allowed = ['Accepted', 'Declined', 'In Progress', 'Completed'];
+    if ($id <= 0 || !in_array($nextStatus, $allowed, true)) {
+        flash('error', 'Invalid task update request.');
+        redirect('/dashboard/volunteer-tasks');
+    }
+
+    $result = disaster_reports_update_volunteer_task_status($id, (int) auth_id(), $nextStatus);
+    if (!$result['ok']) {
+        flash('error', (string) ($result['message'] ?? 'Unable to update task status.'));
+        redirect('/dashboard/volunteer-tasks');
+    }
+
+    if ($note !== '') {
+        disaster_reports_log_field_update($id, (int) auth_id(), $note);
+    }
+
+    flash('success', (string) ($result['message'] ?? 'Task status updated.'));
+    redirect('/dashboard/volunteer-tasks');
+}
+
+function disaster_reports_dmc_tasks_index(): void
+{
+    $statusFilter = trim((string) request_query('status', ''));
+    $tasks = disaster_reports_list_all_tasks_for_dmc($statusFilter !== '' ? $statusFilter : null);
+
+    view('disaster_reports::dmc_tasks', [
+        'breadcrumb' => 'Volunteer Assignments',
+        'tasks' => $tasks,
+        'status_filter' => $statusFilter,
+        'task_counts' => disaster_reports_task_status_counters($tasks),
+    ], 'dashboard');
+}
+
+function disaster_reports_dmc_task_reassign_action(string $taskId): void
+{
+    csrf_check();
+
+    $id = (int) $taskId;
+    $newVolunteerId = (int) request_input('new_volunteer_id', 0);
+
+    if ($id <= 0 || $newVolunteerId <= 0) {
+        flash('error', 'Invalid reassignment request.');
+        redirect('/dashboard/admin/volunteer-tasks');
+    }
+
+    $result = disaster_reports_reassign_task($id, $newVolunteerId);
+    if ($result['ok']) {
+        flash('success', (string) $result['message']);
+    } else {
+        flash('error', (string) $result['message']);
+    }
+
+    redirect('/dashboard/admin/volunteer-tasks');
+}
+
+function disaster_reports_dmc_task_verify_action(string $taskId): void
+{
+    csrf_check();
+
+    $id = (int) $taskId;
+    if ($id <= 0) {
+        flash('error', 'Invalid task id.');
+        redirect('/dashboard/admin/volunteer-tasks');
+    }
+
+    $result = disaster_reports_verify_task_completion($id);
+    if ($result['ok']) {
+        flash('success', (string) $result['message']);
+    } else {
+        flash('warning', (string) $result['message']);
+    }
+
+    redirect('/dashboard/admin/volunteer-tasks');
+}
+
+function disaster_reports_notify_grama_niladhari(array $report): array
+{
+    $gnDivision = trim((string) ($report['gn_division'] ?? ''));
+    if ($gnDivision === '') {
+        return ['sent' => 0, 'failed' => 0];
+    }
+
+    $contacts = disaster_reports_find_gn_contacts_for_division($gnDivision);
+    if (empty($contacts)) {
+        return ['sent' => 0, 'failed' => 0];
+    }
+
+    $sent = 0;
+    $failed = 0;
+
+    foreach ($contacts as $contact) {
+        $email = trim((string) ($contact['email'] ?? ''));
+        if ($email === '') {
+            continue;
+        }
+
+        $subject = 'resqnet disaster report verified for your GN division';
+        $html = '<p>Hello ' . e((string) ($contact['name'] ?? 'GN Officer')) . ',</p>'
+            . '<p>A disaster report has been verified by DMC for your GN division.</p>'
+            . '<p>Report ID: <strong>#' . (int) ($report['report_id'] ?? 0) . '</strong></p>'
+            . '<p>Type: <strong>' . e(disaster_reports_disaster_label($report)) . '</strong></p>'
+            . '<p>Date/Time: <strong>' . e((string) ($report['disaster_datetime'] ?? '-')) . '</strong></p>'
+            . '<p>Location: <strong>' . e((string) (($report['district'] ?? '') . ' / ' . ($report['gn_division'] ?? '') . (($report['location'] ?? '') !== '' ? ' / ' . $report['location'] : ''))) . '</strong></p>';
+
+        if (mail_send($email, $subject, $html)) {
+            $sent++;
+        } else {
+            $failed++;
+        }
+    }
+
+    return ['sent' => $sent, 'failed' => $failed];
 }
 
 function disaster_reports_handle_image_upload(string $fieldName): array

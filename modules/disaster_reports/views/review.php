@@ -98,13 +98,15 @@
           <th>Disaster Type</th>
           <th>Description/Notes</th>
           <th>Verified At</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
       <?php if (empty($approved_reports ?? [])): ?>
-        <tr><td colspan="7" class="empty-state">No approved reports yet.</td></tr>
+        <tr><td colspan="8" class="empty-state">No approved reports yet.</td></tr>
       <?php else: ?>
         <?php foreach (($approved_reports ?? []) as $report): ?>
+          <?php $assignedCount = (int) (($assigned_counts ?? [])[(int) ($report['report_id'] ?? 0)] ?? 0); ?>
           <tr>
             <td data-label="Report ID">#<?= (int) $report['report_id'] ?></td>
             <td data-label="Reported By" class="reported-by">
@@ -119,6 +121,15 @@
             <td data-label="Disaster Type" class="type-strong"><?= e(disaster_reports_disaster_label($report)) ?></td>
             <td data-label="Description/Notes"><?= e((string) ($report['description'] ?? '-')) ?></td>
             <td data-label="Verified At"><?= e((string) ($report['verified_at'] ?? '-')) ?></td>
+            <td data-label="Actions">
+              <div class="action-pills" style="flex-direction:column;align-items:flex-start;gap:0.4rem;">
+                <form method="POST" action="/dashboard/reports/<?= (int) $report['report_id'] ?>/assign-volunteers" class="inline-form">
+                  <?= csrf_field() ?>
+                  <button type="submit" class="pill"><span data-lucide="user-plus"></span><span>Assign volunteers</span></button>
+                </form>
+                <small style="color:#666;">Assigned so far: <?= $assignedCount ?></small>
+              </div>
+            </td>
           </tr>
         <?php endforeach; ?>
       <?php endif; ?>

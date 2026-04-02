@@ -32,6 +32,16 @@ route('POST', '/report-disaster',                 'disaster_reports_store_action
 route('GET',  '/dashboard/reports',               'disaster_reports_review_index',  ['middleware_auth', fn() => middleware_role('dmc')]);
 route('POST', '/dashboard/reports/{reportId}/verify', 'disaster_reports_verify_action', ['middleware_auth', fn() => middleware_role('dmc')]);
 route('POST', '/dashboard/reports/{reportId}/reject', 'disaster_reports_reject_action', ['middleware_auth', fn() => middleware_role('dmc')]);
+route('POST', '/dashboard/reports/{reportId}/assign-volunteers', 'disaster_reports_assign_volunteers_action', ['middleware_auth', fn() => middleware_role('dmc')]);
+
+// Volunteer task lifecycle
+route('GET',  '/dashboard/volunteer-tasks',            'disaster_reports_volunteer_tasks_index', ['middleware_auth', fn() => middleware_role('volunteer')]);
+route('POST', '/dashboard/volunteer-tasks/{taskId}/status', 'disaster_reports_volunteer_task_status_action', ['middleware_auth', fn() => middleware_role('volunteer')]);
+
+// DMC assignment oversight
+route('GET',  '/dashboard/admin/volunteer-tasks',               'disaster_reports_dmc_tasks_index', ['middleware_auth', fn() => middleware_role('dmc')]);
+route('POST', '/dashboard/admin/volunteer-tasks/{taskId}/reassign', 'disaster_reports_dmc_task_reassign_action', ['middleware_auth', fn() => middleware_role('dmc')]);
+route('POST', '/dashboard/admin/volunteer-tasks/{taskId}/verify',   'disaster_reports_dmc_task_verify_action', ['middleware_auth', fn() => middleware_role('dmc')]);
 
 // DMC Auth Operations
 route('GET',  '/dashboard/admin/pending',                        'auth_dmc_pending_approvals',         ['middleware_auth', fn() => middleware_role('dmc')]);

@@ -126,3 +126,450 @@ function disaster_reports_disaster_label(array $report): string
 
     return $type;
 }
+
+function disaster_reports_find_by_id(int $reportId): ?array
+{
+    return db_fetch(
+        'SELECT report_id, reporter_name, contact_number, disaster_type, other_disaster_type,
+                disaster_datetime, district, gn_division, location, description, status, submitted_at, verified_at
+         FROM disaster_reports
+         WHERE report_id = ?
+         LIMIT 1',
+        [$reportId]
+    );
+}
+
+function disaster_reports_find_gn_contacts_for_division(string $gnDivision): array
+{
+    $trimmed = trim($gnDivision);
+    if ($trimmed === '') {
+        return [];
+    }
+
+    return db_fetch_all(
+        "SELECT u.user_id, u.email, g.name, g.gn_division
+         FROM grama_niladhari g
+         INNER JOIN users u ON u.user_id = g.user_id
+         WHERE u.role = 'grama_niladhari'
+           AND u.active = 1
+           AND g.gn_division = ?
+         ORDER BY g.name ASC",
+        [$trimmed]
+    );
+}
+
+function disaster_reports_assigned_volunteer_count(int $reportId): int
+{
+    $row = db_fetch('SELECT COUNT(*) AS cnt FROM volunteer_task WHERE disaster_id = ?', [$reportId]);
+    return (int) ($row['cnt'] ?? 0);
+}
+
+function disaster_reports_assignment_role_for_type(string $disasterType): string
+{
+    return match ($disasterType) {
+        'Flood' => 'Flood Response',
+        'Landslide' => 'Landslide Response',
+        'Fire' => 'Fire Support',
+        'Earthquake' => 'Urban Search & Rescue',
+        'Tsunami' => 'Coastal Response',
+        default => 'Disaster Response',
+    };
+}
+
+function disaster_reports_priority_skills_for_type(string $disasterType): array
+{
+    return match ($disasterType) {
+        'Flood' => ['Swimming / Lifesaving', 'Rescue & Handling', 'Search & Rescue', 'Disaster Management Training'],
+        'Landslide' => ['Search & Rescue', 'Rescue & Handling', 'First Aid Certified', 'Disaster Management Training'],
+        'Fire' => ['Firefighting', 'First Aid Certified', 'Medical Professional'],
+        'Earthquake' => ['Search & Rescue', 'Medical Professional', 'First Aid Certified', 'Disaster Management Training'],
+        'Tsunami' => ['Swimming / Lifesaving', 'Search & Rescue', 'Medical Professional'],
+        default => [],
+    };
+}
+
+function disaster_reports_fetch_assignment_candidates(string $district = ''): array
+{
+    $params = [];
+    $districtSql = '';
+
+    if (trim($district) !== '') {
+        $districtSql = 'AND v.district = ?';
+        $params[] = trim($district);
+    }
+
+    return db_fetch_all(
+        "SELECT v.user_id,
+                v.name,
+                v.district,
+                v.gn_division,
+                u.email,
+                (
+                    SELECT COUNT(*)
+                    FROM volunteer_task vt
+                    WHERE vt.volunteer_id = v.user_id
+                      AND vt.status IN ('Pending', 'Assigned', 'Accepted', 'In Progress')
+                ) AS active_tasks,
+                (
+                    SELECT GROUP_CONCAT(DISTINCT s.skill_name SEPARATOR '||')
+                    FROM skills_volunteers sv
+                    INNER JOIN skills s ON s.skill_id = sv.skill_id
+                    WHERE sv.user_id = v.user_id
+                ) AS skills
+         FROM volunteers v
+         INNER JOIN users u ON u.user_id = v.user_id
+         WHERE u.role = 'volunteer'
+           AND u.active = 1
+           {$districtSql}
+         ORDER BY v.user_id ASC",
+        $params
+    );
+}
+
+function disaster_reports_assign_volunteers_to_report(int $reportId, int $limit = 3): array
+{
+    $report = disaster_reports_find_by_id($reportId);
+    if (!$report) {
+        return ['assigned' => [], 'message' => 'Disaster report not found.'];
+    }
+
+    if (($report['status'] ?? '') !== 'Approved') {
+        return ['assigned' => [], 'message' => 'Only approved reports can be assigned.'];
+    }
+
+    $existing = db_fetch_all('SELECT volunteer_id FROM volunteer_task WHERE disaster_id = ?', [$reportId]);
+    $existingIds = array_map(static fn(array $row): int => (int) ($row['volunteer_id'] ?? 0), $existing);
+    $existingIds = array_values(array_filter($existingIds, static fn(int $id): bool => $id > 0));
+
+    $district = (string) ($report['district'] ?? '');
+    $gnDivision = (string) ($report['gn_division'] ?? '');
+    $candidates = disaster_reports_fetch_assignment_candidates($district);
+
+    if (empty($candidates)) {
+        $candidates = disaster_reports_fetch_assignment_candidates('');
+    }
+
+    $prioritySkills = disaster_reports_priority_skills_for_type((string) ($report['disaster_type'] ?? ''));
+    $priorityMap = array_flip($prioritySkills);
+
+    $scored = [];
+    foreach ($candidates as $candidate) {
+        $userId = (int) ($candidate['user_id'] ?? 0);
+        if ($userId <= 0) {
+            continue;
+        }
+        if (in_array($userId, $existingIds, true)) {
+            continue;
+        }
+
+        $candidateSkills = (string) ($candidate['skills'] ?? '');
+        $skillList = $candidateSkills !== '' ? explode('||', $candidateSkills) : [];
+
+        $score = 0;
+        if (($candidate['district'] ?? '') === $district) {
+            $score += 2;
+        }
+        if (($candidate['gn_division'] ?? '') === $gnDivision) {
+            $score += 3;
+        }
+
+        foreach ($skillList as $skill) {
+            if (isset($priorityMap[$skill])) {
+                $score += 2;
+            }
+        }
+
+        $activeTasks = (int) ($candidate['active_tasks'] ?? 0);
+        if ($activeTasks === 0) {
+            $score += 1;
+        }
+
+        $candidate['score'] = $score;
+        $candidate['active_tasks'] = $activeTasks;
+        $scored[] = $candidate;
+    }
+
+    usort($scored, static function (array $a, array $b): int {
+        $scoreCmp = ((int) ($b['score'] ?? 0)) <=> ((int) ($a['score'] ?? 0));
+        if ($scoreCmp !== 0) {
+            return $scoreCmp;
+        }
+
+        $loadCmp = ((int) ($a['active_tasks'] ?? 0)) <=> ((int) ($b['active_tasks'] ?? 0));
+        if ($loadCmp !== 0) {
+            return $loadCmp;
+        }
+
+        return ((int) ($a['user_id'] ?? 0)) <=> ((int) ($b['user_id'] ?? 0));
+    });
+
+    $selected = array_slice($scored, 0, max(1, $limit));
+    if (empty($selected)) {
+        return ['assigned' => [], 'message' => 'No eligible volunteers were found for assignment.'];
+    }
+
+    $assignmentRole = disaster_reports_assignment_role_for_type((string) ($report['disaster_type'] ?? ''));
+    $assigned = [];
+
+    foreach ($selected as $candidate) {
+        $volunteerId = (int) ($candidate['user_id'] ?? 0);
+        if ($volunteerId <= 0) {
+            continue;
+        }
+
+        db_query(
+            'INSERT INTO volunteer_task (volunteer_id, disaster_id, role, date_assigned, status)
+             VALUES (?, ?, ?, NOW(), ?)',
+            [$volunteerId, $reportId, $assignmentRole, 'Assigned']
+        );
+
+        $assigned[] = [
+            'user_id' => $volunteerId,
+            'name' => (string) ($candidate['name'] ?? 'Volunteer'),
+            'email' => (string) ($candidate['email'] ?? ''),
+        ];
+    }
+
+    return [
+        'assigned' => $assigned,
+        'message' => count($assigned) . ' volunteer(s) assigned successfully.',
+        'report' => $report,
+    ];
+}
+
+function disaster_reports_list_tasks_for_volunteer(int $volunteerId): array
+{
+    return db_fetch_all(
+        "SELECT vt.id,
+                vt.role,
+                vt.status,
+                vt.date_assigned,
+                dr.report_id,
+                dr.disaster_type,
+                dr.other_disaster_type,
+                dr.disaster_datetime,
+                dr.district,
+                dr.gn_division,
+                dr.location,
+                dr.description
+         FROM volunteer_task vt
+         INNER JOIN disaster_reports dr ON dr.report_id = vt.disaster_id
+         WHERE vt.volunteer_id = ?
+         ORDER BY vt.date_assigned DESC, vt.id DESC",
+        [$volunteerId]
+    );
+}
+
+function disaster_reports_task_status_counters(array $rows): array
+{
+    $counters = [
+        'pending' => 0,
+        'assigned' => 0,
+        'accepted' => 0,
+        'in_progress' => 0,
+        'completed' => 0,
+        'verified' => 0,
+        'declined' => 0,
+    ];
+
+    foreach ($rows as $row) {
+        $status = strtolower((string) ($row['status'] ?? ''));
+        $key = str_replace(' ', '_', $status);
+        if (array_key_exists($key, $counters)) {
+            $counters[$key]++;
+        }
+    }
+
+    return $counters;
+}
+
+function disaster_reports_update_volunteer_task_status(int $taskId, int $volunteerId, string $nextStatus): array
+{
+    $task = db_fetch(
+        'SELECT id, status FROM volunteer_task WHERE id = ? AND volunteer_id = ? LIMIT 1',
+        [$taskId, $volunteerId]
+    );
+
+    if (!$task) {
+        return ['ok' => false, 'message' => 'Task not found.'];
+    }
+
+    $current = (string) ($task['status'] ?? '');
+    $transitions = [
+        'Pending' => ['Assigned', 'Accepted', 'Declined'],
+        'Assigned' => ['Accepted', 'Declined'],
+        'Accepted' => ['In Progress', 'Declined'],
+        'In Progress' => ['Completed'],
+        'Completed' => [],
+        'Verified' => [],
+        'Declined' => ['Assigned'],
+    ];
+
+    $allowed = $transitions[$current] ?? [];
+    if (!in_array($nextStatus, $allowed, true)) {
+        return ['ok' => false, 'message' => 'Invalid task status transition.'];
+    }
+
+    $affected = db_query(
+        'UPDATE volunteer_task SET status = ? WHERE id = ? AND volunteer_id = ? LIMIT 1',
+        [$nextStatus, $taskId, $volunteerId]
+    )->rowCount();
+
+    if ($affected <= 0) {
+        return ['ok' => false, 'message' => 'Unable to update task status.'];
+    }
+
+    return ['ok' => true, 'message' => 'Task status updated to ' . $nextStatus . '.'];
+}
+
+function disaster_reports_list_all_tasks_for_dmc(?string $statusFilter = null): array
+{
+    $params = [];
+    $filterSql = '';
+
+    if ($statusFilter !== null && trim($statusFilter) !== '') {
+        $filterSql = 'WHERE vt.status = ?';
+        $params[] = trim($statusFilter);
+    }
+
+    return db_fetch_all(
+        "SELECT vt.id,
+                vt.role,
+                vt.status,
+                vt.date_assigned,
+                vt.volunteer_id,
+                v.name AS volunteer_name,
+                v.district AS volunteer_district,
+                dr.report_id,
+                dr.disaster_type,
+                dr.other_disaster_type,
+                dr.disaster_datetime,
+                dr.district,
+                dr.gn_division,
+                dr.location
+         FROM volunteer_task vt
+         INNER JOIN volunteers v ON v.user_id = vt.volunteer_id
+         INNER JOIN disaster_reports dr ON dr.report_id = vt.disaster_id
+         {$filterSql}
+         ORDER BY vt.date_assigned DESC, vt.id DESC",
+        $params
+    );
+}
+
+function disaster_reports_list_active_volunteers(?string $district = null): array
+{
+    $params = [];
+    $districtSql = '';
+
+    if ($district !== null && trim($district) !== '') {
+        $districtSql = 'AND v.district = ?';
+        $params[] = trim($district);
+    }
+
+    return db_fetch_all(
+        "SELECT v.user_id, v.name, v.district, v.gn_division
+         FROM volunteers v
+         INNER JOIN users u ON u.user_id = v.user_id
+         WHERE u.role = 'volunteer'
+           AND u.active = 1
+           {$districtSql}
+         ORDER BY v.name ASC",
+        $params
+    );
+}
+
+function disaster_reports_reassign_task(int $taskId, int $newVolunteerId): array
+{
+    $task = db_fetch(
+        'SELECT vt.id, vt.disaster_id, dr.district
+         FROM volunteer_task vt
+         INNER JOIN disaster_reports dr ON dr.report_id = vt.disaster_id
+         WHERE vt.id = ?
+         LIMIT 1',
+        [$taskId]
+    );
+
+    if (!$task) {
+        return ['ok' => false, 'message' => 'Task not found.'];
+    }
+
+    $volunteer = db_fetch(
+        "SELECT v.user_id
+         FROM volunteers v
+         INNER JOIN users u ON u.user_id = v.user_id
+         WHERE v.user_id = ?
+           AND u.role = 'volunteer'
+           AND u.active = 1
+         LIMIT 1",
+        [$newVolunteerId]
+    );
+
+    if (!$volunteer) {
+        return ['ok' => false, 'message' => 'Selected volunteer is not available.'];
+    }
+
+    db_query(
+        'UPDATE volunteer_task SET volunteer_id = ?, status = ? WHERE id = ? LIMIT 1',
+        [$newVolunteerId, 'Assigned', $taskId]
+    );
+
+    return ['ok' => true, 'message' => 'Task reassigned successfully.'];
+}
+
+function disaster_reports_verify_task_completion(int $taskId): array
+{
+    $affected = db_query(
+        "UPDATE volunteer_task
+         SET status = 'Verified'
+         WHERE id = ?
+           AND status = 'Completed'
+         LIMIT 1",
+        [$taskId]
+    )->rowCount();
+
+    if ($affected <= 0) {
+        return ['ok' => false, 'message' => 'Only completed tasks can be verified.'];
+    }
+
+    return ['ok' => true, 'message' => 'Task marked as Verified.'];
+}
+
+function disaster_reports_table_exists(string $tableName): bool
+{
+    static $cache = [];
+
+    if (array_key_exists($tableName, $cache)) {
+        return $cache[$tableName];
+    }
+
+    $row = db_fetch(
+        'SELECT COUNT(*) AS cnt
+         FROM information_schema.TABLES
+         WHERE TABLE_SCHEMA = DATABASE()
+           AND TABLE_NAME = ?',
+        [$tableName]
+    );
+
+    $exists = ((int) ($row['cnt'] ?? 0)) > 0;
+    $cache[$tableName] = $exists;
+
+    return $exists;
+}
+
+function disaster_reports_log_field_update(int $taskId, int $volunteerId, string $note): void
+{
+    $trimmed = trim($note);
+    if ($trimmed === '') {
+        return;
+    }
+
+    if (!disaster_reports_table_exists('volunteer_field_updates')) {
+        return;
+    }
+
+    db_query(
+        'INSERT INTO volunteer_field_updates (task_id, volunteer_id, update_text)
+         VALUES (?, ?, ?)',
+        [$taskId, $volunteerId, $trimmed]
+    );
+}
