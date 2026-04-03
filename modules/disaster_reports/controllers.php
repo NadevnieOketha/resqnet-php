@@ -92,6 +92,8 @@ function disaster_reports_store_action(): void
         $timestamp = strtotime($disasterDatetime);
         if ($timestamp === false) {
             $errors[] = 'Invalid disaster date/time.';
+        } elseif ($timestamp > time()) {
+            $errors[] = 'Date and time of occurrence cannot be in the future.';
         } else {
             $normalizedDisasterDatetime = date('Y-m-d H:i:s', $timestamp);
         }

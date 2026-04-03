@@ -18,6 +18,7 @@ $selectedGn = (string) ($oldInput['gn_division'] ?? ($isGnAreaLocked ? $lockedGn
 $districtOther = (string) ($oldInput['district_other'] ?? '');
 $gnOther = (string) ($oldInput['gn_division_other'] ?? '');
 $typeOther = (string) ($oldInput['other_disaster_type'] ?? '');
+$maxDisasterDatetime = date('Y-m-d\\TH:i');
 ?>
 
 <style>
@@ -68,7 +69,7 @@ $typeOther = (string) ($oldInput['other_disaster_type'] ?? '');
 
     <div class="form-field">
       <label for="disaster_datetime">Date and Time of Disaster</label>
-      <input class="input" type="datetime-local" id="disaster_datetime" name="disaster_datetime" value="<?= $oldValue('disaster_datetime') ?>" required />
+      <input class="input" type="datetime-local" id="disaster_datetime" name="disaster_datetime" value="<?= $oldValue('disaster_datetime') ?>" max="<?= e($maxDisasterDatetime) ?>" required />
     </div>
 
     <div class="form-field">
@@ -147,6 +148,7 @@ $typeOther = (string) ($oldInput['other_disaster_type'] ?? '');
     const gnOtherWrap = document.getElementById('gn_other_wrap');
     const gnOtherInput = document.getElementById('gn_division_other');
     const otherTypeInput = document.getElementById('other_disaster_type');
+    const disasterDatetimeEl = document.getElementById('disaster_datetime');
     const isGnAreaLocked = <?= $isGnAreaLocked ? 'true' : 'false' ?>;
     const lockedDistrict = <?= json_encode($lockedDistrict, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
     const lockedGnDivision = <?= json_encode($lockedGnDivision, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
@@ -160,6 +162,17 @@ $typeOther = (string) ($oldInput['other_disaster_type'] ?? '');
       if (!isOther) {
         otherTypeInput.value = '';
       }
+    }
+
+    function setDisasterDatetimeLimit() {
+      if (!disasterDatetimeEl) {
+        return;
+      }
+
+      const now = new Date();
+      now.setSeconds(0, 0);
+      const localIso = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+      disasterDatetimeEl.max = localIso;
     }
 
     function renderGnOptions() {
@@ -261,6 +274,7 @@ $typeOther = (string) ($oldInput['other_disaster_type'] ?? '');
       input.addEventListener('change', setDisasterTypeState);
     });
 
+    setDisasterDatetimeLimit();
     setDisasterTypeState();
   })();
 </script>
