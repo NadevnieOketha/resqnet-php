@@ -13,6 +13,11 @@
         <a href="/profile" class="btn btn-primary">Open Profile</a>
     </article>
     <article class="action-card">
+        <h3><span data-lucide="alert-triangle" style="width:14px;height:14px;vertical-align:-2px;"></span> Report a Disaster</h3>
+        <p>Submit a verified incident report with location and proof image.</p>
+        <a href="/report-disaster" class="btn btn-primary">Open Report Form</a>
+    </article>
+    <article class="action-card">
         <h3>SMS Alerts</h3>
         <p>Enable or disable SMS alerts for early warnings.</p>
         <a href="/profile" class="btn">Manage SMS</a>

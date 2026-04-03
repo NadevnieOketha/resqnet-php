@@ -13,6 +13,11 @@
         <a href="/profile" class="btn btn-primary">Edit Profile</a>
     </article>
     <article class="action-card">
+        <h3><span data-lucide="alert-triangle" style="width:14px;height:14px;vertical-align:-2px;"></span> Report a Disaster</h3>
+        <p>Submit a disaster report for DMC verification and response routing.</p>
+        <a href="/report-disaster" class="btn btn-primary">Open Report Form</a>
+    </article>
+    <article class="action-card">
         <h3>Skills & Preferences</h3>
         <p>Adjust your volunteer preferences and specialized skills.</p>
         <a href="/profile" class="btn">Manage Skills</a>

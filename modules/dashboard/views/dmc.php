@@ -19,6 +19,11 @@
 
 <section class="quick-actions" aria-label="DMC actions">
     <article class="action-card">
+        <h3><span data-lucide="file-text" style="width:14px;height:14px;vertical-align:-2px;"></span> Disaster Reports</h3>
+        <p>Review pending reports and verify or reject submissions.</p>
+        <a href="/dashboard/reports" class="btn btn-primary">Open Reports</a>
+    </article>
+    <article class="action-card">
         <h3>Review Approvals</h3>
         <p>Approve volunteer and NGO registrations pending activation.</p>
         <a href="/dashboard/admin/pending" class="btn btn-primary">Open Queue</a>
