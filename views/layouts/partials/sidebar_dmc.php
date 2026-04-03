@@ -11,6 +11,10 @@
             <span class="icon" data-lucide="clipboard-check"></span>
             <span>Volunteer Assignments</span>
         </a>
+    <a href="/dashboard/admin/safe-locations" class="nav-item <?= is_current_url('/dashboard/admin/safe-locations') ? 'active' : '' ?>" data-section="safe-locations">
+        <span class="icon" data-lucide="building"></span>
+        <span>Safe Locations</span>
+    </a>
     <a href="/dashboard/admin/pending" class="nav-item <?= is_current_url('/dashboard/admin/pending') ? 'active' : '' ?>" data-section="approvals">
         <span class="icon" data-lucide="users"></span>
         <span>Pending Approvals</span>

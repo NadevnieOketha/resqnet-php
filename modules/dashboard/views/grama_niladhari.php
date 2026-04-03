@@ -8,6 +8,11 @@
 
 <section class="quick-actions" aria-label="Quick actions">
     <article class="action-card">
+        <h3>Safe Locations</h3>
+        <p>Update occupancy categories for shelters assigned to your GN division.</p>
+        <a href="/dashboard/safe-locations" class="btn btn-primary">Update Occupancy</a>
+    </article>
+    <article class="action-card">
         <h3>Report a Disaster</h3>
         <p>Submit a verified incident from your GN area directly to DMC.</p>
         <a href="/report-disaster" class="btn btn-primary">Create Report</a>

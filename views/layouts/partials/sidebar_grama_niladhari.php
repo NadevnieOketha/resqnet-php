@@ -7,6 +7,10 @@
         <span class="icon" data-lucide="triangle-alert"></span>
         <span>Report a Disaster</span>
     </a>
+    <a href="/dashboard/safe-locations" class="nav-item <?= is_current_url('/dashboard/safe-locations') ? 'active' : '' ?>" data-section="safe-locations">
+        <span class="icon" data-lucide="house"></span>
+        <span>Safe Locations</span>
+    </a>
     <a href="/profile" class="nav-item <?= is_current_url('/profile') ? 'active' : '' ?>" data-section="profile-settings">
         <span class="icon" data-lucide="user"></span>
         <span>Profile Settings</span>

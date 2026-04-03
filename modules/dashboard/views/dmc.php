@@ -24,6 +24,11 @@
         <a href="/dashboard/reports" class="btn btn-primary">Open Reports</a>
     </article>
     <article class="action-card">
+        <h3><span data-lucide="building" style="width:14px;height:14px;vertical-align:-2px;"></span> Safe Locations</h3>
+        <p>Add shelters, assign GN officers, and maintain capacity records.</p>
+        <a href="/dashboard/admin/safe-locations" class="btn btn-primary">Manage Locations</a>
+    </article>
+    <article class="action-card">
         <h3>Review Approvals</h3>
         <p>Approve volunteer and NGO registrations pending activation.</p>
         <a href="/dashboard/admin/pending" class="btn btn-primary">Open Queue</a>

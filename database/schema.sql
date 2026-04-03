@@ -47,9 +47,29 @@ CREATE TABLE IF NOT EXISTS `volunteer_preferences` (
 CREATE TABLE IF NOT EXISTS `safe_locations` (
   `location_id` int NOT NULL AUTO_INCREMENT,
   `location_name` varchar(255) NOT NULL,
+  `address_house_no` varchar(50) DEFAULT NULL,
+  `address_street` varchar(120) DEFAULT NULL,
+  `address_city` varchar(120) DEFAULT NULL,
+  `district` varchar(100) DEFAULT NULL,
+  `gn_division` varchar(150) DEFAULT NULL,
   `latitude` decimal(10,8) NOT NULL,
   `longitude` decimal(11,8) NOT NULL,
+  `max_capacity` int NOT NULL DEFAULT '0',
+  `assigned_gn_user_id` int DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`location_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE IF NOT EXISTS `safe_location_occupancy` (
+  `location_id` int NOT NULL,
+  `toddlers` int NOT NULL DEFAULT '0',
+  `children` int NOT NULL DEFAULT '0',
+  `adults` int NOT NULL DEFAULT '0',
+  `elderly` int NOT NULL DEFAULT '0',
+  `pregnant_women` int NOT NULL DEFAULT '0',
+  `updated_by_user_id` int DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`location_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
