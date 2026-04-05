@@ -335,15 +335,23 @@ CREATE TABLE IF NOT EXISTS `donation_request_requirements` (
   `packs_elderly` int NOT NULL DEFAULT '0',
   `packs_pregnant_women` int NOT NULL DEFAULT '0',
   `status` enum('Gathered','Fulfilled') NOT NULL DEFAULT 'Gathered',
+  `fulfillment_status` enum('Open','Reserved','Fulfilled') NOT NULL DEFAULT 'Open',
+  `reserved_by_ngo_user_id` int DEFAULT NULL,
+  `reserved_at` timestamp NULL DEFAULT NULL,
+  `fulfilled_by_gn_user_id` int DEFAULT NULL,
   `fulfilled_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`requirement_id`),
   KEY `idx_drr_location` (`location_id`),
   KEY `idx_drr_status` (`status`),
+  KEY `idx_drr_fulfillment_status` (`fulfillment_status`),
+  KEY `idx_drr_reserved_ngo` (`reserved_by_ngo_user_id`),
   KEY `idx_drr_created_at` (`created_at`),
   CONSTRAINT `fk_drr_location` FOREIGN KEY (`location_id`) REFERENCES `safe_locations` (`location_id`) ON DELETE CASCADE,
-  CONSTRAINT `fk_drr_gn` FOREIGN KEY (`gn_user_id`) REFERENCES `grama_niladhari` (`user_id`) ON DELETE CASCADE
+  CONSTRAINT `fk_drr_gn` FOREIGN KEY (`gn_user_id`) REFERENCES `grama_niladhari` (`user_id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_drr_reserved_ngo` FOREIGN KEY (`reserved_by_ngo_user_id`) REFERENCES `ngos` (`user_id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_drr_fulfilled_gn` FOREIGN KEY (`fulfilled_by_gn_user_id`) REFERENCES `grama_niladhari` (`user_id`) ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `donation_request_requirement_items` (

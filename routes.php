@@ -61,6 +61,8 @@ route('GET',  '/dashboard/gn/donation-requests/{locationId}/gather',  'donation_
 route('POST', '/dashboard/gn/donation-requests/{locationId}/gather',  'donation_requests_gn_gather_store',      ['middleware_auth', fn() => middleware_role('grama_niladhari')]);
 route('POST', '/dashboard/gn/donation-requests/{locationId}/fulfilled','donation_requests_gn_mark_fulfilled',    ['middleware_auth', fn() => middleware_role('grama_niladhari')]);
 route('GET',  '/dashboard/donation-requirements',                     'donation_requests_feed_index',           ['middleware_auth', fn() => middleware_roles(['dmc', 'ngo'])]);
+route('GET',  '/dashboard/donation-requirements/{requirementId}',     'donation_requests_feed_details',         ['middleware_auth', fn() => middleware_roles(['dmc', 'ngo'])]);
+route('POST', '/dashboard/donation-requirements/{requirementId}/reserve', 'donation_requests_feed_reserve',     ['middleware_auth', fn() => middleware_role('ngo')]);
 
 // DMC Auth Operations
 route('GET',  '/dashboard/admin/pending',                        'auth_dmc_pending_approvals',         ['middleware_auth', fn() => middleware_role('dmc')]);

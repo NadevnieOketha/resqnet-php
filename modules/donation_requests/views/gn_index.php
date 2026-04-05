@@ -22,7 +22,8 @@ $locations = $locations ?? [];
                     <tr>
                         <th>Safe Location</th>
                         <th>Pending Requests</th>
-                        <th>Requirement Status</th>
+                        <th>Fulfillment Progress</th>
+                        <th>Reserved NGO Details</th>
                         <th>Latest Request</th>
                         <th style="text-align:right;">Actions</th>
                     </tr>
@@ -32,8 +33,9 @@ $locations = $locations ?? [];
                         <?php
                         $locationId = (int) ($location['location_id'] ?? 0);
                         $pendingCount = (int) ($location['requested_count'] ?? 0);
-                        $latestStatus = (string) ($location['latest_requirement_status'] ?? 'Not Gathered');
+                        $latestStatus = (string) ($location['latest_fulfillment_status'] ?? 'Open');
                         $pendingRequests = (array) ($location['pending_requests'] ?? []);
+                        $ngoName = trim((string) ($location['ngo_organization_name'] ?? ''));
                         ?>
                         <tr>
                             <td>
@@ -56,7 +58,17 @@ $locations = $locations ?? [];
                                 <strong><?= $pendingCount ?></strong>
                             </td>
                             <td>
-                                <?= e($latestStatus !== '' ? $latestStatus : 'Not Gathered') ?>
+                                <?= e($latestStatus !== '' ? $latestStatus : 'Open') ?>
+                            </td>
+                            <td>
+                                <?php if ($ngoName !== ''): ?>
+                                    <strong><?= e($ngoName) ?></strong><br>
+                                    <span class="muted" style="font-size:0.7rem;"><?= e((string) ($location['ngo_contact_person_name'] ?? '-')) ?></span><br>
+                                    <span class="muted" style="font-size:0.7rem;"><?= e((string) ($location['ngo_contact_email'] ?? '-')) ?></span><br>
+                                    <span class="muted" style="font-size:0.7rem;"><?= e((string) ($location['ngo_contact_number'] ?? '-')) ?></span>
+                                <?php else: ?>
+                                    <span class="muted">No NGO reservation yet</span>
+                                <?php endif; ?>
                             </td>
                             <td>
                                 <?= e((string) ($location['latest_request_at'] ?? '-')) ?>

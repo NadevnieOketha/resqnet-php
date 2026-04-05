@@ -125,6 +125,42 @@ function donation_requests_ensure_schema(): void
         ) ENGINE=InnoDB"
     );
 
+    donation_requests_ensure_column(
+        'donation_request_requirements',
+        'fulfillment_status',
+        "ENUM('Open','Reserved','Fulfilled') NOT NULL DEFAULT 'Open' AFTER status"
+    );
+    donation_requests_ensure_column(
+        'donation_request_requirements',
+        'reserved_by_ngo_user_id',
+        'INT DEFAULT NULL AFTER fulfillment_status'
+    );
+    donation_requests_ensure_column(
+        'donation_request_requirements',
+        'reserved_at',
+        'TIMESTAMP NULL DEFAULT NULL AFTER reserved_by_ngo_user_id'
+    );
+    donation_requests_ensure_column(
+        'donation_request_requirements',
+        'fulfilled_by_gn_user_id',
+        'INT DEFAULT NULL AFTER reserved_at'
+    );
+
+    if (!donation_requests_index_exists('donation_request_requirements', 'idx_drr_fulfillment_status')) {
+        db_query('ALTER TABLE donation_request_requirements ADD INDEX idx_drr_fulfillment_status (fulfillment_status)');
+    }
+
+    if (!donation_requests_index_exists('donation_request_requirements', 'idx_drr_reserved_ngo')) {
+        db_query('ALTER TABLE donation_request_requirements ADD INDEX idx_drr_reserved_ngo (reserved_by_ngo_user_id)');
+    }
+
+    db_query(
+        "UPDATE donation_request_requirements
+         SET fulfillment_status = 'Fulfilled'
+         WHERE status = 'Fulfilled'
+           AND fulfillment_status <> 'Fulfilled'"
+    );
+
     db_query(
         "CREATE TABLE IF NOT EXISTS donation_request_requirement_items (
             requirement_item_id INT NOT NULL AUTO_INCREMENT,
@@ -403,22 +439,53 @@ function donation_requests_list_location_groups_for_gn(int $gnUserId): array
                 sl.location_name,
                 sl.district,
                 sl.gn_division,
-                COUNT(dr.request_id) AS total_requests,
-                SUM(CASE WHEN dr.processing_status = 'requested' THEN 1 ELSE 0 END) AS requested_count,
-                SUM(CASE WHEN dr.processing_status = 'requirement_gathered' THEN 1 ELSE 0 END) AS gathered_count,
-                SUM(CASE WHEN dr.processing_status = 'fulfilled' THEN 1 ELSE 0 END) AS fulfilled_count,
-                MAX(dr.submitted_at) AS latest_request_at,
                 (
-                    SELECT rr.status
-                    FROM donation_request_requirements rr
-                    WHERE rr.location_id = sl.location_id
-                    ORDER BY rr.requirement_id DESC
-                    LIMIT 1
-                ) AS latest_requirement_status
+                    SELECT COUNT(*)
+                    FROM donation_requests dr_total
+                    WHERE dr_total.safe_location_id = sl.location_id
+                ) AS total_requests,
+                (
+                    SELECT COUNT(*)
+                    FROM donation_requests dr_requested
+                    WHERE dr_requested.safe_location_id = sl.location_id
+                      AND dr_requested.processing_status = 'requested'
+                ) AS requested_count,
+                (
+                    SELECT COUNT(*)
+                    FROM donation_requests dr_gathered
+                    WHERE dr_gathered.safe_location_id = sl.location_id
+                      AND dr_gathered.processing_status = 'requirement_gathered'
+                ) AS gathered_count,
+                (
+                    SELECT COUNT(*)
+                    FROM donation_requests dr_fulfilled
+                    WHERE dr_fulfilled.safe_location_id = sl.location_id
+                      AND dr_fulfilled.processing_status = 'fulfilled'
+                ) AS fulfilled_count,
+                (
+                    SELECT MAX(dr_latest.submitted_at)
+                    FROM donation_requests dr_latest
+                    WHERE dr_latest.safe_location_id = sl.location_id
+                ) AS latest_request_at,
+                rr_latest.requirement_id AS latest_requirement_id,
+                rr_latest.status AS latest_requirement_status,
+                COALESCE(rr_latest.fulfillment_status, 'Open') AS latest_fulfillment_status,
+                ngo.organization_name AS ngo_organization_name,
+                ngo.contact_person_name AS ngo_contact_person_name,
+                ngo.contact_person_email AS ngo_contact_email,
+                ngo.contact_person_telephone AS ngo_contact_number
          FROM safe_locations sl
          LEFT JOIN donation_requests dr ON dr.safe_location_id = sl.location_id
+         LEFT JOIN donation_request_requirements rr_latest
+                ON rr_latest.requirement_id = (
+                    SELECT rr2.requirement_id
+                    FROM donation_request_requirements rr2
+                    WHERE rr2.location_id = sl.location_id
+                    ORDER BY rr2.requirement_id DESC
+                    LIMIT 1
+                )
+         LEFT JOIN ngos ngo ON ngo.user_id = rr_latest.reserved_by_ngo_user_id
          WHERE sl.assigned_gn_user_id = ?
-         GROUP BY sl.location_id, sl.location_name, sl.district, sl.gn_division
          ORDER BY sl.location_name ASC",
         [$gnUserId]
     );
@@ -564,8 +631,8 @@ function donation_requests_create_requirement(array $payload, array $items): int
     try {
         db_query(
             'INSERT INTO donation_request_requirements
-             (location_id, gn_user_id, relief_center_name, location_label, contact_number, situation_description, special_notes, days_count, packs_toddlers, packs_children, packs_adults, packs_elderly, packs_pregnant_women, status)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+             (location_id, gn_user_id, relief_center_name, location_label, contact_number, situation_description, special_notes, days_count, packs_toddlers, packs_children, packs_adults, packs_elderly, packs_pregnant_women, status, fulfillment_status)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
             [
                 (int) $payload['location_id'],
                 (int) $payload['gn_user_id'],
@@ -581,6 +648,7 @@ function donation_requests_create_requirement(array $payload, array $items): int
                 (int) $payload['packs_elderly'],
                 (int) $payload['packs_pregnant_women'],
                 'Gathered',
+                'Open',
             ]
         );
 
@@ -621,7 +689,7 @@ function donation_requests_create_requirement(array $payload, array $items): int
     }
 }
 
-function donation_requests_mark_location_fulfilled(int $locationId): void
+function donation_requests_mark_location_fulfilled(int $locationId, int $gnUserId): void
 {
     donation_requests_ensure_schema();
 
@@ -631,10 +699,14 @@ function donation_requests_mark_location_fulfilled(int $locationId): void
     try {
         db_query(
             "UPDATE donation_request_requirements
-             SET status = 'Fulfilled', fulfilled_at = NOW(), updated_at = NOW()
+                         SET status = 'Fulfilled',
+                                 fulfillment_status = 'Fulfilled',
+                                 fulfilled_by_gn_user_id = ?,
+                                 fulfilled_at = NOW(),
+                                 updated_at = NOW()
              WHERE location_id = ?
-               AND status = 'Gathered'",
-            [$locationId]
+                             AND fulfillment_status = 'Reserved'",
+                        [$gnUserId, $locationId]
         );
 
         db_query(
@@ -658,11 +730,48 @@ function donation_requests_mark_location_fulfilled(int $locationId): void
     }
 }
 
-function donation_requests_list_requirement_feed(): array
+function donation_requests_list_requirement_feed_summary(): array
 {
     donation_requests_ensure_schema();
 
-    $requirements = db_fetch_all(
+    return db_fetch_all(
+        'SELECT rr.requirement_id,
+                rr.location_id,
+                rr.gn_user_id,
+                rr.relief_center_name,
+                rr.location_label,
+                rr.contact_number,
+                rr.situation_description,
+                rr.special_notes,
+                rr.days_count,
+                rr.status,
+                rr.fulfillment_status,
+                rr.reserved_by_ngo_user_id,
+                rr.reserved_at,
+                rr.created_at,
+                rr.updated_at,
+                rr.fulfilled_at,
+                sl.location_name,
+                sl.district,
+                sl.gn_division,
+                gn.name AS gn_name,
+                ngo.organization_name AS ngo_organization_name,
+                ngo.contact_person_name AS ngo_contact_person_name,
+                ngo.contact_person_email AS ngo_contact_email,
+                ngo.contact_person_telephone AS ngo_contact_number
+         FROM donation_request_requirements rr
+         INNER JOIN safe_locations sl ON sl.location_id = rr.location_id
+         LEFT JOIN grama_niladhari gn ON gn.user_id = rr.gn_user_id
+         LEFT JOIN ngos ngo ON ngo.user_id = rr.reserved_by_ngo_user_id
+         ORDER BY rr.created_at DESC, rr.requirement_id DESC'
+    );
+}
+
+function donation_requests_find_requirement_by_id(int $requirementId): ?array
+{
+    donation_requests_ensure_schema();
+
+    $requirement = db_fetch(
         'SELECT rr.requirement_id,
                 rr.location_id,
                 rr.gn_user_id,
@@ -678,46 +787,103 @@ function donation_requests_list_requirement_feed(): array
                 rr.packs_elderly,
                 rr.packs_pregnant_women,
                 rr.status,
+                rr.fulfillment_status,
+                rr.reserved_by_ngo_user_id,
+                rr.reserved_at,
+                rr.fulfilled_by_gn_user_id,
+                rr.fulfilled_at,
                 rr.created_at,
                 rr.updated_at,
-                rr.fulfilled_at,
                 sl.location_name,
                 sl.district,
                 sl.gn_division,
-                gn.name AS gn_name
+                gn.name AS gn_name,
+                ngo.organization_name AS ngo_organization_name,
+                ngo.contact_person_name AS ngo_contact_person_name,
+                ngo.contact_person_email AS ngo_contact_email,
+                ngo.contact_person_telephone AS ngo_contact_number
          FROM donation_request_requirements rr
          INNER JOIN safe_locations sl ON sl.location_id = rr.location_id
          LEFT JOIN grama_niladhari gn ON gn.user_id = rr.gn_user_id
-         ORDER BY rr.created_at DESC, rr.requirement_id DESC'
+         LEFT JOIN ngos ngo ON ngo.user_id = rr.reserved_by_ngo_user_id
+         WHERE rr.requirement_id = ?
+         LIMIT 1',
+        [$requirementId]
     );
 
-    foreach ($requirements as &$requirement) {
-        $items = db_fetch_all(
-            "SELECT item_category, item_name, quantity, unit, source
-             FROM donation_request_requirement_items
-             WHERE requirement_id = ?
-             ORDER BY FIELD(item_category, 'Food', 'Medicine', 'Shelter'), item_name ASC",
-            [(int) ($requirement['requirement_id'] ?? 0)]
-        );
-
-        $groupedItems = [
-            'Food' => [],
-            'Medicine' => [],
-            'Shelter' => [],
-        ];
-
-        foreach ($items as $item) {
-            $category = (string) ($item['item_category'] ?? 'Food');
-            if (!array_key_exists($category, $groupedItems)) {
-                $groupedItems[$category] = [];
-            }
-            $groupedItems[$category][] = $item;
-        }
-
-        $requirement['items'] = $items;
-        $requirement['items_grouped'] = $groupedItems;
+    if (!$requirement) {
+        return null;
     }
-    unset($requirement);
 
-    return $requirements;
+    $items = db_fetch_all(
+        "SELECT item_category, item_name, quantity, unit, source
+         FROM donation_request_requirement_items
+         WHERE requirement_id = ?
+         ORDER BY FIELD(item_category, 'Food', 'Medicine', 'Shelter'), item_name ASC",
+        [$requirementId]
+    );
+
+    $requirement['items'] = $items;
+
+    return $requirement;
+}
+
+function donation_requests_reserve_requirement(int $requirementId, int $ngoUserId): array
+{
+    donation_requests_ensure_schema();
+
+    $requirement = db_fetch(
+        'SELECT requirement_id, fulfillment_status, reserved_by_ngo_user_id
+         FROM donation_request_requirements
+         WHERE requirement_id = ?
+         LIMIT 1',
+        [$requirementId]
+    );
+
+    if (!$requirement) {
+        return ['ok' => false, 'message' => 'Donation request not found.'];
+    }
+
+    $status = (string) ($requirement['fulfillment_status'] ?? 'Open');
+    $reservedBy = (int) ($requirement['reserved_by_ngo_user_id'] ?? 0);
+
+    if ($status === 'Fulfilled') {
+        return ['ok' => false, 'message' => 'This donation request is already fulfilled.'];
+    }
+
+    if ($status === 'Reserved' && $reservedBy > 0 && $reservedBy !== $ngoUserId) {
+        return ['ok' => false, 'message' => 'This donation request is already reserved by another NGO.'];
+    }
+
+    if ($status === 'Reserved' && $reservedBy === $ngoUserId) {
+        return ['ok' => true, 'message' => 'You have already reserved this donation request.'];
+    }
+
+    db_query(
+        "UPDATE donation_request_requirements
+         SET fulfillment_status = 'Reserved',
+             reserved_by_ngo_user_id = ?,
+             reserved_at = NOW(),
+             updated_at = NOW()
+         WHERE requirement_id = ?
+           AND fulfillment_status = 'Open'",
+        [$ngoUserId, $requirementId]
+    );
+
+    return ['ok' => true, 'message' => 'Donation request reserved successfully. Please coordinate delivery with the GN officer.'];
+}
+
+function donation_requests_has_reserved_requirement_for_location(int $locationId): bool
+{
+    donation_requests_ensure_schema();
+
+    $row = db_fetch(
+        "SELECT COUNT(*) AS cnt
+         FROM donation_request_requirements
+         WHERE location_id = ?
+           AND fulfillment_status = 'Reserved'",
+        [$locationId]
+    );
+
+    return ((int) ($row['cnt'] ?? 0)) > 0;
 }

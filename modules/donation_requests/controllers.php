@@ -189,8 +189,13 @@ function donation_requests_gn_mark_fulfilled(string $locationId): void
         abort(403, 'You can only update assigned safe locations.');
     }
 
+    if (!donation_requests_has_reserved_requirement_for_location($id)) {
+        flash('error', 'This safe location has no NGO reservation yet. Wait for an NGO to reserve the request before marking fulfilled.');
+        redirect('/dashboard/gn/donation-requests');
+    }
+
     try {
-        donation_requests_mark_location_fulfilled($id);
+        donation_requests_mark_location_fulfilled($id, $gnUserId);
     } catch (Throwable $e) {
         flash('error', 'Could not mark safe location as fulfilled.');
         redirect('/dashboard/gn/donation-requests');
@@ -202,10 +207,55 @@ function donation_requests_gn_mark_fulfilled(string $locationId): void
 
 function donation_requests_feed_index(): void
 {
-    $requirements = donation_requests_list_requirement_feed();
+    $requirements = donation_requests_list_requirement_feed_summary();
 
     view('donation_requests::feed', [
         'breadcrumb' => 'Donation Requirements Feed',
         'requirements' => $requirements,
     ], 'dashboard');
+}
+
+function donation_requests_feed_details(string $requirementId): void
+{
+    $id = (int) $requirementId;
+    if ($id <= 0) {
+        flash('error', 'Invalid donation request id.');
+        redirect('/dashboard/donation-requirements');
+    }
+
+    $requirement = donation_requests_find_requirement_by_id($id);
+    if (!$requirement) {
+        flash('error', 'Donation request not found.');
+        redirect('/dashboard/donation-requirements');
+    }
+
+    view('donation_requests::feed_detail', [
+        'breadcrumb' => 'Donation Requirement Details',
+        'requirement' => $requirement,
+        'can_reserve' => is_role('ngo'),
+    ], 'dashboard');
+}
+
+function donation_requests_feed_reserve(string $requirementId): void
+{
+    csrf_check();
+
+    if (!is_role('ngo')) {
+        abort(403, 'Only NGOs can reserve donation requests.');
+    }
+
+    $id = (int) $requirementId;
+    if ($id <= 0) {
+        flash('error', 'Invalid donation request id.');
+        redirect('/dashboard/donation-requirements');
+    }
+
+    $result = donation_requests_reserve_requirement($id, (int) auth_id());
+    if (!empty($result['ok'])) {
+        flash('success', (string) ($result['message'] ?? 'Donation request reserved successfully.'));
+    } else {
+        flash('error', (string) ($result['message'] ?? 'Unable to reserve donation request.'));
+    }
+
+    redirect('/dashboard/donation-requirements/' . $id);
 }

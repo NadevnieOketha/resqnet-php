@@ -1,12 +1,13 @@
 <?php
 $requirements = $requirements ?? [];
+$isNgo = is_role('ngo');
 ?>
 
 <section class="welcome">
     <h1>Donation Requirements Feed</h1>
     <div class="alert">
         <span class="alert-icon" data-lucide="package-search"></span>
-        <p>Item-wise requirement totals submitted by Grama Niladhari officers. Use this feed to plan NGO inventory and DMC coordination.</p>
+        <p>Browse requests submitted by GN officers. Open each request using View Details to inspect item quantities and fulfillment progress.</p>
     </div>
 </section>
 
@@ -16,63 +17,61 @@ $requirements = $requirements ?? [];
     <?php if (empty($requirements)): ?>
         <p class="muted">No gathered requirements available at the moment.</p>
     <?php else: ?>
-        <div style="display:grid; gap:0.95rem;">
-            <?php foreach ($requirements as $requirement): ?>
-                <article class="card" style="margin:0;">
-                    <header class="card-header">
-                        <h2 style="margin:0; font-size:0.95rem;">
-                            <?= e((string) ($requirement['location_name'] ?? $requirement['relief_center_name'] ?? 'Safe Location')) ?>
-                            <span class="muted" style="font-size:0.72rem; font-weight:400;">
-                                (<?= e((string) ($requirement['district'] ?? '-')) ?> / <?= e((string) ($requirement['gn_division'] ?? '-')) ?>)
-                            </span>
-                        </h2>
-                        <span class="tag"><?= e((string) ($requirement['status'] ?? 'Gathered')) ?></span>
-                    </header>
-
-                    <div class="card-body" style="display:grid; gap:0.8rem;">
-                        <div class="form-grid-3">
-                            <div><strong>GN Officer</strong><br><span class="muted"><?= e((string) ($requirement['gn_name'] ?? '-')) ?></span></div>
-                            <div><strong>Contact</strong><br><span class="muted"><?= e((string) ($requirement['contact_number'] ?? '-')) ?></span></div>
-                            <div><strong>Days</strong><br><span class="muted"><?= (int) ($requirement['days_count'] ?? 1) ?></span></div>
-                        </div>
-
-                        <div>
-                            <strong>Situation Description</strong>
-                            <p style="margin:0.2rem 0 0;" class="muted"><?= nl2br(e((string) ($requirement['situation_description'] ?? '-'))) ?></p>
-                        </div>
-
-                        <div>
-                            <strong>Special Notes</strong>
-                            <p style="margin:0.2rem 0 0;" class="muted"><?= nl2br(e((string) ($requirement['special_notes'] ?? '-'))) ?></p>
-                        </div>
-
-                        <div class="table-shell">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Category</th>
-                                        <th>Item</th>
-                                        <th>Quantity</th>
-                                        <th>Unit</th>
-                                        <th>Source</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php foreach ((array) ($requirement['items'] ?? []) as $item): ?>
-                                        <tr>
-                                            <td><?= e((string) ($item['item_category'] ?? '-')) ?></td>
-                                            <td><?= e((string) ($item['item_name'] ?? '-')) ?></td>
-                                            <td><?= e((string) ($item['quantity'] ?? '0')) ?></td>
-                                            <td><?= e((string) ($item['unit'] ?? 'units')) ?></td>
-                                            <td><?= e((string) ($item['source'] ?? 'pack')) ?></td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </article>
-            <?php endforeach; ?>
+        <div class="table-shell">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Safe Location</th>
+                        <th>GN Officer</th>
+                        <th>Status</th>
+                        <th>Reserved NGO</th>
+                        <th>Reserved At</th>
+                        <th>Fulfilled At</th>
+                        <th>Created</th>
+                        <th style="text-align:right;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($requirements as $requirement): ?>
+                        <?php
+                        $status = (string) ($requirement['fulfillment_status'] ?? 'Open');
+                        $ngoName = trim((string) ($requirement['ngo_organization_name'] ?? ''));
+                        ?>
+                        <tr>
+                            <td>
+                                <strong><?= e((string) ($requirement['location_name'] ?? $requirement['relief_center_name'] ?? 'Safe Location')) ?></strong><br>
+                                <span class="muted" style="font-size:0.7rem;">
+                                    <?= e((string) ($requirement['district'] ?? '-')) ?> / <?= e((string) ($requirement['gn_division'] ?? '-')) ?>
+                                </span>
+                            </td>
+                            <td>
+                                <?= e((string) ($requirement['gn_name'] ?? '-')) ?><br>
+                                <span class="muted" style="font-size:0.7rem;"><?= e((string) ($requirement['contact_number'] ?? '-')) ?></span>
+                            </td>
+                            <td>
+                                <span class="tag"><?= e($status) ?></span>
+                            </td>
+                            <td>
+                                <?php if ($ngoName !== ''): ?>
+                                    <strong><?= e($ngoName) ?></strong><br>
+                                    <span class="muted" style="font-size:0.7rem;"><?= e((string) ($requirement['ngo_contact_person_name'] ?? '-')) ?></span>
+                                <?php else: ?>
+                                    <span class="muted">Not reserved</span>
+                                <?php endif; ?>
+                            </td>
+                            <td><?= e((string) ($requirement['reserved_at'] ?? '-')) ?></td>
+                            <td><?= e((string) ($requirement['fulfilled_at'] ?? '-')) ?></td>
+                            <td><?= e((string) ($requirement['created_at'] ?? '-')) ?></td>
+                            <td style="text-align:right; white-space:nowrap;">
+                                <a href="/dashboard/donation-requirements/<?= (int) ($requirement['requirement_id'] ?? 0) ?>" class="btn btn-primary btn-sm">View Details</a>
+                                <?php if ($isNgo && $status === 'Open'): ?>
+                                    <span class="muted" style="font-size:0.7rem; display:block; margin-top:0.25rem;">Reserve available</span>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
         </div>
     <?php endif; ?>
 </section>
