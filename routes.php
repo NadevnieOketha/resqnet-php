@@ -8,6 +8,8 @@
 
 // Public
 route('GET', '/', 'home_index');
+route('GET', '/safe-locations', 'safe_locations_public_index');
+route('GET', '/safe-locations/data', 'safe_locations_public_data');
 
 // Auth (guest)
 route('GET',  '/login',            'auth_login',               ['middleware_guest']);
@@ -42,6 +44,14 @@ route('POST', '/dashboard/volunteer-tasks/{taskId}/status', 'disaster_reports_vo
 route('GET',  '/dashboard/admin/volunteer-tasks',               'disaster_reports_dmc_tasks_index', ['middleware_auth', fn() => middleware_role('dmc')]);
 route('POST', '/dashboard/admin/volunteer-tasks/{taskId}/reassign', 'disaster_reports_dmc_task_reassign_action', ['middleware_auth', fn() => middleware_role('dmc')]);
 route('POST', '/dashboard/admin/volunteer-tasks/{taskId}/verify',   'disaster_reports_dmc_task_verify_action', ['middleware_auth', fn() => middleware_role('dmc')]);
+
+// Safe locations
+route('GET',  '/dashboard/admin/safe-locations',                      'safe_locations_dmc_manage_index',        ['middleware_auth', fn() => middleware_role('dmc')]);
+route('POST', '/dashboard/admin/safe-locations/create',               'safe_locations_dmc_create_action',       ['middleware_auth', fn() => middleware_role('dmc')]);
+route('POST', '/dashboard/admin/safe-locations/{locationId}/update',  'safe_locations_dmc_update_action',       ['middleware_auth', fn() => middleware_role('dmc')]);
+route('POST', '/dashboard/admin/safe-locations/{locationId}/delete',  'safe_locations_dmc_delete_action',       ['middleware_auth', fn() => middleware_role('dmc')]);
+route('GET',  '/dashboard/safe-locations',                            'safe_locations_gn_index',                ['middleware_auth', fn() => middleware_role('grama_niladhari')]);
+route('POST', '/dashboard/safe-locations/{locationId}/occupancy',     'safe_locations_gn_update_occupancy_action', ['middleware_auth', fn() => middleware_role('grama_niladhari')]);
 
 // DMC Auth Operations
 route('GET',  '/dashboard/admin/pending',                        'auth_dmc_pending_approvals',         ['middleware_auth', fn() => middleware_role('dmc')]);

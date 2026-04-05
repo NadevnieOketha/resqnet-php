@@ -11,6 +11,10 @@
         <span class="icon" data-lucide="list-checks"></span>
         <span>Assigned Tasks</span>
     </a>
+    <a href="/safe-locations" class="nav-item <?= is_current_url('/safe-locations') ? 'active' : '' ?>" data-section="safe-locations">
+        <span class="icon" data-lucide="map-pinned"></span>
+        <span>Safe Locations</span>
+    </a>
     <a href="/profile" class="nav-item <?= is_current_url('/profile') ? 'active' : '' ?>" data-section="profile-settings">
         <span class="icon" data-lucide="user"></span>
         <span>Profile Settings</span>

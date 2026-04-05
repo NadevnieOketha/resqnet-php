@@ -18,6 +18,11 @@
         <a href="/report-disaster" class="btn btn-primary">Open Report Form</a>
     </article>
     <article class="action-card">
+        <h3><span data-lucide="map-pinned" style="width:14px;height:14px;vertical-align:-2px;"></span> Safe Locations</h3>
+        <p>Find nearby shelters and check available space in real time.</p>
+        <a href="/safe-locations" class="btn btn-primary">Open Map</a>
+    </article>
+    <article class="action-card">
         <h3>SMS Alerts</h3>
         <p>Enable or disable SMS alerts for early warnings.</p>
         <a href="/profile" class="btn">Manage SMS</a>

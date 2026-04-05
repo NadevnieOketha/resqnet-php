@@ -18,6 +18,11 @@
         <a href="/report-disaster" class="btn btn-primary">Open Report Form</a>
     </article>
     <article class="action-card">
+        <h3><span data-lucide="map-pinned" style="width:14px;height:14px;vertical-align:-2px;"></span> Safe Locations</h3>
+        <p>View shelters in your area and check which ones still have space.</p>
+        <a href="/safe-locations" class="btn btn-primary">Open Map</a>
+    </article>
+    <article class="action-card">
         <h3>Skills & Preferences</h3>
         <p>Adjust your volunteer preferences and specialized skills.</p>
         <a href="/profile" class="btn">Manage Skills</a>
