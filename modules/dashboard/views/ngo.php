@@ -8,6 +8,11 @@
 
 <section class="quick-actions" aria-label="Quick actions">
     <article class="action-card">
+        <h3>Donation Requirements Feed</h3>
+        <p>View safe-location requirement totals gathered by Grama Niladhari officers.</p>
+        <a href="/dashboard/donation-requirements" class="btn btn-primary">Open Feed</a>
+    </article>
+    <article class="action-card">
         <h3>Organization Profile</h3>
         <p>Update registration information and contact details.</p>
         <a href="/profile" class="btn btn-primary">Edit Profile</a>

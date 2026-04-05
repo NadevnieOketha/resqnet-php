@@ -53,6 +53,15 @@ route('POST', '/dashboard/admin/safe-locations/{locationId}/delete',  'safe_loca
 route('GET',  '/dashboard/safe-locations',                            'safe_locations_gn_index',                ['middleware_auth', fn() => middleware_role('grama_niladhari')]);
 route('POST', '/dashboard/safe-locations/{locationId}/occupancy',     'safe_locations_gn_update_occupancy_action', ['middleware_auth', fn() => middleware_role('grama_niladhari')]);
 
+// Donation requests and requirement aggregation
+route('GET',  '/donation-requests/create',                            'donation_requests_general_create',       ['middleware_auth', fn() => middleware_role('general')]);
+route('POST', '/donation-requests/submit',                            'donation_requests_general_store',        ['middleware_auth', fn() => middleware_role('general')]);
+route('GET',  '/dashboard/gn/donation-requests',                      'donation_requests_gn_index',             ['middleware_auth', fn() => middleware_role('grama_niladhari')]);
+route('GET',  '/dashboard/gn/donation-requests/{locationId}/gather',  'donation_requests_gn_gather_form',       ['middleware_auth', fn() => middleware_role('grama_niladhari')]);
+route('POST', '/dashboard/gn/donation-requests/{locationId}/gather',  'donation_requests_gn_gather_store',      ['middleware_auth', fn() => middleware_role('grama_niladhari')]);
+route('POST', '/dashboard/gn/donation-requests/{locationId}/fulfilled','donation_requests_gn_mark_fulfilled',    ['middleware_auth', fn() => middleware_role('grama_niladhari')]);
+route('GET',  '/dashboard/donation-requirements',                     'donation_requests_feed_index',           ['middleware_auth', fn() => middleware_roles(['dmc', 'ngo'])]);
+
 // DMC Auth Operations
 route('GET',  '/dashboard/admin/pending',                        'auth_dmc_pending_approvals',         ['middleware_auth', fn() => middleware_role('dmc')]);
 route('POST', '/dashboard/admin/approve/{userId}',               'auth_dmc_approve_user_action',       ['middleware_auth', fn() => middleware_role('dmc')]);
