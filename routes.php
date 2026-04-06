@@ -53,6 +53,12 @@ route('POST', '/dashboard/admin/safe-locations/{locationId}/delete',  'safe_loca
 route('GET',  '/dashboard/safe-locations',                            'safe_locations_gn_index',                ['middleware_auth', fn() => middleware_role('grama_niladhari')]);
 route('POST', '/dashboard/safe-locations/{locationId}/occupancy',     'safe_locations_gn_update_occupancy_action', ['middleware_auth', fn() => middleware_role('grama_niladhari')]);
 
+// NGO collection point management
+route('GET',  '/dashboard/collection-points',                         'collection_points_ngo_index',            ['middleware_auth', fn() => middleware_role('ngo')]);
+route('POST', '/dashboard/collection-points/create',                  'collection_points_ngo_create_action',    ['middleware_auth', fn() => middleware_role('ngo')]);
+route('POST', '/dashboard/collection-points/{collectionPointId}/update', 'collection_points_ngo_update_action', ['middleware_auth', fn() => middleware_role('ngo')]);
+route('POST', '/dashboard/collection-points/{collectionPointId}/delete', 'collection_points_ngo_delete_action', ['middleware_auth', fn() => middleware_role('ngo')]);
+
 // Donation requests and requirement aggregation
 route('GET',  '/donation-requests/create',                            'donation_requests_general_create',       ['middleware_auth', fn() => middleware_role('general')]);
 route('POST', '/donation-requests/submit',                            'donation_requests_general_store',        ['middleware_auth', fn() => middleware_role('general')]);

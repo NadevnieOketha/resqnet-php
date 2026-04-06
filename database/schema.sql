@@ -150,11 +150,19 @@ CREATE TABLE IF NOT EXISTS `collection_points` (
   `collection_point_id` int NOT NULL AUTO_INCREMENT,
   `ngo_id` int NOT NULL,
   `name` varchar(150) NOT NULL,
+  `address_house_no` varchar(50) DEFAULT NULL,
+  `address_street` varchar(120) DEFAULT NULL,
+  `address_city` varchar(120) DEFAULT NULL,
+  `district` varchar(100) DEFAULT NULL,
+  `gn_division` varchar(150) DEFAULT NULL,
   `location_landmark` varchar(150) DEFAULT NULL,
   `full_address` varchar(255) NOT NULL,
   `contact_person` varchar(100) DEFAULT NULL,
   `contact_number` varchar(20) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`collection_point_id`),
+  KEY `idx_collection_points_ngo` (`ngo_id`),
   CONSTRAINT `fk_collection_point_ngo` FOREIGN KEY (`ngo_id`) REFERENCES `ngos` (`user_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 

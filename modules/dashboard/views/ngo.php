@@ -8,6 +8,11 @@
 
 <section class="quick-actions" aria-label="Quick actions">
     <article class="action-card">
+        <h3>Manage Collection Points</h3>
+        <p>Create, edit, and delete drop-off locations for public donations.</p>
+        <a href="/dashboard/collection-points" class="btn btn-primary">Open Management</a>
+    </article>
+    <article class="action-card">
         <h3>Donation Requirements Feed</h3>
         <p>View safe-location requirement totals gathered by Grama Niladhari officers.</p>
         <a href="/dashboard/donation-requirements" class="btn btn-primary">Open Feed</a>

@@ -3,6 +3,10 @@
         <span class="icon" data-lucide="home"></span>
         <span>Overview</span>
     </a>
+    <a href="/dashboard/collection-points" class="nav-item <?= is_current_url('/dashboard/collection-points') ? 'active' : '' ?>" data-section="collection-points">
+        <span class="icon" data-lucide="map-pin-house"></span>
+        <span>Manage Collection Points</span>
+    </a>
     <a href="/dashboard/donation-requirements" class="nav-item <?= is_current_url('/dashboard/donation-requirements') ? 'active' : '' ?>" data-section="donation-requirements">
         <span class="icon" data-lucide="package-search"></span>
         <span>Donation Requirements</span>
