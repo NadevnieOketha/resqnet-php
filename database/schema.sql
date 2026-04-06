@@ -207,6 +207,9 @@ CREATE TABLE IF NOT EXISTS disaster_reports (
 CREATE TABLE IF NOT EXISTS `donations` (
   `donation_id` int NOT NULL AUTO_INCREMENT,
   `user_id` int DEFAULT NULL,
+  `submitted_by_user_id` int DEFAULT NULL,
+  `submitted_by_role` enum('general','volunteer','guest') NOT NULL DEFAULT 'guest',
+  `public_access_token` varchar(64) DEFAULT NULL,
   `collection_point_id` int NOT NULL,
   `name` varchar(150) NOT NULL,
   `contact_number` varchar(20) NOT NULL,
@@ -222,6 +225,8 @@ CREATE TABLE IF NOT EXISTS `donations` (
   `cancelled_at` timestamp NULL DEFAULT NULL,
   `delivered_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`donation_id`),
+  UNIQUE KEY `idx_donations_public_token` (`public_access_token`),
+  KEY `idx_donations_submitter` (`submitted_by_user_id`,`submitted_by_role`),
   CONSTRAINT `fk_donations_collection_point` FOREIGN KEY (`collection_point_id`) REFERENCES `collection_points` (`collection_point_id`) ON DELETE CASCADE,
   CONSTRAINT `fk_donations_user` FOREIGN KEY (`user_id`) REFERENCES `general_user` (`user_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;

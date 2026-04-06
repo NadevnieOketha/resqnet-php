@@ -11,6 +11,14 @@
         <span class="icon" data-lucide="package-search"></span>
         <span>Donation Requirements</span>
     </a>
+    <a href="/dashboard/ngo/donations" class="nav-item <?= is_current_url('/dashboard/ngo/donations') ? 'active' : '' ?>" data-section="received-donations">
+        <span class="icon" data-lucide="package-check"></span>
+        <span>Donations Received</span>
+    </a>
+    <a href="/dashboard/ngo/inventory" class="nav-item <?= is_current_url('/dashboard/ngo/inventory') ? 'active' : '' ?>" data-section="inventory-management">
+        <span class="icon" data-lucide="boxes"></span>
+        <span>Inventory Management</span>
+    </a>
     <a href="/profile" class="nav-item <?= is_current_url('/profile') ? 'active' : '' ?>" data-section="profile-settings">
         <span class="icon" data-lucide="user"></span>
         <span>Profile Settings</span>
