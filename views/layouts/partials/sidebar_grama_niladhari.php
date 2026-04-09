@@ -11,6 +11,10 @@
         <span class="icon" data-lucide="house"></span>
         <span>Safe Locations</span>
     </a>
+    <a href="/dashboard/gn/donation-requests" class="nav-item <?= is_current_url('/dashboard/gn/donation-requests') ? 'active' : '' ?>" data-section="donation-requests">
+        <span class="icon" data-lucide="clipboard-list"></span>
+        <span>Donation Requests</span>
+    </a>
     <a href="/profile" class="nav-item <?= is_current_url('/profile') ? 'active' : '' ?>" data-section="profile-settings">
         <span class="icon" data-lucide="user"></span>
         <span>Profile Settings</span>

@@ -29,6 +29,11 @@
         <a href="/dashboard/admin/safe-locations" class="btn btn-primary">Manage Locations</a>
     </article>
     <article class="action-card">
+        <h3><span data-lucide="package-search" style="width:14px;height:14px;vertical-align:-2px;"></span> Donation Requirements</h3>
+        <p>Review item-wise requirement totals and notes submitted by GN officers.</p>
+        <a href="/dashboard/donation-requirements" class="btn btn-primary">Open Requirements</a>
+    </article>
+    <article class="action-card">
         <h3>Review Approvals</h3>
         <p>Approve volunteer and NGO registrations pending activation.</p>
         <a href="/dashboard/admin/pending" class="btn btn-primary">Open Queue</a>

@@ -150,11 +150,19 @@ CREATE TABLE IF NOT EXISTS `collection_points` (
   `collection_point_id` int NOT NULL AUTO_INCREMENT,
   `ngo_id` int NOT NULL,
   `name` varchar(150) NOT NULL,
+  `address_house_no` varchar(50) DEFAULT NULL,
+  `address_street` varchar(120) DEFAULT NULL,
+  `address_city` varchar(120) DEFAULT NULL,
+  `district` varchar(100) DEFAULT NULL,
+  `gn_division` varchar(150) DEFAULT NULL,
   `location_landmark` varchar(150) DEFAULT NULL,
   `full_address` varchar(255) NOT NULL,
   `contact_person` varchar(100) DEFAULT NULL,
   `contact_number` varchar(20) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`collection_point_id`),
+  KEY `idx_collection_points_ngo` (`ngo_id`),
   CONSTRAINT `fk_collection_point_ngo` FOREIGN KEY (`ngo_id`) REFERENCES `ngos` (`user_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
@@ -199,6 +207,9 @@ CREATE TABLE IF NOT EXISTS disaster_reports (
 CREATE TABLE IF NOT EXISTS `donations` (
   `donation_id` int NOT NULL AUTO_INCREMENT,
   `user_id` int DEFAULT NULL,
+  `submitted_by_user_id` int DEFAULT NULL,
+  `submitted_by_role` enum('general','volunteer','guest') NOT NULL DEFAULT 'guest',
+  `public_access_token` varchar(64) DEFAULT NULL,
   `collection_point_id` int NOT NULL,
   `name` varchar(150) NOT NULL,
   `contact_number` varchar(20) NOT NULL,
@@ -214,6 +225,8 @@ CREATE TABLE IF NOT EXISTS `donations` (
   `cancelled_at` timestamp NULL DEFAULT NULL,
   `delivered_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`donation_id`),
+  UNIQUE KEY `idx_donations_public_token` (`public_access_token`),
+  KEY `idx_donations_submitter` (`submitted_by_user_id`,`submitted_by_role`),
   CONSTRAINT `fk_donations_collection_point` FOREIGN KEY (`collection_point_id`) REFERENCES `collection_points` (`collection_point_id`) ON DELETE CASCADE,
   CONSTRAINT `fk_donations_user` FOREIGN KEY (`user_id`) REFERENCES `general_user` (`user_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
@@ -221,15 +234,22 @@ CREATE TABLE IF NOT EXISTS `donations` (
 CREATE TABLE IF NOT EXISTS `donation_requests` (
   `request_id` int NOT NULL AUTO_INCREMENT,
   `user_id` int NOT NULL,
+  `safe_location_id` int DEFAULT NULL,
+  `assigned_gn_user_id` int DEFAULT NULL,
   `relief_center_name` varchar(150) NOT NULL,
   `status` enum('Pending','Approved') DEFAULT 'Pending',
+  `processing_status` enum('requested','requirement_gathered','fulfilled') NOT NULL DEFAULT 'requested',
   `special_notes` text,
   `submitted_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `approved_at` timestamp NULL DEFAULT NULL,
+  `fulfilled_at` timestamp NULL DEFAULT NULL,
   `location` varchar(255) DEFAULT NULL,
   `contact_number` varchar(20) DEFAULT NULL,
   `situation` text,
   PRIMARY KEY (`request_id`),
+  KEY `idx_donation_requests_safe_location` (`safe_location_id`),
+  KEY `idx_donation_requests_assigned_gn` (`assigned_gn_user_id`),
+  KEY `idx_donation_requests_processing_status` (`processing_status`),
   CONSTRAINT `fk_donation_request_user` FOREIGN KEY (`user_id`) REFERENCES `general_user` (`user_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
@@ -310,6 +330,56 @@ CREATE TABLE IF NOT EXISTS `donation_request_items` (
   PRIMARY KEY (`request_item_id`),
   CONSTRAINT `fk_donation_items_catalog` FOREIGN KEY (`item_id`) REFERENCES `donation_items_catalog` (`item_id`) ON DELETE CASCADE,
   CONSTRAINT `fk_donation_items_request` FOREIGN KEY (`request_id`) REFERENCES `donation_requests` (`request_id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `donation_request_requirements` (
+  `requirement_id` int NOT NULL AUTO_INCREMENT,
+  `location_id` int NOT NULL,
+  `gn_user_id` int NOT NULL,
+  `relief_center_name` varchar(150) NOT NULL,
+  `location_label` varchar(255) NOT NULL,
+  `contact_number` varchar(20) NOT NULL,
+  `situation_description` text NOT NULL,
+  `special_notes` text,
+  `days_count` int NOT NULL DEFAULT '1',
+  `packs_toddlers` int NOT NULL DEFAULT '0',
+  `packs_children` int NOT NULL DEFAULT '0',
+  `packs_adults` int NOT NULL DEFAULT '0',
+  `packs_elderly` int NOT NULL DEFAULT '0',
+  `packs_pregnant_women` int NOT NULL DEFAULT '0',
+  `status` enum('Gathered','Fulfilled') NOT NULL DEFAULT 'Gathered',
+  `fulfillment_status` enum('Open','Reserved','Fulfilled') NOT NULL DEFAULT 'Open',
+  `reserved_by_ngo_user_id` int DEFAULT NULL,
+  `reserved_at` timestamp NULL DEFAULT NULL,
+  `fulfilled_by_gn_user_id` int DEFAULT NULL,
+  `fulfilled_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`requirement_id`),
+  KEY `idx_drr_location` (`location_id`),
+  KEY `idx_drr_status` (`status`),
+  KEY `idx_drr_fulfillment_status` (`fulfillment_status`),
+  KEY `idx_drr_reserved_ngo` (`reserved_by_ngo_user_id`),
+  KEY `idx_drr_created_at` (`created_at`),
+  CONSTRAINT `fk_drr_location` FOREIGN KEY (`location_id`) REFERENCES `safe_locations` (`location_id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_drr_gn` FOREIGN KEY (`gn_user_id`) REFERENCES `grama_niladhari` (`user_id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_drr_reserved_ngo` FOREIGN KEY (`reserved_by_ngo_user_id`) REFERENCES `ngos` (`user_id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_drr_fulfilled_gn` FOREIGN KEY (`fulfilled_by_gn_user_id`) REFERENCES `grama_niladhari` (`user_id`) ON DELETE SET NULL
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `donation_request_requirement_items` (
+  `requirement_item_id` int NOT NULL AUTO_INCREMENT,
+  `requirement_id` int NOT NULL,
+  `item_category` enum('Medicine','Food','Shelter') NOT NULL,
+  `item_name` varchar(160) NOT NULL,
+  `quantity` decimal(12,2) NOT NULL DEFAULT '0.00',
+  `unit` varchar(30) NOT NULL DEFAULT 'units',
+  `source` enum('pack','extra') NOT NULL DEFAULT 'pack',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`requirement_item_id`),
+  KEY `idx_drri_requirement` (`requirement_id`),
+  KEY `idx_drri_category` (`item_category`),
+  CONSTRAINT `fk_drri_requirement` FOREIGN KEY (`requirement_id`) REFERENCES `donation_request_requirements` (`requirement_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `skills_volunteers` (

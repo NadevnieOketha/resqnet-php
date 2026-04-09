@@ -11,6 +11,18 @@
         <span class="icon" data-lucide="map-pinned"></span>
         <span>Safe Locations</span>
     </a>
+    <a href="/donation-requests/create" class="nav-item <?= is_current_url('/donation-requests/create') ? 'active' : '' ?>" data-section="donation-requests">
+        <span class="icon" data-lucide="heart-handshake"></span>
+        <span>Request a Donation</span>
+    </a>
+    <a href="/make-donation" class="nav-item <?= is_current_url('/make-donation') ? 'active' : '' ?>" data-section="make-donation">
+        <span class="icon" data-lucide="gift"></span>
+        <span>Make a Donation</span>
+    </a>
+    <a href="/dashboard/my-donations" class="nav-item <?= is_current_url('/dashboard/my-donations') ? 'active' : '' ?>" data-section="my-donations">
+        <span class="icon" data-lucide="package-search"></span>
+        <span>My Donations</span>
+    </a>
     <a href="/profile" class="nav-item <?= is_current_url('/profile') ? 'active' : '' ?>" data-section="profile-settings">
         <span class="icon" data-lucide="user"></span>
         <span>Profile Settings</span>

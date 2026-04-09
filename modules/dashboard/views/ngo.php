@@ -8,6 +8,26 @@
 
 <section class="quick-actions" aria-label="Quick actions">
     <article class="action-card">
+        <h3>Manage Collection Points</h3>
+        <p>Create, edit, and delete drop-off locations for public donations.</p>
+        <a href="/dashboard/collection-points" class="btn btn-primary">Open Management</a>
+    </article>
+    <article class="action-card">
+        <h3>Donation Requirements Feed</h3>
+        <p>View safe-location requirement totals gathered by Grama Niladhari officers.</p>
+        <a href="/dashboard/donation-requirements" class="btn btn-primary">Open Feed</a>
+    </article>
+    <article class="action-card">
+        <h3>Donations Received</h3>
+        <p>Manage pending donations and mark received items to update inventory.</p>
+        <a href="/dashboard/ngo/donations" class="btn btn-primary">Open Donations</a>
+    </article>
+    <article class="action-card">
+        <h3>Inventory Management</h3>
+        <p>Track stock by collection point, monitor low inventory, and update quantities.</p>
+        <a href="/dashboard/ngo/inventory" class="btn btn-primary">Open Inventory</a>
+    </article>
+    <article class="action-card">
         <h3>Organization Profile</h3>
         <p>Update registration information and contact details.</p>
         <a href="/profile" class="btn btn-primary">Edit Profile</a>

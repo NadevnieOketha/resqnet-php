@@ -10,6 +10,10 @@
 route('GET', '/', 'home_index');
 route('GET', '/safe-locations', 'safe_locations_public_index');
 route('GET', '/safe-locations/data', 'safe_locations_public_data');
+route('GET', '/make-donation', 'donations_make_form');
+route('POST', '/make-donation', 'donations_store');
+route('GET', '/donations/guest/{token}', 'donations_guest_view');
+route('POST', '/donations/guest/{token}/cancel', 'donations_guest_cancel');
 
 // Auth (guest)
 route('GET',  '/login',            'auth_login',               ['middleware_guest']);
@@ -52,6 +56,31 @@ route('POST', '/dashboard/admin/safe-locations/{locationId}/update',  'safe_loca
 route('POST', '/dashboard/admin/safe-locations/{locationId}/delete',  'safe_locations_dmc_delete_action',       ['middleware_auth', fn() => middleware_role('dmc')]);
 route('GET',  '/dashboard/safe-locations',                            'safe_locations_gn_index',                ['middleware_auth', fn() => middleware_role('grama_niladhari')]);
 route('POST', '/dashboard/safe-locations/{locationId}/occupancy',     'safe_locations_gn_update_occupancy_action', ['middleware_auth', fn() => middleware_role('grama_niladhari')]);
+
+// NGO collection point management
+route('GET',  '/dashboard/collection-points',                         'collection_points_ngo_index',            ['middleware_auth', fn() => middleware_role('ngo')]);
+route('POST', '/dashboard/collection-points/create',                  'collection_points_ngo_create_action',    ['middleware_auth', fn() => middleware_role('ngo')]);
+route('POST', '/dashboard/collection-points/{collectionPointId}/update', 'collection_points_ngo_update_action', ['middleware_auth', fn() => middleware_role('ngo')]);
+route('POST', '/dashboard/collection-points/{collectionPointId}/delete', 'collection_points_ngo_delete_action', ['middleware_auth', fn() => middleware_role('ngo')]);
+route('GET',  '/dashboard/ngo/donations',                             'donations_ngo_manage',                   ['middleware_auth', fn() => middleware_role('ngo')]);
+route('POST', '/dashboard/ngo/donations/{donationId}/receive',        'donations_ngo_mark_received',            ['middleware_auth', fn() => middleware_role('ngo')]);
+route('GET',  '/dashboard/ngo/inventory',                             'inventory_ngo_index',                    ['middleware_auth', fn() => middleware_role('ngo')]);
+route('POST', '/dashboard/ngo/inventory/{inventoryId}/quantity',      'inventory_ngo_update_quantity_action',   ['middleware_auth', fn() => middleware_role('ngo')]);
+
+// My donations (general and volunteer)
+route('GET',  '/dashboard/my-donations',                              'donations_my_index',                     ['middleware_auth', fn() => middleware_roles(['general', 'volunteer'])]);
+route('POST', '/dashboard/my-donations/{donationId}/cancel',          'donations_my_cancel',                    ['middleware_auth', fn() => middleware_roles(['general', 'volunteer'])]);
+
+// Donation requests and requirement aggregation
+route('GET',  '/donation-requests/create',                            'donation_requests_general_create',       ['middleware_auth', fn() => middleware_role('general')]);
+route('POST', '/donation-requests/submit',                            'donation_requests_general_store',        ['middleware_auth', fn() => middleware_role('general')]);
+route('GET',  '/dashboard/gn/donation-requests',                      'donation_requests_gn_index',             ['middleware_auth', fn() => middleware_role('grama_niladhari')]);
+route('GET',  '/dashboard/gn/donation-requests/{locationId}/gather',  'donation_requests_gn_gather_form',       ['middleware_auth', fn() => middleware_role('grama_niladhari')]);
+route('POST', '/dashboard/gn/donation-requests/{locationId}/gather',  'donation_requests_gn_gather_store',      ['middleware_auth', fn() => middleware_role('grama_niladhari')]);
+route('POST', '/dashboard/gn/donation-requests/{locationId}/fulfilled','donation_requests_gn_mark_fulfilled',    ['middleware_auth', fn() => middleware_role('grama_niladhari')]);
+route('GET',  '/dashboard/donation-requirements',                     'donation_requests_feed_index',           ['middleware_auth', fn() => middleware_roles(['dmc', 'ngo'])]);
+route('GET',  '/dashboard/donation-requirements/{requirementId}',     'donation_requests_feed_details',         ['middleware_auth', fn() => middleware_roles(['dmc', 'ngo'])]);
+route('POST', '/dashboard/donation-requirements/{requirementId}/reserve', 'donation_requests_feed_reserve',     ['middleware_auth', fn() => middleware_role('ngo')]);
 
 // DMC Auth Operations
 route('GET',  '/dashboard/admin/pending',                        'auth_dmc_pending_approvals',         ['middleware_auth', fn() => middleware_role('dmc')]);

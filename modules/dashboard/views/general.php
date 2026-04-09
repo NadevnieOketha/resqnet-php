@@ -23,6 +23,21 @@
         <a href="/safe-locations" class="btn btn-primary">Open Map</a>
     </article>
     <article class="action-card">
+        <h3><span data-lucide="heart-handshake" style="width:14px;height:14px;vertical-align:-2px;"></span> Request a Donation</h3>
+        <p>Submit a donation request for your GN division safe location.</p>
+        <a href="/donation-requests/create" class="btn btn-primary">Open Request Form</a>
+    </article>
+    <article class="action-card">
+        <h3><span data-lucide="gift" style="width:14px;height:14px;vertical-align:-2px;"></span> Make a Donation</h3>
+        <p>Offer medicine, food, and shelter items to nearby NGO collection points.</p>
+        <a href="/make-donation" class="btn btn-primary">Open Donation Form</a>
+    </article>
+    <article class="action-card">
+        <h3><span data-lucide="package-search" style="width:14px;height:14px;vertical-align:-2px;"></span> My Donations</h3>
+        <p>Track donation status and cancel while requests are still pending.</p>
+        <a href="/dashboard/my-donations" class="btn">View My Donations</a>
+    </article>
+    <article class="action-card">
         <h3>SMS Alerts</h3>
         <p>Enable or disable SMS alerts for early warnings.</p>
         <a href="/profile" class="btn">Manage SMS</a>
