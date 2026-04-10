@@ -32,10 +32,10 @@ if (config('app.debug')) {
 }
 
 // Load core files
-require BASE_PATH . '/core/database.php';
-require BASE_PATH . '/core/router.php';
-require BASE_PATH . '/core/middleware.php';
-require BASE_PATH . '/core/mailer.php';
+require_once BASE_PATH . '/core/database.php';
+require_once BASE_PATH . '/core/router.php';
+require_once BASE_PATH . '/core/middleware.php';
+require_once BASE_PATH . '/core/mailer.php';
 
 // Auto-include all module controllers and models
 $modulesDir = BASE_PATH . '/modules';
@@ -47,15 +47,15 @@ if (is_dir($modulesDir)) {
         if (!is_dir($modulePath)) continue;
 
         // Load models first (controllers may depend on them)
-        $modelsFile = $modulePath . '/models.php';
-        if (file_exists($modelsFile)) {
-            require $modelsFile;
-        }
+$modelsFile = $modulePath . '/models.php';
+if (file_exists($modelsFile)) {
+    require_once $modelsFile;
+}
 
-        // Load controllers
-        $controllersFile = $modulePath . '/controllers.php';
-        if (file_exists($controllersFile)) {
-            require $controllersFile;
-        }
+// Load controllers
+$controllersFile = $modulePath . '/controllers.php';
+if (file_exists($controllersFile)) {
+    require_once $controllersFile;
+}
     }
 }

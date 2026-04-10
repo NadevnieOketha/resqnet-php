@@ -1,4 +1,5 @@
 <?php
+require_once BASE_PATH . '/core/database.php';
 
 /**
  * Auth Module — Models
@@ -462,4 +463,20 @@ function auth_clean_string_array(array $values): array
     }
 
     return $clean;
+}
+
+function auth_deactivate_grama_niladhari(int $userId): int
+{
+    return db_query(
+        "UPDATE users SET active = 0 WHERE user_id = ? AND role = 'grama_niladhari'",
+        [$userId]
+    )->rowCount();
+}
+
+function auth_activate_grama_niladhari(int $userId): int
+{
+    return db_query(
+        "UPDATE users SET active = 1 WHERE user_id = ? AND role = 'grama_niladhari'",
+        [$userId]
+    )->rowCount();
 }

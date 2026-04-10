@@ -54,3 +54,41 @@ function dashboard_index(): void
 
     view('dashboard::' . $viewName, $data, 'dashboard');
 }
+
+function dashboard_deactivate_gn(string $userId): void
+{
+    $user = auth_user();
+    if (!$user) {
+        redirect('/login');
+    }
+
+    if (($user['role'] ?? '') !== 'dmc') {
+        abort(403, 'Only DMC users can deactivate Grama Niladhari accounts.');
+    }
+
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        redirect('/dashboard');
+    }
+
+    auth_deactivate_grama_niladhari((int) $userId);
+    redirect('/dashboard');
+}
+
+function dashboard_activate_gn(string $userId): void
+{
+    $user = auth_user();
+    if (!$user) {
+        redirect('/login');
+    }
+
+    if (($user['role'] ?? '') !== 'dmc') {
+        abort(403, 'Only DMC users can activate Grama Niladhari accounts.');
+    }
+
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        redirect('/dashboard');
+    }
+
+    auth_activate_grama_niladhari((int) $userId);
+    redirect('/dashboard');
+}
