@@ -7,6 +7,10 @@
         <span class="icon" data-lucide="file-text"></span>
         <span>Disaster Reports</span>
     </a>
+    <a href="/dashboard/forecast" class="nav-item <?= is_current_url('/dashboard/forecast') ? 'active' : '' ?>" data-section="forecast-dashboard">
+        <span class="icon" data-lucide="cloud-rain"></span>
+        <span>Forecast Dashboard</span>
+    </a>
         <a href="/dashboard/admin/volunteer-tasks" class="nav-item <?= is_current_url('/dashboard/admin/volunteer-tasks') ? 'active' : '' ?>" data-section="volunteer-assignments">
             <span class="icon" data-lucide="clipboard-check"></span>
             <span>Volunteer Assignments</span>

@@ -7,10 +7,12 @@
     <div class="form-actions">
         <?php if (auth_check()): ?>
             <a href="/dashboard" class="btn btn-primary">Open Dashboard</a>
+            <a href="/dashboard/forecast" class="btn">Forecast Dashboard</a>
             <a href="/make-donation" class="btn">Make Donation</a>
             <a href="/profile" class="btn">Manage Profile</a>
         <?php else: ?>
             <a href="/login" class="btn btn-primary">Log In</a>
+            <a href="/forecast" class="btn">Forecast Dashboard</a>
             <a href="/make-donation" class="btn">Make Donation</a>
             <a href="/register" class="btn">Sign Up</a>
         <?php endif; ?>

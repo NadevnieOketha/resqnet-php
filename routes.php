@@ -10,6 +10,7 @@
 route('GET', '/', 'home_index');
 route('GET', '/safe-locations', 'safe_locations_public_index');
 route('GET', '/safe-locations/data', 'safe_locations_public_data');
+route('GET', '/forecast', 'forecast_index');
 route('GET', '/make-donation', 'donations_make_form');
 route('POST', '/make-donation', 'donations_store');
 route('GET', '/donations/guest/{token}', 'donations_guest_view');
@@ -28,6 +29,7 @@ route('POST', '/reset-password',   'auth_reset_password_post', ['middleware_gues
 // Authenticated
 route('GET',  '/logout',              'auth_logout',             ['middleware_auth']);
 route('GET',  '/dashboard',           'dashboard_index',         ['middleware_auth']);
+route('GET',  '/dashboard/forecast',  'forecast_dashboard_index',['middleware_auth']);
 route('GET',  '/profile',             'auth_profile',            ['middleware_auth']);
 route('POST', '/profile',             'auth_profile_post',       ['middleware_auth']);
 route('POST', '/profile/sms-alert',   'auth_profile_sms_toggle', ['middleware_auth']);

@@ -89,6 +89,7 @@ function donation_requests_gn_gather_form(string $locationId): void
         'pending_requests' => $pendingRequests,
         'pack_definitions' => donation_requests_pack_definitions(),
         'additional_catalog' => donation_requests_additional_item_catalog(),
+        'rainfall_snapshot' => forecast_fetch_river_rainfall_snapshot(),
     ], 'dashboard');
 }
 

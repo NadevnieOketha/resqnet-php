@@ -1,0 +1,1785 @@
+{
+    "source": "open-meteo",
+    "fetched_at": "2026-04-10T11:24:25+02:00",
+    "fetched_date": "2026-04-10",
+    "rivers": [
+        {
+            "river_key": "mahaweli",
+            "river_name": "Mahaweli",
+            "stations": [
+                {
+                    "station_key": "manampitiya",
+                    "station_name": "Manampitiya",
+                    "district": "Polonnaruwa",
+                    "local_area": "Manampitiya GN (Dimbulagala DS)",
+                    "latitude": 7.86,
+                    "longitude": 81.09,
+                    "daily": [
+                        {
+                            "date": "2026-04-08",
+                            "rain_sum": 0,
+                            "showers_sum": 0.8,
+                            "temperature_2m_max": 36.8,
+                            "temperature_2m_min": 25.4,
+                            "river_discharge": 0.16,
+                            "river_discharge_max": 0.34,
+                            "river_discharge_min": 0.16
+                        },
+                        {
+                            "date": "2026-04-09",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "temperature_2m_max": 37.1,
+                            "temperature_2m_min": 23.7,
+                            "river_discharge": 0.16,
+                            "river_discharge_max": 0.19,
+                            "river_discharge_min": 0.16
+                        },
+                        {
+                            "date": "2026-04-10",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "temperature_2m_max": 36.8,
+                            "temperature_2m_min": 23.1,
+                            "river_discharge": 0.16,
+                            "river_discharge_max": 0.16,
+                            "river_discharge_min": 0.16
+                        },
+                        {
+                            "date": "2026-04-11",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "temperature_2m_max": 36.3,
+                            "temperature_2m_min": 24.6,
+                            "river_discharge": 0.12,
+                            "river_discharge_max": 0.16,
+                            "river_discharge_min": 0.12
+                        },
+                        {
+                            "date": "2026-04-12",
+                            "rain_sum": 0,
+                            "showers_sum": 0.3,
+                            "temperature_2m_max": 36.5,
+                            "temperature_2m_min": 24.7,
+                            "river_discharge": 0.12,
+                            "river_discharge_max": 0.22,
+                            "river_discharge_min": 0.12
+                        },
+                        {
+                            "date": "2026-04-13",
+                            "rain_sum": 0,
+                            "showers_sum": 7.2,
+                            "temperature_2m_max": 34.9,
+                            "temperature_2m_min": 25.1,
+                            "river_discharge": 0.12,
+                            "river_discharge_max": 0.19,
+                            "river_discharge_min": 0.12
+                        },
+                        {
+                            "date": "2026-04-14",
+                            "rain_sum": 0,
+                            "showers_sum": 0.6,
+                            "temperature_2m_max": 36.7,
+                            "temperature_2m_min": 23.2,
+                            "river_discharge": 0.16,
+                            "river_discharge_max": 0.22,
+                            "river_discharge_min": 0.12
+                        },
+                        {
+                            "date": "2026-04-15",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "temperature_2m_max": 37.5,
+                            "temperature_2m_min": 24.3,
+                            "river_discharge": 0.16,
+                            "river_discharge_max": 0.19,
+                            "river_discharge_min": 0.12
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "temperature_2m_max": 38.1,
+                            "temperature_2m_min": 25.6,
+                            "river_discharge": 0.12,
+                            "river_discharge_max": 0.16,
+                            "river_discharge_min": 0.12
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "temperature_2m_max": 38.1,
+                            "temperature_2m_min": 25.3,
+                            "river_discharge": 0.12,
+                            "river_discharge_max": 0.22,
+                            "river_discharge_min": 0.12
+                        }
+                    ]
+                },
+                {
+                    "station_key": "nawalapitiya",
+                    "station_name": "Nawalapitiya",
+                    "district": "Kandy",
+                    "local_area": "Nawalapitiya Town GN Divisions",
+                    "latitude": 7.05,
+                    "longitude": 80.53,
+                    "daily": [
+                        {
+                            "date": "2026-04-08",
+                            "rain_sum": 0,
+                            "showers_sum": 4,
+                            "temperature_2m_max": 32.9,
+                            "temperature_2m_min": 23.9,
+                            "river_discharge": 23.04,
+                            "river_discharge_max": 23.55,
+                            "river_discharge_min": 22.99
+                        },
+                        {
+                            "date": "2026-04-09",
+                            "rain_sum": 0,
+                            "showers_sum": 0.4,
+                            "temperature_2m_max": 32.6,
+                            "temperature_2m_min": 23.4,
+                            "river_discharge": 22.71,
+                            "river_discharge_max": 23.21,
+                            "river_discharge_min": 22.33
+                        },
+                        {
+                            "date": "2026-04-10",
+                            "rain_sum": 0,
+                            "showers_sum": 0.2,
+                            "temperature_2m_max": 32.3,
+                            "temperature_2m_min": 22.1,
+                            "river_discharge": 17.58,
+                            "river_discharge_max": 17.58,
+                            "river_discharge_min": 17.11
+                        },
+                        {
+                            "date": "2026-04-11",
+                            "rain_sum": 0,
+                            "showers_sum": 0.5,
+                            "temperature_2m_max": 31.7,
+                            "temperature_2m_min": 24.1,
+                            "river_discharge": 13.42,
+                            "river_discharge_max": 13.49,
+                            "river_discharge_min": 12.65
+                        },
+                        {
+                            "date": "2026-04-12",
+                            "rain_sum": 0,
+                            "showers_sum": 0.6,
+                            "temperature_2m_max": 31.7,
+                            "temperature_2m_min": 23.4,
+                            "river_discharge": 12.68,
+                            "river_discharge_max": 14.7,
+                            "river_discharge_min": 11.62
+                        },
+                        {
+                            "date": "2026-04-13",
+                            "rain_sum": 0,
+                            "showers_sum": 9.3,
+                            "temperature_2m_max": 31.1,
+                            "temperature_2m_min": 23,
+                            "river_discharge": 13.42,
+                            "river_discharge_max": 15.33,
+                            "river_discharge_min": 11.05
+                        },
+                        {
+                            "date": "2026-04-14",
+                            "rain_sum": 0,
+                            "showers_sum": 4.2,
+                            "temperature_2m_max": 31.4,
+                            "temperature_2m_min": 23.1,
+                            "river_discharge": 15.41,
+                            "river_discharge_max": 15.52,
+                            "river_discharge_min": 10.61
+                        },
+                        {
+                            "date": "2026-04-15",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "temperature_2m_max": 33.1,
+                            "temperature_2m_min": 22.5,
+                            "river_discharge": 16.62,
+                            "river_discharge_max": 16.62,
+                            "river_discharge_min": 10.19
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "temperature_2m_max": 33.5,
+                            "temperature_2m_min": 23.5,
+                            "river_discharge": 16.42,
+                            "river_discharge_max": 16.42,
+                            "river_discharge_min": 9.67
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "temperature_2m_max": 33.1,
+                            "temperature_2m_min": 21.7,
+                            "river_discharge": 15.67,
+                            "river_discharge_max": 17.54,
+                            "river_discharge_min": 9.16
+                        }
+                    ]
+                },
+                {
+                    "station_key": "peradeniya",
+                    "station_name": "Peradeniya",
+                    "district": "Kandy",
+                    "local_area": "Peradeniya Town GN Divisions",
+                    "latitude": 7.27,
+                    "longitude": 80.59,
+                    "daily": [
+                        {
+                            "date": "2026-04-08",
+                            "rain_sum": 0,
+                            "showers_sum": 3.4,
+                            "temperature_2m_max": 32.8,
+                            "temperature_2m_min": 22,
+                            "river_discharge": 27.51,
+                            "river_discharge_max": 28.65,
+                            "river_discharge_min": 27.18
+                        },
+                        {
+                            "date": "2026-04-09",
+                            "rain_sum": 0,
+                            "showers_sum": 0.2,
+                            "temperature_2m_max": 32.7,
+                            "temperature_2m_min": 21.1,
+                            "river_discharge": 26.93,
+                            "river_discharge_max": 29.34,
+                            "river_discharge_min": 26.16
+                        },
+                        {
+                            "date": "2026-04-10",
+                            "rain_sum": 0,
+                            "showers_sum": 0.2,
+                            "temperature_2m_max": 32.7,
+                            "temperature_2m_min": 21.2,
+                            "river_discharge": 19,
+                            "river_discharge_max": 19,
+                            "river_discharge_min": 18.36
+                        },
+                        {
+                            "date": "2026-04-11",
+                            "rain_sum": 0,
+                            "showers_sum": 0.3,
+                            "temperature_2m_max": 32.7,
+                            "temperature_2m_min": 22.9,
+                            "river_discharge": 12.71,
+                            "river_discharge_max": 13.26,
+                            "river_discharge_min": 11.82
+                        },
+                        {
+                            "date": "2026-04-12",
+                            "rain_sum": 0,
+                            "showers_sum": 0.2,
+                            "temperature_2m_max": 31.7,
+                            "temperature_2m_min": 21.8,
+                            "river_discharge": 11.68,
+                            "river_discharge_max": 15.22,
+                            "river_discharge_min": 10.48
+                        },
+                        {
+                            "date": "2026-04-13",
+                            "rain_sum": 0,
+                            "showers_sum": 7.1,
+                            "temperature_2m_max": 30.6,
+                            "temperature_2m_min": 22.6,
+                            "river_discharge": 12.87,
+                            "river_discharge_max": 14.89,
+                            "river_discharge_min": 10.04
+                        },
+                        {
+                            "date": "2026-04-14",
+                            "rain_sum": 0,
+                            "showers_sum": 5.7,
+                            "temperature_2m_max": 31.6,
+                            "temperature_2m_min": 21.7,
+                            "river_discharge": 15.56,
+                            "river_discharge_max": 15.56,
+                            "river_discharge_min": 9.59
+                        },
+                        {
+                            "date": "2026-04-15",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "temperature_2m_max": 32.5,
+                            "temperature_2m_min": 21.1,
+                            "river_discharge": 16.58,
+                            "river_discharge_max": 16.58,
+                            "river_discharge_min": 9.21
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "temperature_2m_max": 33.6,
+                            "temperature_2m_min": 22.9,
+                            "river_discharge": 15.9,
+                            "river_discharge_max": 15.9,
+                            "river_discharge_min": 8.75
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "rain_sum": 0,
+                            "showers_sum": 0.15,
+                            "temperature_2m_max": 33.7,
+                            "temperature_2m_min": 21.6,
+                            "river_discharge": 14.85,
+                            "river_discharge_max": 18.01,
+                            "river_discharge_min": 8.31
+                        }
+                    ]
+                },
+                {
+                    "station_key": "thaldena",
+                    "station_name": "Thaldena",
+                    "district": "Badulla",
+                    "local_area": "Adjacent GN in Welimada / Uva region",
+                    "latitude": 6.9,
+                    "longitude": 80.94,
+                    "daily": [
+                        {
+                            "date": "2026-04-08",
+                            "rain_sum": 0,
+                            "showers_sum": 1.5,
+                            "temperature_2m_max": 25.5,
+                            "temperature_2m_min": 17.3,
+                            "river_discharge": 9.35,
+                            "river_discharge_max": 9.67,
+                            "river_discharge_min": 9.26
+                        },
+                        {
+                            "date": "2026-04-09",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "temperature_2m_max": 25.4,
+                            "temperature_2m_min": 16.5,
+                            "river_discharge": 9.09,
+                            "river_discharge_max": 9.38,
+                            "river_discharge_min": 8.93
+                        },
+                        {
+                            "date": "2026-04-10",
+                            "rain_sum": 0,
+                            "showers_sum": 8.8,
+                            "temperature_2m_max": 25.8,
+                            "temperature_2m_min": 16.8,
+                            "river_discharge": 8.06,
+                            "river_discharge_max": 8.06,
+                            "river_discharge_min": 7.91
+                        },
+                        {
+                            "date": "2026-04-11",
+                            "rain_sum": 0,
+                            "showers_sum": 0.2,
+                            "temperature_2m_max": 24.5,
+                            "temperature_2m_min": 17.8,
+                            "river_discharge": 7,
+                            "river_discharge_max": 7.18,
+                            "river_discharge_min": 6.78
+                        },
+                        {
+                            "date": "2026-04-12",
+                            "rain_sum": 0,
+                            "showers_sum": 12.5,
+                            "temperature_2m_max": 24.5,
+                            "temperature_2m_min": 16.9,
+                            "river_discharge": 6.74,
+                            "river_discharge_max": 8.4,
+                            "river_discharge_min": 6.31
+                        },
+                        {
+                            "date": "2026-04-13",
+                            "rain_sum": 0,
+                            "showers_sum": 6.1,
+                            "temperature_2m_max": 23.2,
+                            "temperature_2m_min": 17.4,
+                            "river_discharge": 7.38,
+                            "river_discharge_max": 8.93,
+                            "river_discharge_min": 5.97
+                        },
+                        {
+                            "date": "2026-04-14",
+                            "rain_sum": 0,
+                            "showers_sum": 3.6,
+                            "temperature_2m_max": 23.4,
+                            "temperature_2m_min": 17.4,
+                            "river_discharge": 8.38,
+                            "river_discharge_max": 9.26,
+                            "river_discharge_min": 5.71
+                        },
+                        {
+                            "date": "2026-04-15",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "temperature_2m_max": 26.1,
+                            "temperature_2m_min": 17.5,
+                            "river_discharge": 8.73,
+                            "river_discharge_max": 9.02,
+                            "river_discharge_min": 5.41
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "temperature_2m_max": 25.6,
+                            "temperature_2m_min": 16.1,
+                            "river_discharge": 8.29,
+                            "river_discharge_max": 8.44,
+                            "river_discharge_min": 5.1
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "temperature_2m_max": 25.5,
+                            "temperature_2m_min": 15.9,
+                            "river_discharge": 7.71,
+                            "river_discharge_max": 8.29,
+                            "river_discharge_min": 4.81
+                        }
+                    ]
+                },
+                {
+                    "station_key": "weraganthota",
+                    "station_name": "Weraganthota",
+                    "district": "Kandy",
+                    "local_area": "Weraganthota / Adjacent GN",
+                    "latitude": 7.29,
+                    "longitude": 80.76,
+                    "daily": [
+                        {
+                            "date": "2026-04-08",
+                            "rain_sum": 0,
+                            "showers_sum": 3.2,
+                            "temperature_2m_max": 32.4,
+                            "temperature_2m_min": 21.4,
+                            "river_discharge": 0.66,
+                            "river_discharge_max": 0.66,
+                            "river_discharge_min": 0.66
+                        },
+                        {
+                            "date": "2026-04-09",
+                            "rain_sum": 0,
+                            "showers_sum": 0.1,
+                            "temperature_2m_max": 32.1,
+                            "temperature_2m_min": 22.3,
+                            "river_discharge": 0.59,
+                            "river_discharge_max": 0.63,
+                            "river_discharge_min": 0.59
+                        },
+                        {
+                            "date": "2026-04-10",
+                            "rain_sum": 0,
+                            "showers_sum": 0.1,
+                            "temperature_2m_max": 33.4,
+                            "temperature_2m_min": 21.3,
+                            "river_discharge": 0.47,
+                            "river_discharge_max": 0.47,
+                            "river_discharge_min": 0.47
+                        },
+                        {
+                            "date": "2026-04-11",
+                            "rain_sum": 0,
+                            "showers_sum": 0.2,
+                            "temperature_2m_max": 33,
+                            "temperature_2m_min": 23.1,
+                            "river_discharge": 0.34,
+                            "river_discharge_max": 0.34,
+                            "river_discharge_min": 0.34
+                        },
+                        {
+                            "date": "2026-04-12",
+                            "rain_sum": 0,
+                            "showers_sum": 1.8,
+                            "temperature_2m_max": 31.9,
+                            "temperature_2m_min": 22,
+                            "river_discharge": 0.31,
+                            "river_discharge_max": 0.34,
+                            "river_discharge_min": 0.31
+                        },
+                        {
+                            "date": "2026-04-13",
+                            "rain_sum": 0,
+                            "showers_sum": 8.6,
+                            "temperature_2m_max": 30.3,
+                            "temperature_2m_min": 23.2,
+                            "river_discharge": 0.31,
+                            "river_discharge_max": 0.37,
+                            "river_discharge_min": 0.31
+                        },
+                        {
+                            "date": "2026-04-14",
+                            "rain_sum": 0,
+                            "showers_sum": 6.6,
+                            "temperature_2m_max": 32.1,
+                            "temperature_2m_min": 22,
+                            "river_discharge": 0.31,
+                            "river_discharge_max": 0.37,
+                            "river_discharge_min": 0.31
+                        },
+                        {
+                            "date": "2026-04-15",
+                            "rain_sum": 0,
+                            "showers_sum": 0.3,
+                            "temperature_2m_max": 32.3,
+                            "temperature_2m_min": 21.4,
+                            "river_discharge": 0.34,
+                            "river_discharge_max": 0.37,
+                            "river_discharge_min": 0.31
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "temperature_2m_max": 33.2,
+                            "temperature_2m_min": 23.2,
+                            "river_discharge": 0.37,
+                            "river_discharge_max": 0.37,
+                            "river_discharge_min": 0.31
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "temperature_2m_max": 33.6,
+                            "temperature_2m_min": 22.4,
+                            "river_discharge": 0.34,
+                            "river_discharge_max": 0.34,
+                            "river_discharge_min": 0.31
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "river_key": "kalu",
+            "river_name": "Kalu",
+            "stations": [
+                {
+                    "station_key": "ellagawa",
+                    "station_name": "Ellagawa",
+                    "district": "Ratnapura",
+                    "local_area": "Ellagawa GN area",
+                    "latitude": 6.62,
+                    "longitude": 80.3,
+                    "daily": [
+                        {
+                            "date": "2026-04-08",
+                            "rain_sum": 0,
+                            "showers_sum": 1.6,
+                            "temperature_2m_max": 32,
+                            "temperature_2m_min": 24.1,
+                            "river_discharge": 3.84,
+                            "river_discharge_max": 3.88,
+                            "river_discharge_min": 3.79
+                        },
+                        {
+                            "date": "2026-04-09",
+                            "rain_sum": 0,
+                            "showers_sum": 0.1,
+                            "temperature_2m_max": 31.9,
+                            "temperature_2m_min": 23.9,
+                            "river_discharge": 3.79,
+                            "river_discharge_max": 3.79,
+                            "river_discharge_min": 3.66
+                        },
+                        {
+                            "date": "2026-04-10",
+                            "rain_sum": 0,
+                            "showers_sum": 1.2,
+                            "temperature_2m_max": 32.5,
+                            "temperature_2m_min": 22.5,
+                            "river_discharge": 3.62,
+                            "river_discharge_max": 3.66,
+                            "river_discharge_min": 3.62
+                        },
+                        {
+                            "date": "2026-04-11",
+                            "rain_sum": 0,
+                            "showers_sum": 2.5,
+                            "temperature_2m_max": 32.5,
+                            "temperature_2m_min": 23.9,
+                            "river_discharge": 3.56,
+                            "river_discharge_max": 3.72,
+                            "river_discharge_min": 3.5
+                        },
+                        {
+                            "date": "2026-04-12",
+                            "rain_sum": 0,
+                            "showers_sum": 2,
+                            "temperature_2m_max": 31.8,
+                            "temperature_2m_min": 23.3,
+                            "river_discharge": 3.59,
+                            "river_discharge_max": 3.91,
+                            "river_discharge_min": 3.41
+                        },
+                        {
+                            "date": "2026-04-13",
+                            "rain_sum": 0,
+                            "showers_sum": 3.4,
+                            "temperature_2m_max": 30.4,
+                            "temperature_2m_min": 23.7,
+                            "river_discharge": 3.79,
+                            "river_discharge_max": 4.09,
+                            "river_discharge_min": 3.32
+                        },
+                        {
+                            "date": "2026-04-14",
+                            "rain_sum": 0,
+                            "showers_sum": 3.9,
+                            "temperature_2m_max": 31.3,
+                            "temperature_2m_min": 22.8,
+                            "river_discharge": 4.09,
+                            "river_discharge_max": 4.35,
+                            "river_discharge_min": 3.29
+                        },
+                        {
+                            "date": "2026-04-15",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "temperature_2m_max": 32.4,
+                            "temperature_2m_min": 22.4,
+                            "river_discharge": 4.43,
+                            "river_discharge_max": 4.43,
+                            "river_discharge_min": 3.16
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "temperature_2m_max": 32.6,
+                            "temperature_2m_min": 24,
+                            "river_discharge": 4.71,
+                            "river_discharge_max": 4.71,
+                            "river_discharge_min": 3.06
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "rain_sum": 0,
+                            "showers_sum": 0.15,
+                            "temperature_2m_max": 32.7,
+                            "temperature_2m_min": 23,
+                            "river_discharge": 4.75,
+                            "river_discharge_max": 4.75,
+                            "river_discharge_min": 2.97
+                        }
+                    ]
+                },
+                {
+                    "station_key": "kalawellawa",
+                    "station_name": "Kalawellawa",
+                    "district": "Ratnapura",
+                    "local_area": "Kalawellawa GN area",
+                    "latitude": 6.64,
+                    "longitude": 80.36,
+                    "daily": [
+                        {
+                            "date": "2026-04-08",
+                            "rain_sum": 0,
+                            "showers_sum": 2.6,
+                            "temperature_2m_max": 34.6,
+                            "temperature_2m_min": 26,
+                            "river_discharge": 3.06,
+                            "river_discharge_max": 3.12,
+                            "river_discharge_min": 3.03
+                        },
+                        {
+                            "date": "2026-04-09",
+                            "rain_sum": 0,
+                            "showers_sum": 0.6,
+                            "temperature_2m_max": 33.8,
+                            "temperature_2m_min": 25.7,
+                            "river_discharge": 3.03,
+                            "river_discharge_max": 3.03,
+                            "river_discharge_min": 2.94
+                        },
+                        {
+                            "date": "2026-04-10",
+                            "rain_sum": 0,
+                            "showers_sum": 7.3,
+                            "temperature_2m_max": 34.9,
+                            "temperature_2m_min": 24,
+                            "river_discharge": 2.91,
+                            "river_discharge_max": 2.94,
+                            "river_discharge_min": 2.91
+                        },
+                        {
+                            "date": "2026-04-11",
+                            "rain_sum": 0,
+                            "showers_sum": 5.1,
+                            "temperature_2m_max": 34.3,
+                            "temperature_2m_min": 25.9,
+                            "river_discharge": 2.85,
+                            "river_discharge_max": 2.94,
+                            "river_discharge_min": 2.81
+                        },
+                        {
+                            "date": "2026-04-12",
+                            "rain_sum": 0,
+                            "showers_sum": 4.1,
+                            "temperature_2m_max": 33.8,
+                            "temperature_2m_min": 24.7,
+                            "river_discharge": 2.87,
+                            "river_discharge_max": 3.09,
+                            "river_discharge_min": 2.72
+                        },
+                        {
+                            "date": "2026-04-13",
+                            "rain_sum": 0,
+                            "showers_sum": 4,
+                            "temperature_2m_max": 31.9,
+                            "temperature_2m_min": 25.4,
+                            "river_discharge": 3.03,
+                            "river_discharge_max": 3.22,
+                            "river_discharge_min": 2.62
+                        },
+                        {
+                            "date": "2026-04-14",
+                            "rain_sum": 0,
+                            "showers_sum": 5.4,
+                            "temperature_2m_max": 33.3,
+                            "temperature_2m_min": 24.6,
+                            "river_discharge": 3.29,
+                            "river_discharge_max": 3.41,
+                            "river_discharge_min": 2.62
+                        },
+                        {
+                            "date": "2026-04-15",
+                            "rain_sum": 0,
+                            "showers_sum": 0.3,
+                            "temperature_2m_max": 34.9,
+                            "temperature_2m_min": 24.1,
+                            "river_discharge": 3.56,
+                            "river_discharge_max": 3.56,
+                            "river_discharge_min": 2.53
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "temperature_2m_max": 35.6,
+                            "temperature_2m_min": 26.1,
+                            "river_discharge": 3.79,
+                            "river_discharge_max": 3.79,
+                            "river_discharge_min": 2.44
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "rain_sum": 0,
+                            "showers_sum": 0.3,
+                            "temperature_2m_max": 35.6,
+                            "temperature_2m_min": 24.5,
+                            "river_discharge": 3.81,
+                            "river_discharge_max": 3.81,
+                            "river_discharge_min": 2.34
+                        }
+                    ]
+                },
+                {
+                    "station_key": "magura",
+                    "station_name": "Magura",
+                    "district": "Ratnapura",
+                    "local_area": "Magura GN area",
+                    "latitude": 6.58,
+                    "longitude": 80.29,
+                    "daily": [
+                        {
+                            "date": "2026-04-08",
+                            "rain_sum": 0,
+                            "showers_sum": 1.6,
+                            "temperature_2m_max": 32.1,
+                            "temperature_2m_min": 24.2,
+                            "river_discharge": 9.91,
+                            "river_discharge_max": 10.04,
+                            "river_discharge_min": 9.91
+                        },
+                        {
+                            "date": "2026-04-09",
+                            "rain_sum": 0,
+                            "showers_sum": 0.1,
+                            "temperature_2m_max": 32,
+                            "temperature_2m_min": 24,
+                            "river_discharge": 9.81,
+                            "river_discharge_max": 10.07,
+                            "river_discharge_min": 9.57
+                        },
+                        {
+                            "date": "2026-04-10",
+                            "rain_sum": 0,
+                            "showers_sum": 1.2,
+                            "temperature_2m_max": 32.6,
+                            "temperature_2m_min": 22.6,
+                            "river_discharge": 9.45,
+                            "river_discharge_max": 9.59,
+                            "river_discharge_min": 9.45
+                        },
+                        {
+                            "date": "2026-04-11",
+                            "rain_sum": 0,
+                            "showers_sum": 2.5,
+                            "temperature_2m_max": 32.6,
+                            "temperature_2m_min": 24,
+                            "river_discharge": 9.26,
+                            "river_discharge_max": 9.79,
+                            "river_discharge_min": 9.21
+                        },
+                        {
+                            "date": "2026-04-12",
+                            "rain_sum": 0,
+                            "showers_sum": 2,
+                            "temperature_2m_max": 31.9,
+                            "temperature_2m_min": 23.4,
+                            "river_discharge": 9.4,
+                            "river_discharge_max": 10.48,
+                            "river_discharge_min": 9
+                        },
+                        {
+                            "date": "2026-04-13",
+                            "rain_sum": 0,
+                            "showers_sum": 3.4,
+                            "temperature_2m_max": 30.5,
+                            "temperature_2m_min": 23.8,
+                            "river_discharge": 9.96,
+                            "river_discharge_max": 11.88,
+                            "river_discharge_min": 8.82
+                        },
+                        {
+                            "date": "2026-04-14",
+                            "rain_sum": 0,
+                            "showers_sum": 3.9,
+                            "temperature_2m_max": 31.4,
+                            "temperature_2m_min": 22.9,
+                            "river_discharge": 10.94,
+                            "river_discharge_max": 12.61,
+                            "river_discharge_min": 8.82
+                        },
+                        {
+                            "date": "2026-04-15",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "temperature_2m_max": 32.5,
+                            "temperature_2m_min": 22.5,
+                            "river_discharge": 11.97,
+                            "river_discharge_max": 12.49,
+                            "river_discharge_min": 8.59
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "temperature_2m_max": 32.7,
+                            "temperature_2m_min": 24.1,
+                            "river_discharge": 12.8,
+                            "river_discharge_max": 13.86,
+                            "river_discharge_min": 8.46
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "rain_sum": 0,
+                            "showers_sum": 0.15,
+                            "temperature_2m_max": 32.8,
+                            "temperature_2m_min": 23.2,
+                            "river_discharge": 12.93,
+                            "river_discharge_max": 13.66,
+                            "river_discharge_min": 8.29
+                        }
+                    ]
+                },
+                {
+                    "station_key": "putupaula",
+                    "station_name": "Putupaula",
+                    "district": "Ratnapura",
+                    "local_area": "Putupaula GN area",
+                    "latitude": 6.6,
+                    "longitude": 80.33,
+                    "daily": [
+                        {
+                            "date": "2026-04-08",
+                            "rain_sum": 0,
+                            "showers_sum": 2.6,
+                            "temperature_2m_max": 33.2,
+                            "temperature_2m_min": 24.6,
+                            "river_discharge": 0.72,
+                            "river_discharge_max": 0.72,
+                            "river_discharge_min": 0.72
+                        },
+                        {
+                            "date": "2026-04-09",
+                            "rain_sum": 0,
+                            "showers_sum": 0.6,
+                            "temperature_2m_max": 32.4,
+                            "temperature_2m_min": 24.3,
+                            "river_discharge": 0.72,
+                            "river_discharge_max": 0.72,
+                            "river_discharge_min": 0.69
+                        },
+                        {
+                            "date": "2026-04-10",
+                            "rain_sum": 0,
+                            "showers_sum": 7.3,
+                            "temperature_2m_max": 33.5,
+                            "temperature_2m_min": 22.6,
+                            "river_discharge": 0.69,
+                            "river_discharge_max": 0.72,
+                            "river_discharge_min": 0.69
+                        },
+                        {
+                            "date": "2026-04-11",
+                            "rain_sum": 0,
+                            "showers_sum": 5.1,
+                            "temperature_2m_max": 32.9,
+                            "temperature_2m_min": 24.5,
+                            "river_discharge": 0.69,
+                            "river_discharge_max": 0.75,
+                            "river_discharge_min": 0.69
+                        },
+                        {
+                            "date": "2026-04-12",
+                            "rain_sum": 0,
+                            "showers_sum": 4.1,
+                            "temperature_2m_max": 32.4,
+                            "temperature_2m_min": 23.3,
+                            "river_discharge": 0.69,
+                            "river_discharge_max": 0.81,
+                            "river_discharge_min": 0.66
+                        },
+                        {
+                            "date": "2026-04-13",
+                            "rain_sum": 0,
+                            "showers_sum": 4,
+                            "temperature_2m_max": 30.5,
+                            "temperature_2m_min": 24,
+                            "river_discharge": 0.72,
+                            "river_discharge_max": 0.85,
+                            "river_discharge_min": 0.66
+                        },
+                        {
+                            "date": "2026-04-14",
+                            "rain_sum": 0,
+                            "showers_sum": 5.4,
+                            "temperature_2m_max": 31.9,
+                            "temperature_2m_min": 23.2,
+                            "river_discharge": 0.78,
+                            "river_discharge_max": 0.87,
+                            "river_discharge_min": 0.66
+                        },
+                        {
+                            "date": "2026-04-15",
+                            "rain_sum": 0,
+                            "showers_sum": 0.3,
+                            "temperature_2m_max": 33.5,
+                            "temperature_2m_min": 22.7,
+                            "river_discharge": 0.85,
+                            "river_discharge_max": 0.87,
+                            "river_discharge_min": 0.63
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "temperature_2m_max": 34.2,
+                            "temperature_2m_min": 24.7,
+                            "river_discharge": 0.87,
+                            "river_discharge_max": 0.87,
+                            "river_discharge_min": 0.63
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "rain_sum": 0,
+                            "showers_sum": 0.15,
+                            "temperature_2m_max": 34.2,
+                            "temperature_2m_min": 23.4,
+                            "river_discharge": 0.91,
+                            "river_discharge_max": 0.91,
+                            "river_discharge_min": 0.59
+                        }
+                    ]
+                },
+                {
+                    "station_key": "rathnapura",
+                    "station_name": "Rathnapura",
+                    "district": "Ratnapura",
+                    "local_area": "Rathnapura Town GN divisions",
+                    "latitude": 6.68,
+                    "longitude": 80.4,
+                    "daily": [
+                        {
+                            "date": "2026-04-08",
+                            "rain_sum": 0,
+                            "showers_sum": 2.6,
+                            "temperature_2m_max": 34.8,
+                            "temperature_2m_min": 26.1,
+                            "river_discharge": 18.01,
+                            "river_discharge_max": 19.7,
+                            "river_discharge_min": 18.01
+                        },
+                        {
+                            "date": "2026-04-09",
+                            "rain_sum": 0,
+                            "showers_sum": 0.6,
+                            "temperature_2m_max": 34,
+                            "temperature_2m_min": 25.9,
+                            "river_discharge": 17.75,
+                            "river_discharge_max": 17.75,
+                            "river_discharge_min": 17.11
+                        },
+                        {
+                            "date": "2026-04-10",
+                            "rain_sum": 0,
+                            "showers_sum": 7.3,
+                            "temperature_2m_max": 35.1,
+                            "temperature_2m_min": 24.2,
+                            "river_discharge": 17.03,
+                            "river_discharge_max": 17.45,
+                            "river_discharge_min": 17.03
+                        },
+                        {
+                            "date": "2026-04-11",
+                            "rain_sum": 0,
+                            "showers_sum": 5.1,
+                            "temperature_2m_max": 34.5,
+                            "temperature_2m_min": 26,
+                            "river_discharge": 16.62,
+                            "river_discharge_max": 17.45,
+                            "river_discharge_min": 16.5
+                        },
+                        {
+                            "date": "2026-04-12",
+                            "rain_sum": 0,
+                            "showers_sum": 4.1,
+                            "temperature_2m_max": 34,
+                            "temperature_2m_min": 24.9,
+                            "river_discharge": 16.7,
+                            "river_discharge_max": 18.86,
+                            "river_discharge_min": 15.9
+                        },
+                        {
+                            "date": "2026-04-13",
+                            "rain_sum": 0,
+                            "showers_sum": 4,
+                            "temperature_2m_max": 32.1,
+                            "temperature_2m_min": 25.5,
+                            "river_discharge": 17.41,
+                            "river_discharge_max": 21.34,
+                            "river_discharge_min": 15.48
+                        },
+                        {
+                            "date": "2026-04-14",
+                            "rain_sum": 0,
+                            "showers_sum": 5.4,
+                            "temperature_2m_max": 33.5,
+                            "temperature_2m_min": 24.8,
+                            "river_discharge": 18.82,
+                            "river_discharge_max": 22.07,
+                            "river_discharge_min": 15.18
+                        },
+                        {
+                            "date": "2026-04-15",
+                            "rain_sum": 0,
+                            "showers_sum": 0.3,
+                            "temperature_2m_max": 35.1,
+                            "temperature_2m_min": 24.3,
+                            "river_discharge": 20.38,
+                            "river_discharge_max": 23.04,
+                            "river_discharge_min": 14.67
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "temperature_2m_max": 35.7,
+                            "temperature_2m_min": 26.3,
+                            "river_discharge": 21.39,
+                            "river_discharge_max": 24.12,
+                            "river_discharge_min": 14.17
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "rain_sum": 0,
+                            "showers_sum": 0.15,
+                            "temperature_2m_max": 35.7,
+                            "temperature_2m_min": 24.8,
+                            "river_discharge": 21.39,
+                            "river_discharge_max": 23.15,
+                            "river_discharge_min": 13.59
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "river_key": "kelani",
+            "river_name": "Kelani",
+            "stations": [
+                {
+                    "station_key": "deraniyagala",
+                    "station_name": "Deraniyagala",
+                    "district": "Kegalle",
+                    "local_area": "Deraniyagala GN",
+                    "latitude": 6.92,
+                    "longitude": 80.34,
+                    "daily": [
+                        {
+                            "date": "2026-04-08",
+                            "rain_sum": 0,
+                            "showers_sum": 5.3,
+                            "temperature_2m_max": 35.3,
+                            "temperature_2m_min": 26,
+                            "river_discharge": 6.38,
+                            "river_discharge_max": 6.46,
+                            "river_discharge_min": 6.38
+                        },
+                        {
+                            "date": "2026-04-09",
+                            "rain_sum": 0,
+                            "showers_sum": 0.5,
+                            "temperature_2m_max": 35.1,
+                            "temperature_2m_min": 26.1,
+                            "river_discharge": 6.31,
+                            "river_discharge_max": 6.31,
+                            "river_discharge_min": 6.13
+                        },
+                        {
+                            "date": "2026-04-10",
+                            "rain_sum": 0,
+                            "showers_sum": 5.2,
+                            "temperature_2m_max": 34.7,
+                            "temperature_2m_min": 24,
+                            "river_discharge": 6.06,
+                            "river_discharge_max": 6.06,
+                            "river_discharge_min": 6
+                        },
+                        {
+                            "date": "2026-04-11",
+                            "rain_sum": 0,
+                            "showers_sum": 0.5,
+                            "temperature_2m_max": 34,
+                            "temperature_2m_min": 26.1,
+                            "river_discharge": 5.93,
+                            "river_discharge_max": 5.93,
+                            "river_discharge_min": 5.71
+                        },
+                        {
+                            "date": "2026-04-12",
+                            "rain_sum": 0,
+                            "showers_sum": 1.9,
+                            "temperature_2m_max": 34.9,
+                            "temperature_2m_min": 25.3,
+                            "river_discharge": 5.87,
+                            "river_discharge_max": 5.97,
+                            "river_discharge_min": 5.44
+                        },
+                        {
+                            "date": "2026-04-13",
+                            "rain_sum": 0,
+                            "showers_sum": 7.9,
+                            "temperature_2m_max": 33.2,
+                            "temperature_2m_min": 25.2,
+                            "river_discharge": 6,
+                            "river_discharge_max": 6.28,
+                            "river_discharge_min": 5.22
+                        },
+                        {
+                            "date": "2026-04-14",
+                            "rain_sum": 0,
+                            "showers_sum": 13.2,
+                            "temperature_2m_max": 33.4,
+                            "temperature_2m_min": 25.2,
+                            "river_discharge": 6.43,
+                            "river_discharge_max": 6.82,
+                            "river_discharge_min": 5.07
+                        },
+                        {
+                            "date": "2026-04-15",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "temperature_2m_max": 35.7,
+                            "temperature_2m_min": 24.7,
+                            "river_discharge": 7.04,
+                            "river_discharge_max": 7.24,
+                            "river_discharge_min": 4.85
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "rain_sum": 0,
+                            "showers_sum": 0.3,
+                            "temperature_2m_max": 36.3,
+                            "temperature_2m_min": 26.1,
+                            "river_discharge": 7.43,
+                            "river_discharge_max": 7.81,
+                            "river_discharge_min": 4.69
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "rain_sum": 0,
+                            "showers_sum": 0.15,
+                            "temperature_2m_max": 35.9,
+                            "temperature_2m_min": 24.4,
+                            "river_discharge": 7.47,
+                            "river_discharge_max": 7.47,
+                            "river_discharge_min": 4.5
+                        }
+                    ]
+                },
+                {
+                    "station_key": "glencourse",
+                    "station_name": "Glencourse",
+                    "district": "Kalutara",
+                    "local_area": "Glencourse / Avissawella GN",
+                    "latitude": 6.96,
+                    "longitude": 80.21,
+                    "daily": [
+                        {
+                            "date": "2026-04-08",
+                            "rain_sum": 0,
+                            "showers_sum": 3.3,
+                            "temperature_2m_max": 34.7,
+                            "temperature_2m_min": 26.6,
+                            "river_discharge": 12.71,
+                            "river_discharge_max": 13.19,
+                            "river_discharge_min": 12.71
+                        },
+                        {
+                            "date": "2026-04-09",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "temperature_2m_max": 34.8,
+                            "temperature_2m_min": 25.9,
+                            "river_discharge": 12.74,
+                            "river_discharge_max": 12.74,
+                            "river_discharge_min": 12.34
+                        },
+                        {
+                            "date": "2026-04-10",
+                            "rain_sum": 0,
+                            "showers_sum": 1.7,
+                            "temperature_2m_max": 36.9,
+                            "temperature_2m_min": 24.6,
+                            "river_discharge": 12.21,
+                            "river_discharge_max": 12.21,
+                            "river_discharge_min": 12.06
+                        },
+                        {
+                            "date": "2026-04-11",
+                            "rain_sum": 0,
+                            "showers_sum": 0.7,
+                            "temperature_2m_max": 35.5,
+                            "temperature_2m_min": 26.3,
+                            "river_discharge": 11.97,
+                            "river_discharge_max": 12,
+                            "river_discharge_min": 11.53
+                        },
+                        {
+                            "date": "2026-04-12",
+                            "rain_sum": 0,
+                            "showers_sum": 1.5,
+                            "temperature_2m_max": 36.6,
+                            "temperature_2m_min": 25.6,
+                            "river_discharge": 11.94,
+                            "river_discharge_max": 12.3,
+                            "river_discharge_min": 10.99
+                        },
+                        {
+                            "date": "2026-04-13",
+                            "rain_sum": 0,
+                            "showers_sum": 5.9,
+                            "temperature_2m_max": 33.8,
+                            "temperature_2m_min": 26.1,
+                            "river_discharge": 12.3,
+                            "river_discharge_max": 13.66,
+                            "river_discharge_min": 10.67
+                        },
+                        {
+                            "date": "2026-04-14",
+                            "rain_sum": 0,
+                            "showers_sum": 3.9,
+                            "temperature_2m_max": 34.5,
+                            "temperature_2m_min": 25.8,
+                            "river_discharge": 13.42,
+                            "river_discharge_max": 14.45,
+                            "river_discharge_min": 10.32
+                        },
+                        {
+                            "date": "2026-04-15",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "temperature_2m_max": 36.1,
+                            "temperature_2m_min": 24.4,
+                            "river_discharge": 14.67,
+                            "river_discharge_max": 16.38,
+                            "river_discharge_min": 10.07
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "temperature_2m_max": 37.1,
+                            "temperature_2m_min": 26.1,
+                            "river_discharge": 15.48,
+                            "river_discharge_max": 17.75,
+                            "river_discharge_min": 9.74
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "temperature_2m_max": 37.1,
+                            "temperature_2m_min": 25.2,
+                            "river_discharge": 15.6,
+                            "river_discharge_max": 17.07,
+                            "river_discharge_min": 9.38
+                        }
+                    ]
+                },
+                {
+                    "station_key": "hanwella",
+                    "station_name": "Hanwella",
+                    "district": "Colombo",
+                    "local_area": "Hanwella GN (Seethawaka DS)",
+                    "latitude": 6.91,
+                    "longitude": 80.08,
+                    "daily": [
+                        {
+                            "date": "2026-04-08",
+                            "rain_sum": 0,
+                            "showers_sum": 0.7,
+                            "temperature_2m_max": 34.1,
+                            "temperature_2m_min": 29.1,
+                            "river_discharge": 1.25,
+                            "river_discharge_max": 1.31,
+                            "river_discharge_min": 1.25
+                        },
+                        {
+                            "date": "2026-04-09",
+                            "rain_sum": 0,
+                            "showers_sum": 0.1,
+                            "temperature_2m_max": 34,
+                            "temperature_2m_min": 28,
+                            "river_discharge": 1.34,
+                            "river_discharge_max": 1.34,
+                            "river_discharge_min": 1.22
+                        },
+                        {
+                            "date": "2026-04-10",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "temperature_2m_max": 34.8,
+                            "temperature_2m_min": 27.5,
+                            "river_discharge": 1.25,
+                            "river_discharge_max": 1.28,
+                            "river_discharge_min": 1.22
+                        },
+                        {
+                            "date": "2026-04-11",
+                            "rain_sum": 0,
+                            "showers_sum": 1.1,
+                            "temperature_2m_max": 33.9,
+                            "temperature_2m_min": 27.5,
+                            "river_discharge": 1.25,
+                            "river_discharge_max": 1.31,
+                            "river_discharge_min": 1.16
+                        },
+                        {
+                            "date": "2026-04-12",
+                            "rain_sum": 0,
+                            "showers_sum": 0.9,
+                            "temperature_2m_max": 34.1,
+                            "temperature_2m_min": 27.3,
+                            "river_discharge": 1.28,
+                            "river_discharge_max": 1.34,
+                            "river_discharge_min": 1.12
+                        },
+                        {
+                            "date": "2026-04-13",
+                            "rain_sum": 0,
+                            "showers_sum": 2.5,
+                            "temperature_2m_max": 33.4,
+                            "temperature_2m_min": 27.6,
+                            "river_discharge": 1.4,
+                            "river_discharge_max": 1.47,
+                            "river_discharge_min": 1.12
+                        },
+                        {
+                            "date": "2026-04-14",
+                            "rain_sum": 0,
+                            "showers_sum": 2.7,
+                            "temperature_2m_max": 34.1,
+                            "temperature_2m_min": 27.1,
+                            "river_discharge": 1.56,
+                            "river_discharge_max": 1.62,
+                            "river_discharge_min": 1.12
+                        },
+                        {
+                            "date": "2026-04-15",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "temperature_2m_max": 34.5,
+                            "temperature_2m_min": 26.2,
+                            "river_discharge": 1.65,
+                            "river_discharge_max": 1.81,
+                            "river_discharge_min": 1.09
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "temperature_2m_max": 34.4,
+                            "temperature_2m_min": 28,
+                            "river_discharge": 1.69,
+                            "river_discharge_max": 1.84,
+                            "river_discharge_min": 1.09
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "temperature_2m_max": 34.6,
+                            "temperature_2m_min": 25.5,
+                            "river_discharge": 1.65,
+                            "river_discharge_max": 1.75,
+                            "river_discharge_min": 1.09
+                        }
+                    ]
+                },
+                {
+                    "station_key": "holombuwa",
+                    "station_name": "Holombuwa",
+                    "district": "Kegalle",
+                    "local_area": "Holombuwa GN",
+                    "latitude": 7.03,
+                    "longitude": 80.27,
+                    "daily": [
+                        {
+                            "date": "2026-04-08",
+                            "rain_sum": 0,
+                            "showers_sum": 3.3,
+                            "temperature_2m_max": 34,
+                            "temperature_2m_min": 25.8,
+                            "river_discharge": 24.12,
+                            "river_discharge_max": 25.24,
+                            "river_discharge_min": 24.12
+                        },
+                        {
+                            "date": "2026-04-09",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "temperature_2m_max": 34.1,
+                            "temperature_2m_min": 25.2,
+                            "river_discharge": 23.83,
+                            "river_discharge_max": 24.12,
+                            "river_discharge_min": 23.21
+                        },
+                        {
+                            "date": "2026-04-10",
+                            "rain_sum": 0,
+                            "showers_sum": 1.7,
+                            "temperature_2m_max": 36.1,
+                            "temperature_2m_min": 23.8,
+                            "river_discharge": 22.44,
+                            "river_discharge_max": 22.82,
+                            "river_discharge_min": 22.44
+                        },
+                        {
+                            "date": "2026-04-11",
+                            "rain_sum": 0,
+                            "showers_sum": 0.7,
+                            "temperature_2m_max": 34.8,
+                            "temperature_2m_min": 25.6,
+                            "river_discharge": 21.75,
+                            "river_discharge_max": 22.66,
+                            "river_discharge_min": 21.34
+                        },
+                        {
+                            "date": "2026-04-12",
+                            "rain_sum": 0,
+                            "showers_sum": 1.5,
+                            "temperature_2m_max": 35.8,
+                            "temperature_2m_min": 24.9,
+                            "river_discharge": 21.65,
+                            "river_discharge_max": 23.89,
+                            "river_discharge_min": 20.48
+                        },
+                        {
+                            "date": "2026-04-13",
+                            "rain_sum": 0,
+                            "showers_sum": 5.9,
+                            "temperature_2m_max": 33,
+                            "temperature_2m_min": 25.3,
+                            "river_discharge": 22.77,
+                            "river_discharge_max": 25.18,
+                            "river_discharge_min": 19.84
+                        },
+                        {
+                            "date": "2026-04-14",
+                            "rain_sum": 0,
+                            "showers_sum": 3.9,
+                            "temperature_2m_max": 33.7,
+                            "temperature_2m_min": 25,
+                            "river_discharge": 25.12,
+                            "river_discharge_max": 27.64,
+                            "river_discharge_min": 19.32
+                        },
+                        {
+                            "date": "2026-04-15",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "temperature_2m_max": 35.4,
+                            "temperature_2m_min": 23.7,
+                            "river_discharge": 27.31,
+                            "river_discharge_max": 29.83,
+                            "river_discharge_min": 18.68
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "temperature_2m_max": 36.4,
+                            "temperature_2m_min": 25.4,
+                            "river_discharge": 28.04,
+                            "river_discharge_max": 30.26,
+                            "river_discharge_min": 18.05
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "temperature_2m_max": 36.4,
+                            "temperature_2m_min": 24.6,
+                            "river_discharge": 27.77,
+                            "river_discharge_max": 28.99,
+                            "river_discharge_min": 17.32
+                        }
+                    ]
+                },
+                {
+                    "station_key": "kithulgala",
+                    "station_name": "Kithulgala",
+                    "district": "Kegalle",
+                    "local_area": "Kithulgala GN",
+                    "latitude": 6.99,
+                    "longitude": 80.42,
+                    "daily": [
+                        {
+                            "date": "2026-04-08",
+                            "rain_sum": 0,
+                            "showers_sum": 5.5,
+                            "temperature_2m_max": 36.9,
+                            "temperature_2m_min": 27.4,
+                            "river_discharge": 8.57,
+                            "river_discharge_max": 9.09,
+                            "river_discharge_min": 8.46
+                        },
+                        {
+                            "date": "2026-04-09",
+                            "rain_sum": 0,
+                            "showers_sum": 0.1,
+                            "temperature_2m_max": 36.6,
+                            "temperature_2m_min": 27,
+                            "river_discharge": 8.44,
+                            "river_discharge_max": 8.68,
+                            "river_discharge_min": 8.23
+                        },
+                        {
+                            "date": "2026-04-10",
+                            "rain_sum": 0,
+                            "showers_sum": 0.2,
+                            "temperature_2m_max": 37.8,
+                            "temperature_2m_min": 25.6,
+                            "river_discharge": 7.97,
+                            "river_discharge_max": 8.16,
+                            "river_discharge_min": 7.97
+                        },
+                        {
+                            "date": "2026-04-11",
+                            "rain_sum": 0,
+                            "showers_sum": 2.5,
+                            "temperature_2m_max": 36.5,
+                            "temperature_2m_min": 27.6,
+                            "river_discharge": 7.65,
+                            "river_discharge_max": 8.25,
+                            "river_discharge_min": 7.47
+                        },
+                        {
+                            "date": "2026-04-12",
+                            "rain_sum": 0,
+                            "showers_sum": 0.7,
+                            "temperature_2m_max": 37.5,
+                            "temperature_2m_min": 26.9,
+                            "river_discharge": 7.63,
+                            "river_discharge_max": 9.09,
+                            "river_discharge_min": 7.15
+                        },
+                        {
+                            "date": "2026-04-13",
+                            "rain_sum": 0,
+                            "showers_sum": 9.5,
+                            "temperature_2m_max": 35.1,
+                            "temperature_2m_min": 26.9,
+                            "river_discharge": 8.1,
+                            "river_discharge_max": 9.3,
+                            "river_discharge_min": 6.94
+                        },
+                        {
+                            "date": "2026-04-14",
+                            "rain_sum": 0,
+                            "showers_sum": 5.1,
+                            "temperature_2m_max": 35.8,
+                            "temperature_2m_min": 26.8,
+                            "river_discharge": 8.98,
+                            "river_discharge_max": 9.91,
+                            "river_discharge_min": 6.85
+                        },
+                        {
+                            "date": "2026-04-15",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "temperature_2m_max": 37.7,
+                            "temperature_2m_min": 25.8,
+                            "river_discharge": 9.59,
+                            "river_discharge_max": 10.25,
+                            "river_discharge_min": 6.62
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "temperature_2m_max": 38.6,
+                            "temperature_2m_min": 27.5,
+                            "river_discharge": 9.62,
+                            "river_discharge_max": 9.84,
+                            "river_discharge_min": 6.31
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "rain_sum": 0,
+                            "showers_sum": 0.15,
+                            "temperature_2m_max": 38.2,
+                            "temperature_2m_min": 25,
+                            "river_discharge": 9.35,
+                            "river_discharge_max": 9.86,
+                            "river_discharge_min": 6
+                        }
+                    ]
+                },
+                {
+                    "station_key": "nagalagam_street",
+                    "station_name": "Nagalagam Street",
+                    "district": "Colombo",
+                    "local_area": "Colombo riverside GN divisions",
+                    "latitude": 6.95,
+                    "longitude": 79.87,
+                    "daily": [
+                        {
+                            "date": "2026-04-08",
+                            "rain_sum": 0,
+                            "showers_sum": 2.4,
+                            "temperature_2m_max": 30.3,
+                            "temperature_2m_min": 29.5,
+                            "river_discharge": 52.21,
+                            "river_discharge_max": 54.98,
+                            "river_discharge_min": 51.48
+                        },
+                        {
+                            "date": "2026-04-09",
+                            "rain_sum": 0,
+                            "showers_sum": 2,
+                            "temperature_2m_max": 30,
+                            "temperature_2m_min": 28.8,
+                            "river_discharge": 53.2,
+                            "river_discharge_max": 53.58,
+                            "river_discharge_min": 50.05
+                        },
+                        {
+                            "date": "2026-04-10",
+                            "rain_sum": 0,
+                            "showers_sum": 1.7,
+                            "temperature_2m_max": 29.7,
+                            "temperature_2m_min": 28.8,
+                            "river_discharge": 47.08,
+                            "river_discharge_max": 49.23,
+                            "river_discharge_min": 46.75
+                        },
+                        {
+                            "date": "2026-04-11",
+                            "rain_sum": 0,
+                            "showers_sum": 1.3,
+                            "temperature_2m_max": 29.5,
+                            "temperature_2m_min": 28.4,
+                            "river_discharge": 45.03,
+                            "river_discharge_max": 47.08,
+                            "river_discharge_min": 42.95
+                        },
+                        {
+                            "date": "2026-04-12",
+                            "rain_sum": 0,
+                            "showers_sum": 0.6,
+                            "temperature_2m_max": 29.6,
+                            "temperature_2m_min": 28.1,
+                            "river_discharge": 46.42,
+                            "river_discharge_max": 49.58,
+                            "river_discharge_min": 41.07
+                        },
+                        {
+                            "date": "2026-04-13",
+                            "rain_sum": 0,
+                            "showers_sum": 9.3,
+                            "temperature_2m_max": 29.5,
+                            "temperature_2m_min": 27.6,
+                            "river_discharge": 51.84,
+                            "river_discharge_max": 56.68,
+                            "river_discharge_min": 39.74
+                        },
+                        {
+                            "date": "2026-04-14",
+                            "rain_sum": 0,
+                            "showers_sum": 1.5,
+                            "temperature_2m_max": 29.7,
+                            "temperature_2m_min": 28.5,
+                            "river_discharge": 56.81,
+                            "river_discharge_max": 65.07,
+                            "river_discharge_min": 38.45
+                        },
+                        {
+                            "date": "2026-04-15",
+                            "rain_sum": 0,
+                            "showers_sum": 0.9,
+                            "temperature_2m_max": 29.6,
+                            "temperature_2m_min": 28,
+                            "river_discharge": 60.52,
+                            "river_discharge_max": 72.11,
+                            "river_discharge_min": 37.37
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "rain_sum": 0,
+                            "showers_sum": 0.6,
+                            "temperature_2m_max": 29.6,
+                            "temperature_2m_min": 28.6,
+                            "river_discharge": 61.37,
+                            "river_discharge_max": 71.61,
+                            "river_discharge_min": 36.07
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "rain_sum": 0,
+                            "showers_sum": 0.3,
+                            "temperature_2m_max": 30.2,
+                            "temperature_2m_min": 26.7,
+                            "river_discharge": 60.38,
+                            "river_discharge_max": 67.39,
+                            "river_discharge_min": 34.4
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

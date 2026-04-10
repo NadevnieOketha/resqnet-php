@@ -28,6 +28,7 @@ $pageTitle = $page_title ?? config('app.name');
                 <ul>
                     <li><a href="/" <?= is_current_url('/') ? 'aria-current="page"' : '' ?>>Home</a></li>
                     <li><a href="/safe-locations" <?= is_current_url('/safe-locations') ? 'aria-current="page"' : '' ?>>Safe Locations</a></li>
+                    <li><a href="/forecast" <?= is_current_url('/forecast') ? 'aria-current="page"' : '' ?>>Forecast</a></li>
                     <li><a href="/make-donation" <?= is_current_url('/make-donation') ? 'aria-current="page"' : '' ?>>Make Donation</a></li>
                     <?php if (auth_check()): ?>
                         <li><a href="/dashboard" <?= is_current_url('/dashboard') ? 'aria-current="page"' : '' ?>>Dashboard</a></li>
@@ -41,9 +42,11 @@ $pageTitle = $page_title ?? config('app.name');
             <div class="header-actions">
                 <?php if (auth_check()): ?>
                     <a href="/logout" class="btn">Logout</a>
+                    <a href="/forecast" class="btn">Forecast</a>
                     <a href="/dashboard" class="btn btn-primary">Open Dashboard</a>
                 <?php else: ?>
                     <a href="/register" class="btn" <?= is_current_url('/register') ? 'aria-current="page"' : '' ?>>Sign Up</a>
+                    <a href="/forecast" class="btn">Forecast</a>
                     <a href="/login" class="btn btn-primary" <?= is_current_url('/login') ? 'aria-current="page"' : '' ?>>Login</a>
                 <?php endif; ?>
             </div>
