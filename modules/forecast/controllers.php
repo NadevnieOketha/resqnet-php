@@ -21,6 +21,145 @@ function forecast_normalize(string $value): string
     return trim($clean);
 }
 
+function forecast_normalize_district(string $value): string
+{
+    $normalized = forecast_normalize($value);
+    $normalized = preg_replace('/\bdistrict\b/', '', $normalized) ?? $normalized;
+    return trim((string) $normalized);
+}
+
+function forecast_station_mapping_groups(): array
+{
+    return [
+        ['district' => 'Colombo', 'station' => 'nagalagam_street', 'areas' => ['Colombo', 'Kolonnawa', 'Nagalagam Street', 'Sri Jayawardenepura Kotte', 'Thimbirigasyaya', 'Dehiwala', 'Ratmalana', 'Moratuwa']],
+        ['district' => 'Colombo', 'station' => 'hanwella', 'areas' => ['Kaduwela', 'Maharagama', 'Kesbewa', 'Homagama', 'Padukka', 'Hanwella (Seethawaka)', 'Hanwella']],
+
+        ['district' => 'Gampaha', 'station' => 'nagalagam_street', 'areas' => ['Wattala', 'Kelaniya', 'Biyagama', 'Ja-Ela']],
+        ['district' => 'Gampaha', 'station' => 'hanwella', 'areas' => ['Gampaha', 'Mahara', 'Dompe', 'Attanagalla']],
+        ['district' => 'Gampaha', 'station' => 'holombuwa', 'areas' => ['Negombo', 'Katana', 'Divulapitiya', 'Mirigama', 'Minuwangoda']],
+
+        ['district' => 'Kalutara', 'station' => 'glencourse', 'areas' => ['Avissawella', 'Glencourse']],
+        ['district' => 'Kalutara', 'station' => 'ellagawa', 'areas' => ['Ingiriya', 'Horana']],
+        ['district' => 'Kalutara', 'station' => 'kalawellawa', 'areas' => ['Bandaragama', 'Millaniya', 'Madurawala', 'Bulathsinhala']],
+        ['district' => 'Kalutara', 'station' => 'putupaula', 'areas' => ['Panadura', 'Kalutara', 'Beruwala', 'Dodangoda']],
+        ['district' => 'Kalutara', 'station' => 'magura', 'areas' => ['Matugama', 'Agalawatta', 'Palindanuwara', 'Walallavita']],
+
+        ['district' => 'Kandy', 'station' => 'nawalapitiya', 'areas' => ['Nawalapitiya', 'Pasbage Korale', 'Ganga Ihala Korale']],
+        ['district' => 'Kandy', 'station' => 'peradeniya', 'areas' => ['Peradeniya', 'Kandy Four Gravets', 'Gangawata Korale', 'Yatinuwara', 'Udunuwara', 'Doluwa', 'Hatharaliyadda', 'Thumpane', 'Pujapitiya', 'Akurana', 'Udapalatha', 'Pathahewaheta', 'Delthota']],
+        ['district' => 'Kandy', 'station' => 'weraganthota', 'areas' => ['Weraganthota', 'Minipe', 'Ududumbara', 'Medadumbara', 'Pathadumbara', 'Panvila', 'Kundasale']],
+
+        ['district' => 'Kegalle', 'station' => 'deraniyagala', 'areas' => ['Deraniyagala']],
+        ['district' => 'Kegalle', 'station' => 'kithulgala', 'areas' => ['Kithulgala', 'Yatiyanthota', 'Ruwanwella']],
+        ['district' => 'Kegalle', 'station' => 'holombuwa', 'areas' => ['Holombuwa', 'Warakapola', 'Mawanella']],
+
+        ['district' => 'Ratnapura', 'station' => 'rathnapura', 'areas' => ['Rathnapura', 'Kuruwita', 'Pelmadulla', 'Balangoda', 'Godakawela']],
+        ['district' => 'Ratnapura', 'station' => 'ellagawa', 'areas' => ['Eheliyagoda', 'Ellagawa']],
+        ['district' => 'Ratnapura', 'station' => 'kalawellawa', 'areas' => ['Kalawellawa']],
+        ['district' => 'Ratnapura', 'station' => 'magura', 'areas' => ['Magura']],
+        ['district' => 'Ratnapura', 'station' => 'putupaula', 'areas' => ['Putupaula']],
+
+        ['district' => 'Polonnaruwa', 'station' => 'manampitiya', 'areas' => ['Manampitiya', 'Dimbulagala', 'Polonnaruwa', 'Hingurakgoda', 'Lankapura', 'Welikanda']],
+        ['district' => 'Badulla', 'station' => 'thaldena', 'areas' => ['Thaldena', 'Welimada', 'Badulla', 'Passara', 'Bandarawela', 'Hali-Ela']],
+
+        ['district' => 'Galle', 'station' => 'putupaula', 'areas' => ['Bentota', 'Balapitiya', 'Karandeniya', 'Elpitiya', 'Ambalangoda', 'Hikkaduwa', 'Gonapinuwala', 'Baddegama', 'Welivitiya-Divithura', 'Bope-Poddala', 'Galle Four Gravets', 'Akmeemana', 'Habaraduwa', 'Talape']],
+        ['district' => 'Galle', 'station' => 'magura', 'areas' => ['Nagoda', 'Yakkalamulla', 'Imaduwa', 'Neluwa', 'Thawalama']],
+
+        ['district' => 'Matara', 'station' => 'magura', 'areas' => ['Pitabeddara', 'Kotapola', 'Pasgoda', 'Mulatiyana', 'Akuressa']],
+        ['district' => 'Matara', 'station' => 'putupaula', 'areas' => ['Athuraliya', 'Welipitiya', 'Malimbada', 'Kamburupitiya', 'Hakmana', 'Kirinda-Puhulwella', 'Thihagoda', 'Weligama', 'Matara Four Gravets', 'Devinuwara', 'Dickwella']],
+    ];
+}
+
+function forecast_station_lookup(): array
+{
+    static $lookup = null;
+    if (is_array($lookup)) {
+        return $lookup;
+    }
+
+    $byDistrict = [];
+    $byGn = [];
+
+    foreach (forecast_station_mapping_groups() as $group) {
+        $districtKey = forecast_normalize_district((string) ($group['district'] ?? ''));
+        $stationKey = (string) ($group['station'] ?? '');
+        $areas = (array) ($group['areas'] ?? []);
+
+        if ($districtKey === '' || $stationKey === '' || empty($areas)) {
+            continue;
+        }
+
+        foreach ($areas as $area) {
+            $areaKey = forecast_normalize((string) $area);
+            if ($areaKey === '') {
+                continue;
+            }
+
+            $byDistrict[$districtKey][$areaKey] = $stationKey;
+
+            if (!isset($byGn[$areaKey])) {
+                $byGn[$areaKey] = $stationKey;
+            }
+        }
+    }
+
+    $lookup = [
+        'by_district' => $byDistrict,
+        'by_gn' => $byGn,
+    ];
+
+    return $lookup;
+}
+
+function forecast_selection_from_station(array $snapshot, string $stationKey): array
+{
+    $target = forecast_normalize((string) $stationKey);
+    if ($target === '') {
+        return ['river_key' => '', 'station_key' => ''];
+    }
+
+    foreach ((array) ($snapshot['rivers'] ?? []) as $river) {
+        $riverKey = (string) ($river['river_key'] ?? '');
+        foreach ((array) ($river['stations'] ?? []) as $station) {
+            $candidate = forecast_normalize((string) ($station['station_key'] ?? ''));
+            if ($candidate === $target) {
+                return [
+                    'river_key' => $riverKey,
+                    'station_key' => (string) ($station['station_key'] ?? ''),
+                ];
+            }
+        }
+    }
+
+    return ['river_key' => '', 'station_key' => ''];
+}
+
+function forecast_station_from_profile_map(?array $profile): string
+{
+    if (!$profile) {
+        return '';
+    }
+
+    $districtKey = forecast_normalize_district((string) ($profile['district'] ?? ''));
+    $gnKey = forecast_normalize((string) ($profile['gn_division'] ?? ''));
+    $lookup = forecast_station_lookup();
+
+    if ($districtKey !== '' && $gnKey !== '') {
+        $byDistrict = (array) ($lookup['by_district'] ?? []);
+        if (isset($byDistrict[$districtKey][$gnKey])) {
+            return (string) $byDistrict[$districtKey][$gnKey];
+        }
+    }
+
+    if ($gnKey !== '') {
+        $byGn = (array) ($lookup['by_gn'] ?? []);
+        if (isset($byGn[$gnKey])) {
+            return (string) $byGn[$gnKey];
+        }
+    }
+
+    return '';
+}
+
 function forecast_station_aliases(): array
 {
     return [
@@ -77,6 +216,14 @@ function forecast_profile_station_selection(array $snapshot, ?array $profile): a
 {
     if (!$profile) {
         return ['river_key' => '', 'station_key' => ''];
+    }
+
+    $mappedStation = forecast_station_from_profile_map($profile);
+    if ($mappedStation !== '') {
+        $mappedSelection = forecast_selection_from_station($snapshot, $mappedStation);
+        if ((string) ($mappedSelection['river_key'] ?? '') !== '' && (string) ($mappedSelection['station_key'] ?? '') !== '') {
+            return $mappedSelection;
+        }
     }
 
     $gnDivision = forecast_normalize((string) ($profile['gn_division'] ?? ''));
