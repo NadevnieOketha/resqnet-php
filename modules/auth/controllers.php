@@ -184,7 +184,7 @@ function auth_forgot_password_post(): void
     if ($sent) {
         flash('success', 'A reset link has been sent to your email.');
     } else {
-        flash('warning', 'Email sending failed. Check storage/logs/mail.log for SMTP details. Use this reset link: ' . $resetLink);
+        flash('warning', 'Email sending failed. Use this reset link: ' . $resetLink);
     }
 
     clear_old_input();

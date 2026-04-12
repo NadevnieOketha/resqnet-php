@@ -2,521 +2,753 @@
 $snapshot = is_array($rainfall_snapshot ?? null) ? $rainfall_snapshot : [];
 $defaultSelection = is_array($default_selection ?? null) ? $default_selection : [];
 
-$snapshotJson = json_encode($snapshot, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+$snapshotJson = json_encode($snapshot, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 $snapshotJson = is_string($snapshotJson) ? $snapshotJson : '{}';
 
-$defaultJson = json_encode($defaultSelection, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+$defaultJson = json_encode($defaultSelection, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 $defaultJson = is_string($defaultJson) ? $defaultJson : '{}';
+
+$source = (string) ($snapshot['source'] ?? '');
+$fetchedAt = (string) ($snapshot['fetched_at'] ?? '');
 ?>
 
 <style>
-  .forecast-header {
-    margin-bottom: 0.85rem;
-  }
+    .forecast-wrap {
+        display: grid;
+        gap: 1rem;
+    }
 
-  .forecast-header p {
-    margin: 0.3rem 0 0;
-    font-size: 0.78rem;
-    color: #526071;
-  }
+    .forecast-top {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 1rem;
+    }
 
-  .forecast-toolbar {
-    display: grid;
-    gap: 0.9rem 1rem;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  }
+    .forecast-title {
+        margin: 0;
+        color: #0f172a;
+    }
 
-  .forecast-meta {
-    display: grid;
-    gap: 0.45rem 1rem;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    margin-top: 0.85rem;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    background: #f8fbff;
-    padding: 0.78rem;
-    font-size: 0.76rem;
-    color: #334155;
-  }
-
-  .forecast-chart-wrap {
-    margin-top: 0.85rem;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    background: #fff;
-    padding: 0.65rem;
-  }
-
-    .forecast-chart-title {
-        margin: 0 0 0.55rem;
-        font-size: 0.75rem;
-        font-weight: 700;
+    .forecast-subtitle {
+        margin-top: 0.5rem;
         color: #334155;
+        font-size: 0.95rem;
     }
 
-  .forecast-chart {
-    display: flex;
-    align-items: flex-end;
-    gap: 0.6rem;
-    overflow-x: auto;
-    min-height: 228px;
-  }
-
-  .forecast-column {
-    min-width: 84px;
-    display: grid;
-    gap: 0.35rem;
-    justify-items: center;
-  }
-
-  .forecast-mm {
-    font-size: 0.68rem;
-    font-weight: 700;
-    color: #0f4f73;
-  }
-
-  .forecast-track {
-    width: 100%;
-    min-height: 162px;
-    border-radius: 11px;
-    padding: 0.2rem;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    background: linear-gradient(180deg, #ebf8ff 0%, #dbeafe 100%);
-    box-sizing: border-box;
-  }
-
-  .forecast-fill {
-    width: 100%;
-    border-radius: 9px;
-    background: linear-gradient(180deg, #2dd4bf 0%, #0284c7 100%);
-  }
-
-  .forecast-date {
-    font-size: 0.67rem;
-    font-weight: 600;
-    color: #334155;
-    text-align: center;
-    line-height: 1.1;
-  }
-
-  .forecast-day-label {
-    font-size: 0.64rem;
-    color: #64748b;
-    text-align: center;
-    line-height: 1.1;
-  }
-
-  .forecast-empty {
-    margin-top: 0.75rem;
-    padding: 0.75rem;
-    border: 1px dashed var(--color-border);
-    border-radius: var(--radius-md);
-    background: #fafafa;
-    color: #6b7280;
-    font-size: 0.78rem;
-  }
-
-    .forecast-temp-chart {
-        display: flex;
-        align-items: flex-end;
-        gap: 0.6rem;
-        overflow-x: auto;
-        min-height: 218px;
-    }
-
-    .forecast-temp-column {
-        min-width: 84px;
+    .forecast-toolbar {
         display: grid;
-        gap: 0.35rem;
-        justify-items: center;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 0.75rem;
+        align-items: end;
     }
 
-    .forecast-temp-values {
-        font-size: 0.67rem;
-        font-weight: 700;
-        color: #7c2d12;
-        text-align: center;
-        line-height: 1.15;
+    .forecast-field label {
+        display: block;
+        margin-bottom: 0.35rem;
+        color: #1e293b;
+        font-weight: 600;
     }
 
-    .forecast-temp-track {
+    .forecast-field select {
         width: 100%;
-        min-height: 152px;
-        border-radius: 11px;
-        padding: 0.2rem;
-        display: flex;
-        align-items: flex-end;
-        justify-content: center;
-        background: linear-gradient(180deg, #fff7ed 0%, #e0f2fe 100%);
-        box-sizing: border-box;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        min-height: 40px;
+        padding: 0.5rem 0.65rem;
+        background: #fff;
     }
 
-    .forecast-temp-bars {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: flex-end;
-        justify-content: center;
-        gap: 0.2rem;
+    .forecast-meta {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+        color: #334155;
+        font-size: 0.92rem;
+        line-height: 1.5;
     }
 
-    .forecast-temp-max,
-    .forecast-temp-min {
-        width: calc(50% - 0.14rem);
-        border-radius: 6px 6px 3px 3px;
-    }
-
-    .forecast-temp-max {
-        background: linear-gradient(180deg, #fb923c 0%, #f97316 100%);
-    }
-
-    .forecast-temp-min {
-        background: linear-gradient(180deg, #60a5fa 0%, #2563eb 100%);
-    }
-
-    .forecast-flood-chart {
-        display: flex;
-        align-items: flex-end;
-        gap: 0.6rem;
-        overflow-x: auto;
-        min-height: 218px;
-    }
-
-    .forecast-flood-column {
-        min-width: 86px;
+    .forecast-grid {
         display: grid;
-        gap: 0.35rem;
-        justify-items: center;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
     }
 
-    .forecast-flood-value {
-        font-size: 0.67rem;
-        font-weight: 700;
-        color: #365314;
-        text-align: center;
-        line-height: 1.15;
+    .chart-card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 0.9rem;
+        min-height: 290px;
+        box-shadow: 0 6px 18px rgba(2, 6, 23, 0.03);
     }
 
-    .forecast-flood-track {
-        width: 100%;
-        min-height: 152px;
-        border-radius: 11px;
-        padding: 0.2rem;
+    .chart-title {
+        margin: 0;
+        color: #0f172a;
+        font-size: 1rem;
+    }
+
+    .chart-caption {
+        margin-top: 0.25rem;
+        color: #475569;
+        font-size: 0.82rem;
+    }
+
+    .chart-surface {
+        margin-top: 0.8rem;
+        min-height: 220px;
+    }
+
+    .chart-empty {
+        margin-top: 0.85rem;
+        color: #64748b;
+        font-style: italic;
+    }
+
+    .bars {
         display: flex;
         align-items: flex-end;
-        justify-content: center;
-        background: linear-gradient(180deg, #f0fdf4 0%, #dcfce7 100%);
-        box-sizing: border-box;
+        gap: 0.55rem;
+        min-height: 196px;
+        overflow-x: auto;
+        padding-bottom: 0.15rem;
     }
 
-    .forecast-flood-fill {
-        width: 100%;
-        border-radius: 6px;
-        background: linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
+    .bar-col {
+        min-width: 64px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .bar-track {
+        width: 24px;
+        height: 150px;
+        border-radius: 8px;
+        background: #e2e8f0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .bar {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: 8px 8px 4px 4px;
+    }
+
+    .bar-value {
+        font-size: 0.76rem;
+        color: #0f172a;
+        text-align: center;
+        line-height: 1.2;
+        min-height: 1.9rem;
+    }
+
+    .bar-date {
+        font-size: 0.72rem;
+        color: #64748b;
+        text-align: center;
+    }
+
+    .flag {
+        font-size: 0.66rem;
+        border-radius: 999px;
+        padding: 0.1rem 0.45rem;
+        border: 1px solid #cbd5e1;
+        color: #334155;
+        background: #f8fafc;
+    }
+
+    .forecast-divider {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        border-left: 2px dashed #ef4444;
+        opacity: 0.85;
+        pointer-events: none;
+        z-index: 3;
+    }
+
+    .threshold-line {
+        position: absolute;
+        left: 0;
+        right: 0;
+        border-top-width: 2px;
+        border-top-style: dashed;
+        z-index: 2;
+    }
+
+    .threshold-alert { border-top-color: #f59e0b; }
+    .threshold-minor { border-top-color: #fb7185; }
+    .threshold-major { border-top-color: #dc2626; }
+
+    .status-safe { background: #0ea5e9; }
+    .status-alert { background: #f59e0b; }
+    .status-minor { background: #fb7185; }
+    .status-major { background: #dc2626; }
+    .status-unknown { background: #94a3b8; }
+
+    .rain-bar { background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%); }
+    .temp-max { background: #f97316; }
+    .temp-min { background: #22d3ee; opacity: 0.9; }
+
+    .temp-stack {
+        width: 24px;
+        height: 150px;
+        position: relative;
+        background: #e2e8f0;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .temp-segment {
+        position: absolute;
+        left: 0;
+        right: 0;
+    }
+
+    @media (max-width: 980px) {
+        .forecast-grid {
+            grid-template-columns: 1fr;
+        }
     }
 </style>
 
 <section class="section-card" aria-label="River basin forecast dashboard">
-    <div class="forecast-header">
-        <h1 style="margin:0;">Forecast Dashboard</h1>
-        <p>Open-Meteo rainfall outlook covering day prior to yesterday, yesterday, today, and 7 forecast days across configured hydrometric stations.</p>
-    </div>
-
-    <div class="forecast-toolbar">
-        <div class="form-group" style="margin:0;">
-            <label for="forecast_river_select">River</label>
-            <select id="forecast_river_select" class="input"></select>
+    <div class="forecast-wrap">
+        <div class="forecast-top">
+            <h2 class="forecast-title">River Forecast Dashboard</h2>
+            <p class="forecast-subtitle">
+                Observed water levels are from Irrigation Department ArcGIS gauges. Forecast discharge, rainfall, and temperature are from Open-Meteo APIs.
+            </p>
         </div>
-        <div class="form-group" style="margin:0;">
-            <label for="forecast_station_select">River Basin / Hydrometric Station</label>
-            <select id="forecast_station_select" class="input"></select>
+
+        <div class="forecast-toolbar">
+            <div class="forecast-field">
+                <label for="riverSelect">River</label>
+                <select id="riverSelect"></select>
+            </div>
+            <div class="forecast-field">
+                <label for="stationSelect">Station</label>
+                <select id="stationSelect"></select>
+            </div>
         </div>
-    </div>
 
-    <div class="forecast-meta" id="forecast_meta" aria-live="polite"></div>
+        <div class="forecast-meta" id="forecastMeta">Select a station to view details.</div>
 
-    <div class="forecast-chart-wrap" id="forecast_chart_wrap">
-        <p class="forecast-chart-title">Daily Rainfall (mm)</p>
-        <div class="forecast-chart" id="forecast_chart" role="img" aria-label="Daily rainfall forecast chart"></div>
-    </div>
+        <div class="forecast-grid">
+            <section class="chart-card">
+                <h3 class="chart-title">Observed Water Levels</h3>
+                <p class="chart-caption">Unit: m</p>
+                <div class="chart-surface" id="observedChart"></div>
+            </section>
 
-    <div class="forecast-chart-wrap" id="forecast_temp_wrap">
-        <p class="forecast-chart-title">Daily Temperature (Max/Min °C)</p>
-        <div class="forecast-temp-chart" id="forecast_temp_chart" role="img" aria-label="Daily temperature max and min chart"></div>
-    </div>
+            <section class="chart-card">
+                <h3 class="chart-title">River Discharge Forecast</h3>
+                <p class="chart-caption">Unit: m3/s (thresholds based on discharge mean multipliers)</p>
+                <div class="chart-surface" id="dischargeChart"></div>
+            </section>
 
-    <div class="forecast-chart-wrap" id="forecast_flood_wrap">
-        <p class="forecast-chart-title">Daily Flood Level (River Discharge m³/s)</p>
-        <div class="forecast-flood-chart" id="forecast_flood_chart" role="img" aria-label="Daily flood level chart"></div>
-    </div>
+            <section class="chart-card">
+                <h3 class="chart-title">Rainfall Forecast</h3>
+                <p class="chart-caption">Unit: mm/day</p>
+                <div class="chart-surface" id="rainfallChart"></div>
+            </section>
 
-    <div class="forecast-empty" id="forecast_empty" hidden>
-        Forecast data is unavailable for the selected station right now. Please try a different station or reload.
+            <section class="chart-card">
+                <h3 class="chart-title">Temperature Forecast</h3>
+                <p class="chart-caption">Unit: C (max/min)</p>
+                <div class="chart-surface" id="temperatureChart"></div>
+            </section>
+        </div>
     </div>
 </section>
 
 <script>
 (() => {
     const snapshot = <?= $snapshotJson ?>;
-    const defaultSelection = <?= $defaultJson ?>;
+    const defaults = <?= $defaultJson ?>;
     const rivers = Array.isArray(snapshot.rivers) ? snapshot.rivers : [];
+    const sourceText = <?= json_encode($source, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
+    const fetchedAt = <?= json_encode($fetchedAt, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
 
-    const riverSelect = document.getElementById('forecast_river_select');
-    const stationSelect = document.getElementById('forecast_station_select');
-    const metaEl = document.getElementById('forecast_meta');
-    const chartEl = document.getElementById('forecast_chart');
-    const tempChartEl = document.getElementById('forecast_temp_chart');
-    const floodChartEl = document.getElementById('forecast_flood_chart');
-    const chartWrapEl = document.getElementById('forecast_chart_wrap');
-    const tempWrapEl = document.getElementById('forecast_temp_wrap');
-    const floodWrapEl = document.getElementById('forecast_flood_wrap');
-    const emptyEl = document.getElementById('forecast_empty');
+    const riverSelect = document.getElementById('riverSelect');
+    const stationSelect = document.getElementById('stationSelect');
+    const metaBox = document.getElementById('forecastMeta');
 
-    if (!riverSelect || !stationSelect || !metaEl || !chartEl || !tempChartEl || !floodChartEl || !chartWrapEl || !tempWrapEl || !floodWrapEl || !emptyEl) {
+    const observedChart = document.getElementById('observedChart');
+    const dischargeChart = document.getElementById('dischargeChart');
+    const rainfallChart = document.getElementById('rainfallChart');
+    const temperatureChart = document.getElementById('temperatureChart');
+
+    if (!riverSelect || !stationSelect || !metaBox || !observedChart || !dischargeChart || !rainfallChart || !temperatureChart) {
         return;
     }
 
-    const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#039;'
-    }[char] || char));
+    function esc(value) {
+        return String(value ?? '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/\"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
 
-    const formatDate = (isoDate) => {
-        const date = new Date(`${isoDate}T00:00:00`);
-        if (Number.isNaN(date.getTime())) {
-            return isoDate;
+    function shortDate(dateString) {
+        if (!dateString) return '-';
+        const d = new Date(dateString + 'T00:00:00');
+        if (Number.isNaN(d.getTime())) return dateString;
+        return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    }
+
+    function num(value, digits = 2) {
+        if (value === null || value === undefined || value === '' || Number.isNaN(Number(value))) {
+            return '-';
+        }
+        return Number(value).toFixed(digits);
+    }
+
+    function isForecastDate(dateString) {
+        if (!dateString) {
+            return false;
         }
 
-        return date.toLocaleDateString('en-LK', {
-            month: 'short',
-            day: 'numeric'
-        });
-    };
-
-    const relativeLabel = (isoDate) => {
         const now = new Date();
         now.setHours(0, 0, 0, 0);
-
-        const date = new Date(`${isoDate}T00:00:00`);
+        const date = new Date(dateString + 'T00:00:00');
         if (Number.isNaN(date.getTime())) {
+            return false;
+        }
+
+        return date.getTime() > now.getTime();
+    }
+
+    function stationDailyRows(station) {
+        return Array.isArray(station && station.daily) ? station.daily : [];
+    }
+
+    function observedRowsForStation(station) {
+        if (Array.isArray(station && station.observed_water_levels) && station.observed_water_levels.length > 0) {
+            return station.observed_water_levels;
+        }
+
+        const daily = stationDailyRows(station)
+            .filter((row) => row && row.water_level !== null && row.water_level !== undefined)
+            .map((row) => ({
+                date: row.date,
+                water_level: row.water_level,
+                water_level_max: row.water_level_max,
+                water_level_min: row.water_level_min,
+                alert_level: station && station.alert_level,
+                minor_flood_level: station && station.minor_flood_level,
+                major_flood_level: station && station.major_flood_level,
+                flood_status: row.flood_status || 'unknown',
+                data_unit: 'm',
+            }));
+
+        if (daily.length <= 4) {
+            return daily;
+        }
+
+        return daily.slice(daily.length - 4);
+    }
+
+    function dischargeRowsForStation(station) {
+        if (Array.isArray(station && station.discharge_forecast) && station.discharge_forecast.length > 0) {
+            return station.discharge_forecast;
+        }
+
+        return stationDailyRows(station).map((row) => ({
+            date: row.date,
+            river_discharge: row.river_discharge,
+            river_discharge_max: row.river_discharge_max,
+            river_discharge_min: row.river_discharge_min,
+            river_discharge_mean: row.river_discharge_mean,
+            alert_threshold: null,
+            minor_threshold: null,
+            major_threshold: null,
+            flood_status: row.flood_status || 'unknown',
+            is_forecast_day: row.is_forecast_day !== undefined ? Boolean(row.is_forecast_day) : isForecastDate(row.date),
+            data_unit: 'm3/s',
+        }));
+    }
+
+    function rainfallRowsForStation(station) {
+        if (Array.isArray(station && station.rainfall_forecast) && station.rainfall_forecast.length > 0) {
+            return station.rainfall_forecast;
+        }
+
+        return stationDailyRows(station).map((row) => ({
+            date: row.date,
+            precipitation_sum: row.precipitation_sum ?? row.rain_sum ?? row.showers_sum ?? null,
+            is_forecast_day: row.is_forecast_day !== undefined ? Boolean(row.is_forecast_day) : isForecastDate(row.date),
+            data_unit: 'mm',
+        }));
+    }
+
+    function temperatureRowsForStation(station) {
+        if (Array.isArray(station && station.temperature_forecast) && station.temperature_forecast.length > 0) {
+            return station.temperature_forecast;
+        }
+
+        return stationDailyRows(station).map((row) => ({
+            date: row.date,
+            temperature_2m_max: row.temperature_2m_max,
+            temperature_2m_min: row.temperature_2m_min,
+            is_forecast_day: row.is_forecast_day !== undefined ? Boolean(row.is_forecast_day) : isForecastDate(row.date),
+            data_unit: 'celsius',
+        }));
+    }
+
+    function statusClass(status) {
+        if (status === 'major_flood') return 'status-major';
+        if (status === 'minor_flood') return 'status-minor';
+        if (status === 'alert') return 'status-alert';
+        if (status === 'safe') return 'status-safe';
+        return 'status-unknown';
+    }
+
+    function renderEmpty(element, text) {
+        element.innerHTML = '<div class="chart-empty">' + esc(text) + '</div>';
+    }
+
+    function thresholdLines(maxValue, lines) {
+        if (!maxValue || maxValue <= 0) {
             return '';
         }
 
-        const delta = Math.round((date.getTime() - now.getTime()) / 86400000);
-        if (delta === -2) return 'Day Prior to Yesterday';
-        if (delta === -1) return 'Yesterday';
-        if (delta === 0) return 'Today';
-        if (delta > 0) return `D+${delta}`;
-        return `D${delta}`;
-    };
+        return lines
+            .filter((line) => line && line.value !== null && line.value !== undefined && !Number.isNaN(Number(line.value)))
+            .map((line) => {
+                const ratio = Math.max(0, Math.min(1, Number(line.value) / maxValue));
+                const bottom = ratio * 150;
+                return '<span class="threshold-line ' + esc(line.className) + '" style="bottom:' + bottom.toFixed(1) + 'px" title="' + esc(line.label) + ': ' + esc(num(line.value, 2)) + '"></span>';
+            })
+            .join('');
+    }
 
-    const getStationsByRiver = (riverKey) => {
-        const river = rivers.find((row) => String(row.river_key) === String(riverKey));
-        return Array.isArray(river?.stations) ? river.stations : [];
-    };
+    function forecastDivider(index, total) {
+        if (index < 0 || total <= 0) {
+            return '';
+        }
+        const x = ((index + 0.5) / total) * 100;
+        return '<span class="forecast-divider" style="left:' + x.toFixed(2) + '%"></span>';
+    }
 
-    const populateRivers = () => {
-        riverSelect.innerHTML = rivers.map((river, idx) => {
-            const key = escapeHtml(river.river_key || `river_${idx}`);
-            const label = escapeHtml(river.river_name || `River ${idx + 1}`);
-            return `<option value="${key}">${label}</option>`;
-        }).join('');
-    };
+    function riverByKey(key) {
+        return rivers.find((river) => river.river_key === key) || null;
+    }
 
-    const populateStations = (riverKey) => {
-        const stations = getStationsByRiver(riverKey);
-        stationSelect.innerHTML = stations.map((station, idx) => {
-            const key = escapeHtml(station.station_key || `station_${idx}`);
-            const label = escapeHtml(station.station_name || `Station ${idx + 1}`);
-            return `<option value="${key}">${label}</option>`;
-        }).join('');
-    };
+    function stationByKey(river, stationKey) {
+        if (!river || !Array.isArray(river.stations)) {
+            return null;
+        }
+        return river.stations.find((station) => station.station_key === stationKey) || null;
+    }
 
-    const renderSelected = () => {
-        const river = rivers.find((row) => String(row.river_key) === String(riverSelect.value));
-        const stations = Array.isArray(river?.stations) ? river.stations : [];
-        const station = stations.find((row) => String(row.station_key) === String(stationSelect.value));
+    function currentSelection() {
+        const river = riverByKey(riverSelect.value) || rivers[0] || null;
+        const station = stationByKey(river, stationSelect.value)
+            || (river && Array.isArray(river.stations) ? river.stations[0] : null);
 
-        if (!river || !station) {
-            chartWrapEl.hidden = true;
-            tempWrapEl.hidden = true;
-            floodWrapEl.hidden = true;
-            chartEl.innerHTML = '';
-            tempChartEl.innerHTML = '';
-            floodChartEl.innerHTML = '';
-            emptyEl.hidden = false;
-            metaEl.innerHTML = '<div>No station selected.</div>';
+        return { river, station };
+    }
+
+    function populateRivers() {
+        riverSelect.innerHTML = '';
+
+        if (!Array.isArray(rivers) || rivers.length === 0) {
+            riverSelect.innerHTML = '<option value="">No rivers available</option>';
+            stationSelect.innerHTML = '<option value="">No stations available</option>';
+            renderEmpty(observedChart, 'No observed water level data available.');
+            renderEmpty(dischargeChart, 'No discharge forecast data available.');
+            renderEmpty(rainfallChart, 'No rainfall forecast data available.');
+            renderEmpty(temperatureChart, 'No temperature forecast data available.');
+            metaBox.textContent = 'No forecast data found for today.';
             return;
         }
 
-        const daily = Array.isArray(station.daily) ? station.daily : [];
+        rivers.forEach((river) => {
+            const option = document.createElement('option');
+            option.value = river.river_key || '';
+            option.textContent = river.river_name || river.river_key || 'Unnamed river';
+            riverSelect.appendChild(option);
+        });
 
-        metaEl.innerHTML = [
-            `<div><strong>River:</strong> ${escapeHtml(river.river_name || '-')}</div>`,
-            `<div><strong>Station:</strong> ${escapeHtml(station.station_name || '-')}</div>`,
-            `<div><strong>District:</strong> ${escapeHtml(station.district || '-')}</div>`,
-            `<div><strong>Local Area:</strong> ${escapeHtml(station.local_area || '-')}</div>`,
-            `<div><strong>Coordinates:</strong> ${escapeHtml(station.latitude)}, ${escapeHtml(station.longitude)}</div>`,
-            `<div><strong>Updated:</strong> ${escapeHtml(snapshot.fetched_at || '-')}</div>`
-        ].join('');
+        const preferredRiverKey = defaults.riverKey || defaults.river_key;
+        if (preferredRiverKey && rivers.some((r) => r.river_key === preferredRiverKey)) {
+            riverSelect.value = preferredRiverKey;
+        } else {
+            riverSelect.selectedIndex = 0;
+        }
 
-        if (daily.length === 0) {
-            chartWrapEl.hidden = true;
-            tempWrapEl.hidden = true;
-            floodWrapEl.hidden = true;
-            chartEl.innerHTML = '';
-            tempChartEl.innerHTML = '';
-            floodChartEl.innerHTML = '';
-            emptyEl.hidden = false;
+        populateStations();
+        renderSelected();
+    }
+
+    function populateStations() {
+        const river = riverByKey(riverSelect.value);
+        stationSelect.innerHTML = '';
+
+        if (!river || !Array.isArray(river.stations) || river.stations.length === 0) {
+            stationSelect.innerHTML = '<option value="">No stations available</option>';
             return;
         }
 
-        const rainValues = daily.map((row) => Number(row.rain_sum)).filter((value) => Number.isFinite(value));
-        const maxRain = Math.max(...rainValues, 1);
+        river.stations.forEach((station) => {
+            const option = document.createElement('option');
+            option.value = station.station_key || '';
+            const basin = station.basin_name ? ' - ' + station.basin_name : '';
+            option.textContent = (station.station_name || station.station_key || 'Station') + basin;
+            stationSelect.appendChild(option);
+        });
 
-        chartEl.innerHTML = daily.map((row) => {
-            const rain = Number(row.rain_sum);
-            const value = Number.isFinite(rain) ? rain : 0;
-            const height = Math.max(8, Math.round((value / maxRain) * 150));
+        const preferredStationKey = defaults.stationKey || defaults.station_key;
+        if (preferredStationKey && river.stations.some((s) => s.station_key === preferredStationKey)) {
+            stationSelect.value = preferredStationKey;
+        } else {
+            stationSelect.selectedIndex = 0;
+        }
+    }
 
-            return `
-                <div class="forecast-column">
-                    <span class="forecast-mm">${value.toFixed(1)} mm</span>
-                    <div class="forecast-track">
-                        <div class="forecast-fill" style="height:${height}px"></div>
-                    </div>
-                    <span class="forecast-date">${escapeHtml(formatDate(row.date || ''))}</span>
-                    <span class="forecast-day-label">${escapeHtml(relativeLabel(row.date || ''))}</span>
-                </div>
-            `;
+    function renderMeta(river, station) {
+        if (!station) {
+            metaBox.textContent = 'No station selected.';
+            return;
+        }
+
+        const dischargeRows = dischargeRowsForStation(station);
+        const firstThresholdRow = dischargeRows.find((row) => row && row.alert_threshold !== null && row.alert_threshold !== undefined)
+            || dischargeRows.find((row) => row && row.river_discharge_mean !== null && row.river_discharge_mean !== undefined)
+            || null;
+
+        const dischargeAlert = firstThresholdRow ? firstThresholdRow.alert_threshold : null;
+        const dischargeMinor = firstThresholdRow ? firstThresholdRow.minor_threshold : null;
+        const dischargeMajor = firstThresholdRow ? firstThresholdRow.major_threshold : null;
+
+        const latestObserved = station.latest_observed_at || '-';
+        const riverName = river && river.river_name ? river.river_name : '-';
+
+        metaBox.innerHTML = [
+            '<strong>River:</strong> ' + esc(riverName),
+            '<strong>Station:</strong> ' + esc(station.station_name || '-'),
+            '<strong>Basin:</strong> ' + esc(station.basin_name || '-'),
+            '<strong>Water Thresholds (m):</strong> Alert ' + esc(num(station.alert_level, 2)) + ', Minor ' + esc(num(station.minor_flood_level, 2)) + ', Major ' + esc(num(station.major_flood_level, 2)),
+            '<strong>Discharge Thresholds (m3/s):</strong> Alert ' + esc(num(dischargeAlert, 2)) + ', Minor ' + esc(num(dischargeMinor, 2)) + ', Major ' + esc(num(dischargeMajor, 2)),
+            '<strong>Latest Observed:</strong> ' + esc(latestObserved),
+            '<strong>Data Source:</strong> ' + esc(sourceText || '-'),
+            '<strong>Fetched:</strong> ' + esc(fetchedAt || '-'),
+        ].join(' | ');
+    }
+
+    function renderObserved(station) {
+        const rows = observedRowsForStation(station);
+        if (rows.length === 0) {
+            renderEmpty(observedChart, 'No observed water-level values available for the selected station.');
+            return;
+        }
+
+        const values = rows
+            .map((row) => Number(row && row.water_level))
+            .filter((value) => Number.isFinite(value));
+
+        const alert = Number(station && station.alert_level);
+        const minor = Number(station && station.minor_flood_level);
+        const major = Number(station && station.major_flood_level);
+
+        const maxValue = Math.max(
+            values.length ? Math.max(...values) : 0,
+            Number.isFinite(alert) ? alert : 0,
+            Number.isFinite(minor) ? minor : 0,
+            Number.isFinite(major) ? major : 0,
+            1
+        ) * 1.15;
+
+        const lines = thresholdLines(maxValue, [
+            { value: Number.isFinite(alert) ? alert : null, label: 'Alert level', className: 'threshold-alert' },
+            { value: Number.isFinite(minor) ? minor : null, label: 'Minor flood level', className: 'threshold-minor' },
+            { value: Number.isFinite(major) ? major : null, label: 'Major flood level', className: 'threshold-major' },
+        ]);
+
+        const cols = rows.map((row) => {
+            const level = Number(row && row.water_level);
+            const value = Number.isFinite(level) ? level : null;
+            const ratio = value === null ? 0 : Math.max(0, Math.min(1, value / maxValue));
+            const height = Math.max(8, ratio * 150);
+            const status = row && row.flood_status ? row.flood_status : 'unknown';
+
+            return '<div class="bar-col">'
+                + '<div class="bar-value">' + (value === null ? '-' : (num(value, 2) + ' m')) + '</div>'
+                + '<div class="bar-track">' + lines + '<span class="bar ' + statusClass(status) + '" style="height:' + height.toFixed(1) + 'px"></span></div>'
+                + '<div class="bar-date">' + esc(shortDate(row && row.date)) + '</div>'
+                + '</div>';
         }).join('');
 
-        const maxTempValues = daily
-            .map((row) => Number(row.temperature_2m_max))
-            .filter((value) => Number.isFinite(value));
-        const minTempValues = daily
-            .map((row) => Number(row.temperature_2m_min))
-            .filter((value) => Number.isFinite(value));
-        const tempValues = [...maxTempValues, ...minTempValues];
-
-        if (tempValues.length === 0) {
-            tempWrapEl.hidden = true;
-            tempChartEl.innerHTML = '';
-        } else {
-            const minTemp = Math.min(...tempValues);
-            const maxTemp = Math.max(...tempValues);
-            const tempRange = Math.max(1, maxTemp - minTemp);
-
-            tempChartEl.innerHTML = daily.map((row) => {
-                const rawMax = Number(row.temperature_2m_max);
-                const rawMin = Number(row.temperature_2m_min);
-                const maxValue = Number.isFinite(rawMax) ? rawMax : minTemp;
-                const minValue = Number.isFinite(rawMin) ? rawMin : minTemp;
-
-                const maxHeight = Math.max(8, Math.round(((maxValue - minTemp) / tempRange) * 140));
-                const minHeight = Math.max(8, Math.round(((minValue - minTemp) / tempRange) * 140));
-
-                return `
-                    <div class="forecast-temp-column">
-                        <span class="forecast-temp-values">${maxValue.toFixed(1)}° / ${minValue.toFixed(1)}°</span>
-                        <div class="forecast-temp-track">
-                            <div class="forecast-temp-bars">
-                                <div class="forecast-temp-max" style="height:${maxHeight}px"></div>
-                                <div class="forecast-temp-min" style="height:${minHeight}px"></div>
-                            </div>
-                        </div>
-                        <span class="forecast-date">${escapeHtml(formatDate(row.date || ''))}</span>
-                        <span class="forecast-day-label">${escapeHtml(relativeLabel(row.date || ''))}</span>
-                    </div>
-                `;
-            }).join('');
-
-            tempWrapEl.hidden = false;
-        }
-
-        const floodValues = daily
-            .map((row) => Number(row.river_discharge))
-            .filter((value) => Number.isFinite(value));
-
-        if (floodValues.length === 0) {
-            floodWrapEl.hidden = true;
-            floodChartEl.innerHTML = '';
-        } else {
-            const maxFlood = Math.max(...floodValues, 1);
-
-            floodChartEl.innerHTML = daily.map((row) => {
-                const rawDischarge = Number(row.river_discharge);
-                const rawMax = Number(row.river_discharge_max);
-                const rawMin = Number(row.river_discharge_min);
-
-                const discharge = Number.isFinite(rawDischarge) ? rawDischarge : 0;
-                const dischargeMax = Number.isFinite(rawMax) ? rawMax : null;
-                const dischargeMin = Number.isFinite(rawMin) ? rawMin : null;
-                const height = Math.max(8, Math.round((discharge / maxFlood) * 150));
-
-                const summaryParts = [];
-                if (dischargeMax !== null) summaryParts.push(`max ${dischargeMax.toFixed(1)}`);
-                if (dischargeMin !== null) summaryParts.push(`min ${dischargeMin.toFixed(1)}`);
-
-                return `
-                    <div class="forecast-flood-column">
-                        <span class="forecast-flood-value">${discharge.toFixed(1)} m³/s${summaryParts.length ? `<br><span style="font-weight:500;color:#4b5563;">${summaryParts.join(' / ')}</span>` : ''}</span>
-                        <div class="forecast-flood-track">
-                            <div class="forecast-flood-fill" style="height:${height}px"></div>
-                        </div>
-                        <span class="forecast-date">${escapeHtml(formatDate(row.date || ''))}</span>
-                        <span class="forecast-day-label">${escapeHtml(relativeLabel(row.date || ''))}</span>
-                    </div>
-                `;
-            }).join('');
-
-            floodWrapEl.hidden = false;
-        }
-
-        chartWrapEl.hidden = false;
-        emptyEl.hidden = true;
-    };
-
-    if (rivers.length === 0) {
-        riverSelect.innerHTML = '<option value="">No river data available</option>';
-        stationSelect.innerHTML = '<option value="">No station data available</option>';
-        riverSelect.disabled = true;
-        stationSelect.disabled = true;
-        chartWrapEl.hidden = true;
-        tempWrapEl.hidden = true;
-        floodWrapEl.hidden = true;
-        emptyEl.hidden = false;
-        metaEl.innerHTML = '<div>Weather API data is currently unavailable.</div>';
-        return;
+        observedChart.innerHTML = '<div class="bars">' + cols + '</div>';
     }
 
-    populateRivers();
+    function renderDischarge(station) {
+        const rows = dischargeRowsForStation(station);
+        if (rows.length === 0) {
+            renderEmpty(dischargeChart, 'No discharge forecast values available for the selected station.');
+            return;
+        }
 
-    const defaultRiver = String(defaultSelection.river_key || '');
-    if (defaultRiver !== '' && rivers.some((river) => String(river.river_key) === defaultRiver)) {
-        riverSelect.value = defaultRiver;
+        const values = rows
+            .map((row) => Number(row && row.river_discharge))
+            .filter((value) => Number.isFinite(value));
+
+        const thresholds = rows
+            .map((row) => ({
+                alert: Number(row && row.alert_threshold),
+                minor: Number(row && row.minor_threshold),
+                major: Number(row && row.major_threshold),
+            }))
+            .find((row) => Number.isFinite(row.alert) || Number.isFinite(row.minor) || Number.isFinite(row.major))
+            || { alert: NaN, minor: NaN, major: NaN };
+
+        const maxValue = Math.max(
+            values.length ? Math.max(...values) : 0,
+            Number.isFinite(thresholds.alert) ? thresholds.alert : 0,
+            Number.isFinite(thresholds.minor) ? thresholds.minor : 0,
+            Number.isFinite(thresholds.major) ? thresholds.major : 0,
+            1
+        ) * 1.15;
+
+        const lines = thresholdLines(maxValue, [
+            { value: Number.isFinite(thresholds.alert) ? thresholds.alert : null, label: 'Alert threshold', className: 'threshold-alert' },
+            { value: Number.isFinite(thresholds.minor) ? thresholds.minor : null, label: 'Minor threshold', className: 'threshold-minor' },
+            { value: Number.isFinite(thresholds.major) ? thresholds.major : null, label: 'Major threshold', className: 'threshold-major' },
+        ]);
+
+        const firstForecastIdx = rows.findIndex((row) => Boolean(row && row.is_forecast_day));
+        const divider = forecastDivider(firstForecastIdx, rows.length);
+
+        const cols = rows.map((row) => {
+            const discharge = Number(row && row.river_discharge);
+            const value = Number.isFinite(discharge) ? discharge : null;
+            const ratio = value === null ? 0 : Math.max(0, Math.min(1, value / maxValue));
+            const height = Math.max(8, ratio * 150);
+            const status = row && row.flood_status ? row.flood_status : 'unknown';
+            const mode = row && row.is_forecast_day ? 'Forecast' : 'Past';
+
+            return '<div class="bar-col">'
+                + '<div class="bar-value">' + (value === null ? '-' : (num(value, 2) + ' m3/s')) + '</div>'
+                + '<div class="bar-track">' + lines + '<span class="bar ' + statusClass(status) + '" style="height:' + height.toFixed(1) + 'px"></span></div>'
+                + '<span class="flag">' + esc(mode) + '</span>'
+                + '<div class="bar-date">' + esc(shortDate(row && row.date)) + '</div>'
+                + '</div>';
+        }).join('');
+
+        dischargeChart.innerHTML = '<div class="bars" style="position:relative">' + divider + cols + '</div>';
     }
 
-    populateStations(riverSelect.value);
+    function renderRainfall(station) {
+        const rows = rainfallRowsForStation(station);
+        if (rows.length === 0) {
+            renderEmpty(rainfallChart, 'No rainfall forecast values available for the selected station.');
+            return;
+        }
 
-    const defaultStation = String(defaultSelection.station_key || '');
-    const options = Array.from(stationSelect.options).map((opt) => String(opt.value));
-    if (defaultStation !== '' && options.includes(defaultStation)) {
-        stationSelect.value = defaultStation;
+        const values = rows
+            .map((row) => Number(row && row.precipitation_sum))
+            .filter((value) => Number.isFinite(value));
+
+        const maxValue = Math.max(values.length ? Math.max(...values) : 0, 1) * 1.15;
+
+        const cols = rows.map((row) => {
+            const rainfall = Number(row && row.precipitation_sum);
+            const value = Number.isFinite(rainfall) ? rainfall : 0;
+            const ratio = Math.max(0, Math.min(1, value / maxValue));
+            const height = Math.max(8, ratio * 150);
+            const flag = row && row.is_forecast_day ? 'Forecast' : 'Past';
+
+            return '<div class="bar-col">'
+                + '<div class="bar-value">' + num(value, 1) + ' mm</div>'
+                + '<div class="bar-track"><span class="bar rain-bar" style="height:' + height.toFixed(1) + 'px"></span></div>'
+                + '<span class="flag">' + esc(flag) + '</span>'
+                + '<div class="bar-date">' + esc(shortDate(row && row.date)) + '</div>'
+                + '</div>';
+        }).join('');
+
+        rainfallChart.innerHTML = '<div class="bars">' + cols + '</div>';
+    }
+
+    function renderTemperature(station) {
+        const rows = temperatureRowsForStation(station);
+        if (rows.length === 0) {
+            renderEmpty(temperatureChart, 'No temperature forecast values available for the selected station.');
+            return;
+        }
+
+        const validNumbers = [];
+        rows.forEach((row) => {
+            const maxTemp = Number(row && row.temperature_2m_max);
+            const minTemp = Number(row && row.temperature_2m_min);
+            if (Number.isFinite(maxTemp)) validNumbers.push(maxTemp);
+            if (Number.isFinite(minTemp)) validNumbers.push(minTemp);
+        });
+
+        const maxVal = validNumbers.length ? Math.max(...validNumbers) : 40;
+        const minVal = validNumbers.length ? Math.min(...validNumbers) : 0;
+        const span = Math.max(1, maxVal - minVal);
+
+        const cols = rows.map((row) => {
+            const tMax = Number(row && row.temperature_2m_max);
+            const tMin = Number(row && row.temperature_2m_min);
+
+            const maxOk = Number.isFinite(tMax);
+            const minOk = Number.isFinite(tMin);
+
+            const maxHeight = maxOk ? ((tMax - minVal) / span) * 150 : 0;
+            const minHeight = minOk ? ((tMin - minVal) / span) * 150 : 0;
+            const flag = row && row.is_forecast_day ? 'Forecast' : 'Past';
+
+            return '<div class="bar-col">'
+                + '<div class="bar-value">' + (maxOk || minOk ? (num(tMax, 1) + ' / ' + num(tMin, 1) + ' C') : '-') + '</div>'
+                + '<div class="temp-stack">'
+                + (minOk ? ('<span class="temp-segment temp-min" style="bottom:0;height:' + Math.max(6, minHeight).toFixed(1) + 'px"></span>') : '')
+                + (maxOk ? ('<span class="temp-segment temp-max" style="bottom:0;height:' + Math.max(6, maxHeight).toFixed(1) + 'px"></span>') : '')
+                + '</div>'
+                + '<span class="flag">' + esc(flag) + '</span>'
+                + '<div class="bar-date">' + esc(shortDate(row && row.date)) + '</div>'
+                + '</div>';
+        }).join('');
+
+        temperatureChart.innerHTML = '<div class="bars">' + cols + '</div>';
+    }
+
+    function renderSelected() {
+        const selection = currentSelection();
+        renderMeta(selection.river, selection.station);
+
+        if (!selection.station) {
+            renderEmpty(observedChart, 'No observed water-level data available.');
+            renderEmpty(dischargeChart, 'No discharge forecast data available.');
+            renderEmpty(rainfallChart, 'No rainfall forecast data available.');
+            renderEmpty(temperatureChart, 'No temperature forecast data available.');
+            return;
+        }
+
+        renderObserved(selection.station);
+        renderDischarge(selection.station);
+        renderRainfall(selection.station);
+        renderTemperature(selection.station);
     }
 
     riverSelect.addEventListener('change', () => {
-        populateStations(riverSelect.value);
+        populateStations();
         renderSelected();
     });
 
     stationSelect.addEventListener('change', renderSelected);
 
-    renderSelected();
+    populateRivers();
 })();
 </script>
