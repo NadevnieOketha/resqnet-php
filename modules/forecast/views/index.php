@@ -13,124 +13,192 @@ $fetchedAt = (string) ($snapshot['fetched_at'] ?? '');
 ?>
 
 <style>
+    :root {
+        --forecast-ink: #0f172a;
+        --forecast-muted: #475569;
+        --forecast-border: #d9e2ec;
+    }
+
     .forecast-wrap {
         display: grid;
-        gap: 1rem;
+        gap: 1.2rem;
     }
 
     .forecast-top {
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        padding: 1rem;
+        background: linear-gradient(145deg, #e6f4ff 0%, #f8fbff 58%, #eefcf6 100%);
+        border: 1px solid #cfe0ea;
+        border-radius: 14px;
+        padding: 1.15rem 1.2rem;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.07);
     }
 
     .forecast-title {
         margin: 0;
-        color: #0f172a;
+        color: var(--forecast-ink);
+        font-size: 1.3rem;
+        letter-spacing: 0.2px;
     }
 
     .forecast-subtitle {
-        margin-top: 0.5rem;
-        color: #334155;
+        margin-top: 0.55rem;
+        color: #1e293b;
         font-size: 0.95rem;
+        max-width: 80ch;
     }
 
     .forecast-toolbar {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 0.75rem;
+        gap: 0.85rem;
         align-items: end;
+    }
+
+    .forecast-field {
+        background: #fff;
+        border: 1px solid var(--forecast-border);
+        border-radius: 12px;
+        padding: 0.75rem;
+        box-shadow: 0 4px 16px rgba(2, 6, 23, 0.03);
     }
 
     .forecast-field label {
         display: block;
-        margin-bottom: 0.35rem;
-        color: #1e293b;
+        margin-bottom: 0.45rem;
+        color: #0f172a;
         font-weight: 600;
+        font-size: 0.88rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
     }
 
     .forecast-field select {
         width: 100%;
-        border: 1px solid #cbd5e1;
+        border: 1px solid #b8ccda;
         border-radius: 8px;
-        min-height: 40px;
+        min-height: 42px;
         padding: 0.5rem 0.65rem;
         background: #fff;
+        color: #0f172a;
+        font-weight: 500;
     }
 
     .forecast-meta {
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
+        background: #ffffff;
+        border: 1px solid var(--forecast-border);
         border-radius: 12px;
-        padding: 0.75rem 1rem;
+        padding: 0.85rem 0.95rem;
         color: #334155;
-        font-size: 0.92rem;
+        font-size: 0.9rem;
         line-height: 1.5;
+        box-shadow: 0 6px 18px rgba(2, 6, 23, 0.03);
+    }
+
+    .meta-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 0.5rem;
+    }
+
+    .meta-item {
+        border: 1px solid #dbe7ef;
+        background: #f8fbff;
+        border-radius: 9px;
+        padding: 0.4rem 0.55rem;
+        color: #334155;
     }
 
     .forecast-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.9rem;
     }
 
     .chart-card {
-        background: #fff;
-        border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        padding: 0.9rem;
+        background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+        border: 1px solid #d8e4ed;
+        border-left-width: 6px;
+        border-radius: 13px;
+        padding: 0.95rem;
         min-height: 290px;
-        box-shadow: 0 6px 18px rgba(2, 6, 23, 0.03);
+        box-shadow: 0 8px 26px rgba(2, 6, 23, 0.05);
+    }
+
+    .chart-observed { border-left-color: #0284c7; }
+    .chart-discharge { border-left-color: #16a34a; }
+    .chart-rainfall { border-left-color: #2563eb; }
+    .chart-temperature { border-left-color: #ea580c; }
+
+    .chart-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 0.6rem;
     }
 
     .chart-title {
         margin: 0;
-        color: #0f172a;
-        font-size: 1rem;
+        color: var(--forecast-ink);
+        font-size: 1.06rem;
     }
 
     .chart-caption {
-        margin-top: 0.25rem;
-        color: #475569;
-        font-size: 0.82rem;
+        margin: 0;
+        color: #334155;
+        font-size: 0.78rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        white-space: nowrap;
     }
 
     .chart-surface {
-        margin-top: 0.8rem;
-        min-height: 220px;
+        margin-top: 0.75rem;
+        min-height: 225px;
+        border: 1px solid #e4edf3;
+        border-radius: 10px;
+        padding: 0.65rem 0.55rem;
+        background:
+            linear-gradient(180deg, rgba(248, 250, 252, 0.95), rgba(255, 255, 255, 0.96)),
+            repeating-linear-gradient(
+                to right,
+                rgba(148, 163, 184, 0.09) 0,
+                rgba(148, 163, 184, 0.09) 1px,
+                transparent 1px,
+                transparent 42px
+            );
     }
 
     .chart-empty {
         margin-top: 0.85rem;
-        color: #64748b;
+        color: #5f6f84;
         font-style: italic;
     }
 
     .bars {
         display: flex;
         align-items: flex-end;
-        gap: 0.55rem;
-        min-height: 196px;
+        gap: 0.65rem;
+        min-height: 202px;
         overflow-x: auto;
-        padding-bottom: 0.15rem;
+        padding: 0.15rem 0.1rem 0.2rem;
     }
 
     .bar-col {
-        min-width: 64px;
+        min-width: 72px;
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 0.3rem;
+        gap: 0.33rem;
     }
 
     .bar-track {
-        width: 24px;
-        height: 150px;
+        width: 28px;
+        height: 160px;
         border-radius: 8px;
-        background: #e2e8f0;
+        background: linear-gradient(180deg, #ebf2f8 0%, #dbe5ee 100%);
         position: relative;
         overflow: hidden;
+        box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.22);
     }
 
     .bar {
@@ -142,26 +210,29 @@ $fetchedAt = (string) ($snapshot['fetched_at'] ?? '');
     }
 
     .bar-value {
-        font-size: 0.76rem;
+        font-size: 0.73rem;
         color: #0f172a;
         text-align: center;
         line-height: 1.2;
         min-height: 1.9rem;
+        font-weight: 600;
     }
 
     .bar-date {
-        font-size: 0.72rem;
+        font-size: 0.7rem;
         color: #64748b;
         text-align: center;
+        font-weight: 600;
     }
 
     .flag {
-        font-size: 0.66rem;
+        font-size: 0.64rem;
         border-radius: 999px;
-        padding: 0.1rem 0.45rem;
-        border: 1px solid #cbd5e1;
-        color: #334155;
-        background: #f8fafc;
+        padding: 0.11rem 0.5rem;
+        border: 1px solid #bad0df;
+        color: #1f2937;
+        background: #f0f7ff;
+        font-weight: 700;
     }
 
     .forecast-divider {
@@ -199,12 +270,13 @@ $fetchedAt = (string) ($snapshot['fetched_at'] ?? '');
     .temp-min { background: #22d3ee; opacity: 0.9; }
 
     .temp-stack {
-        width: 24px;
-        height: 150px;
+        width: 28px;
+        height: 160px;
         position: relative;
-        background: #e2e8f0;
+        background: linear-gradient(180deg, #ebf2f8 0%, #dbe5ee 100%);
         border-radius: 8px;
         overflow: hidden;
+        box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.22);
     }
 
     .temp-segment {
@@ -213,9 +285,24 @@ $fetchedAt = (string) ($snapshot['fetched_at'] ?? '');
         right: 0;
     }
 
-    @media (max-width: 980px) {
-        .forecast-grid {
+    @media (max-width: 760px) {
+        .meta-grid {
             grid-template-columns: 1fr;
+        }
+
+        .chart-head {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.2rem;
+        }
+
+        .bar-col {
+            min-width: 64px;
+        }
+
+        .bar-track,
+        .temp-stack {
+            width: 24px;
         }
     }
 </style>
@@ -243,27 +330,35 @@ $fetchedAt = (string) ($snapshot['fetched_at'] ?? '');
         <div class="forecast-meta" id="forecastMeta">Select a station to view details.</div>
 
         <div class="forecast-grid">
-            <section class="chart-card">
-                <h3 class="chart-title">Observed Water Levels</h3>
-                <p class="chart-caption">Unit: m</p>
+            <section class="chart-card chart-observed">
+                <div class="chart-head">
+                    <h3 class="chart-title">Observed Water Levels</h3>
+                    <p class="chart-caption">Unit: m</p>
+                </div>
                 <div class="chart-surface" id="observedChart"></div>
             </section>
 
-            <section class="chart-card">
-                <h3 class="chart-title">River Discharge Forecast</h3>
-                <p class="chart-caption">Unit: m3/s (thresholds based on discharge mean multipliers)</p>
+            <section class="chart-card chart-discharge">
+                <div class="chart-head">
+                    <h3 class="chart-title">River Discharge Forecast</h3>
+                    <p class="chart-caption">Unit: m3/s</p>
+                </div>
                 <div class="chart-surface" id="dischargeChart"></div>
             </section>
 
-            <section class="chart-card">
-                <h3 class="chart-title">Rainfall Forecast</h3>
-                <p class="chart-caption">Unit: mm/day</p>
+            <section class="chart-card chart-rainfall">
+                <div class="chart-head">
+                    <h3 class="chart-title">Rainfall Forecast</h3>
+                    <p class="chart-caption">Unit: mm/day</p>
+                </div>
                 <div class="chart-surface" id="rainfallChart"></div>
             </section>
 
-            <section class="chart-card">
-                <h3 class="chart-title">Temperature Forecast</h3>
-                <p class="chart-caption">Unit: C (max/min)</p>
+            <section class="chart-card chart-temperature">
+                <div class="chart-head">
+                    <h3 class="chart-title">Temperature Forecast</h3>
+                    <p class="chart-caption">Unit: C (max/min)</p>
+                </div>
                 <div class="chart-surface" id="temperatureChart"></div>
             </section>
         </div>
@@ -535,16 +630,16 @@ $fetchedAt = (string) ($snapshot['fetched_at'] ?? '');
         const latestObserved = station.latest_observed_at || '-';
         const riverName = river && river.river_name ? river.river_name : '-';
 
-        metaBox.innerHTML = [
-            '<strong>River:</strong> ' + esc(riverName),
-            '<strong>Station:</strong> ' + esc(station.station_name || '-'),
-            '<strong>Basin:</strong> ' + esc(station.basin_name || '-'),
-            '<strong>Water Thresholds (m):</strong> Alert ' + esc(num(station.alert_level, 2)) + ', Minor ' + esc(num(station.minor_flood_level, 2)) + ', Major ' + esc(num(station.major_flood_level, 2)),
-            '<strong>Discharge Thresholds (m3/s):</strong> Alert ' + esc(num(dischargeAlert, 2)) + ', Minor ' + esc(num(dischargeMinor, 2)) + ', Major ' + esc(num(dischargeMajor, 2)),
-            '<strong>Latest Observed:</strong> ' + esc(latestObserved),
-            '<strong>Data Source:</strong> ' + esc(sourceText || '-'),
-            '<strong>Fetched:</strong> ' + esc(fetchedAt || '-'),
-        ].join(' | ');
+        metaBox.innerHTML = '<div class="meta-grid">'
+            + '<div class="meta-item"><strong>River:</strong> ' + esc(riverName) + '</div>'
+            + '<div class="meta-item"><strong>Station:</strong> ' + esc(station.station_name || '-') + '</div>'
+            + '<div class="meta-item"><strong>Basin:</strong> ' + esc(station.basin_name || '-') + '</div>'
+            + '<div class="meta-item"><strong>Water Thresholds (m):</strong> Alert ' + esc(num(station.alert_level, 2)) + ', Minor ' + esc(num(station.minor_flood_level, 2)) + ', Major ' + esc(num(station.major_flood_level, 2)) + '</div>'
+            + '<div class="meta-item"><strong>Discharge Thresholds (m3/s):</strong> Alert ' + esc(num(dischargeAlert, 2)) + ', Minor ' + esc(num(dischargeMinor, 2)) + ', Major ' + esc(num(dischargeMajor, 2)) + '</div>'
+            + '<div class="meta-item"><strong>Latest Observed:</strong> ' + esc(latestObserved) + '</div>'
+            + '<div class="meta-item"><strong>Data Source:</strong> ' + esc(sourceText || '-') + '</div>'
+            + '<div class="meta-item"><strong>Fetched:</strong> ' + esc(fetchedAt || '-') + '</div>'
+            + '</div>';
     }
 
     function renderObserved(station) {
