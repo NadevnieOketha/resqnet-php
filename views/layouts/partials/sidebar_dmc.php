@@ -15,6 +15,10 @@
         <span class="icon" data-lucide="building"></span>
         <span>Safe Locations</span>
     </a>
+    <a href="/dashboard/donation-requirements" class="nav-item <?= is_current_url('/dashboard/donation-requirements') ? 'active' : '' ?>" data-section="donation-requirements">
+        <span class="icon" data-lucide="package-search"></span>
+        <span>Donation Requirements</span>
+    </a>
     <a href="/dashboard/admin/pending" class="nav-item <?= is_current_url('/dashboard/admin/pending') ? 'active' : '' ?>" data-section="approvals">
         <span class="icon" data-lucide="users"></span>
         <span>Pending Approvals</span>

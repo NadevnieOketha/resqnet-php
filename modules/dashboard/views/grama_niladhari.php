@@ -13,6 +13,11 @@
         <a href="/dashboard/safe-locations" class="btn btn-primary">Update Occupancy</a>
     </article>
     <article class="action-card">
+        <h3>Donation Requests</h3>
+        <p>Review requests by safe location, gather item requirements, and mark fulfillment.</p>
+        <a href="/dashboard/gn/donation-requests" class="btn btn-primary">Manage Requests</a>
+    </article>
+    <article class="action-card">
         <h3>Report a Disaster</h3>
         <p>Submit a verified incident from your GN area directly to DMC.</p>
         <a href="/report-disaster" class="btn btn-primary">Create Report</a>

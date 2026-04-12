@@ -23,6 +23,16 @@
         <a href="/safe-locations" class="btn btn-primary">Open Map</a>
     </article>
     <article class="action-card">
+        <h3><span data-lucide="gift" style="width:14px;height:14px;vertical-align:-2px;"></span> Make a Donation</h3>
+        <p>Donate supplies to NGO collection points in your district and GN division.</p>
+        <a href="/make-donation" class="btn btn-primary">Open Donation Form</a>
+    </article>
+    <article class="action-card">
+        <h3><span data-lucide="package-search" style="width:14px;height:14px;vertical-align:-2px;"></span> My Donations</h3>
+        <p>Review your donation history and pending requests.</p>
+        <a href="/dashboard/my-donations" class="btn">View My Donations</a>
+    </article>
+    <article class="action-card">
         <h3>Skills & Preferences</h3>
         <p>Adjust your volunteer preferences and specialized skills.</p>
         <a href="/profile" class="btn">Manage Skills</a>
