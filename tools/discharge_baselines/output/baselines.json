@@ -1,0 +1,658 @@
+{
+    "generated_at_utc": "2026-04-13T08:14:58+00:00",
+    "source": {
+        "hydrostations": "https://services3.arcgis.com/J7ZFXmR8rSmQ3FGf/arcgis/rest/services/hydrostations/FeatureServer/0/query",
+        "active_gauges": "https://services3.arcgis.com/J7ZFXmR8rSmQ3FGf/arcgis/rest/services/gauges_2_view/FeatureServer/0/query",
+        "flood_api": "https://flood-api.open-meteo.com/v1/flood"
+    },
+    "window": {
+        "start": "2020-01-01",
+        "end": "2024-12-31"
+    },
+    "active_station_count": 40,
+    "computed_count": 40,
+    "skipped_count": 0,
+    "stations": [
+        {
+            "station_key": "ampara",
+            "station_name": "Ampara",
+            "basin": "Gal Oya",
+            "latitude": 7.290711,
+            "longitude": 81.670343,
+            "sample_count": 1827,
+            "mean": 34.071565,
+            "alert": 68.143131,
+            "minor": 170.357827,
+            "major": 340.715654,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "badalgama",
+            "station_name": "Badalgama",
+            "basin": "Maha Oya",
+            "latitude": 7.300741,
+            "longitude": 79.983916,
+            "sample_count": 1827,
+            "mean": 54.633618,
+            "alert": 109.267236,
+            "minor": 273.16809,
+            "major": 546.33618,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "baddegama",
+            "station_name": "Baddegama",
+            "basin": "Gin Ganga",
+            "latitude": 6.173806,
+            "longitude": 80.175381,
+            "sample_count": 1827,
+            "mean": 35.802857,
+            "alert": 71.605714,
+            "minor": 179.014286,
+            "major": 358.028571,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "deraniyagala",
+            "station_name": "Deraniyagala",
+            "basin": "Kelani Ganga",
+            "latitude": 6.925934,
+            "longitude": 80.339212,
+            "sample_count": 1827,
+            "mean": 15.277712,
+            "alert": 30.555424,
+            "minor": 76.38856,
+            "major": 152.777121,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "dunamale",
+            "station_name": "Dunamale",
+            "basin": "Aththanagalu Oya",
+            "latitude": 7.116416,
+            "longitude": 80.084085,
+            "sample_count": 1827,
+            "mean": 7.956125,
+            "alert": 15.91225,
+            "minor": 39.780624,
+            "major": 79.561248,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "ellagawa",
+            "station_name": "Ellagawa",
+            "basin": "Kalu Ganga",
+            "latitude": 6.731554,
+            "longitude": 80.218254,
+            "sample_count": 1827,
+            "mean": 106.344143,
+            "alert": 212.688287,
+            "minor": 531.720717,
+            "major": 1063.441434,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "galgamuwa",
+            "station_name": "Galgamuwa",
+            "basin": "Mee Oya",
+            "latitude": 7.969368,
+            "longitude": 80.262322,
+            "sample_count": 1827,
+            "mean": 0.379929,
+            "alert": 0.759858,
+            "minor": 1.899644,
+            "major": 3.799288,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "giriulla",
+            "station_name": "Giriulla",
+            "basin": "Maha Oya",
+            "latitude": 7.330736,
+            "longitude": 80.125095,
+            "sample_count": 1827,
+            "mean": 8.258555,
+            "alert": 16.51711,
+            "minor": 41.292775,
+            "major": 82.58555,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "glencourse",
+            "station_name": "Glencourse",
+            "basin": "Kelani Ganga",
+            "latitude": 6.976981,
+            "longitude": 80.194247,
+            "sample_count": 1827,
+            "mean": 132.148161,
+            "alert": 264.296322,
+            "minor": 660.740805,
+            "major": 1321.481609,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "hanwella",
+            "station_name": "Hanwella",
+            "basin": "Kelani Ganga",
+            "latitude": 6.9097,
+            "longitude": 80.083126,
+            "sample_count": 1827,
+            "mean": 7.758084,
+            "alert": 15.516169,
+            "minor": 38.790421,
+            "major": 77.580843,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "holombuwa",
+            "station_name": "Holombuwa",
+            "basin": "Kelani Ganga",
+            "latitude": 7.188201,
+            "longitude": 80.266331,
+            "sample_count": 1827,
+            "mean": 8.197115,
+            "alert": 16.394231,
+            "minor": 40.985577,
+            "major": 81.971155,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "horowpothana",
+            "station_name": "Horowpothana",
+            "basin": "Yan Oya                          ",
+            "latitude": 8.576998,
+            "longitude": 80.880815,
+            "sample_count": 1827,
+            "mean": 2.744483,
+            "alert": 5.488966,
+            "minor": 13.722414,
+            "major": 27.444828,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "kalawellawa_millakanda",
+            "station_name": "Kalawellawa (Millakanda)",
+            "basin": "Kalu Ganga",
+            "latitude": 6.631166,
+            "longitude": 80.16069,
+            "sample_count": 1827,
+            "mean": 56.09965,
+            "alert": 112.199299,
+            "minor": 280.498248,
+            "major": 560.996497,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "katharagama",
+            "station_name": "Katharagama",
+            "basin": "Menik Ganga",
+            "latitude": 6.417705,
+            "longitude": 81.33219,
+            "sample_count": 1827,
+            "mean": 15.102507,
+            "alert": 30.205014,
+            "minor": 75.512534,
+            "major": 151.025068,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "kithulgala",
+            "station_name": "Kithulgala",
+            "basin": "Kelani Ganga",
+            "latitude": 6.991259,
+            "longitude": 80.419213,
+            "sample_count": 1827,
+            "mean": 20.97491,
+            "alert": 41.949819,
+            "minor": 104.874548,
+            "major": 209.749097,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "kuda_oya",
+            "station_name": "Kuda Oya",
+            "basin": "Kirindi Oya",
+            "latitude": 6.524746,
+            "longitude": 81.123337,
+            "sample_count": 1827,
+            "mean": 0.244888,
+            "alert": 0.489776,
+            "minor": 1.224439,
+            "major": 2.448878,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "magura",
+            "station_name": "Magura",
+            "basin": "Kalu Ganga",
+            "latitude": 6.513727,
+            "longitude": 80.243935,
+            "sample_count": 1827,
+            "mean": 4.033498,
+            "alert": 8.066995,
+            "minor": 20.167488,
+            "major": 40.334975,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "manampitiya",
+            "station_name": "Manampitiya",
+            "basin": "Mahaweli Ganga             ",
+            "latitude": 7.912987,
+            "longitude": 81.090594,
+            "sample_count": 1827,
+            "mean": 177.465441,
+            "alert": 354.930881,
+            "minor": 887.327203,
+            "major": 1774.654406,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "moragaswewa",
+            "station_name": "Moragaswewa",
+            "basin": "Deduru Oya",
+            "latitude": 7.7,
+            "longitude": 79.99,
+            "sample_count": 1827,
+            "mean": 0.621593,
+            "alert": 1.243186,
+            "minor": 3.107964,
+            "major": 6.215928,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "moraketiya",
+            "station_name": "Moraketiya",
+            "basin": "Walawe Ganga",
+            "latitude": 6.345339,
+            "longitude": 80.901244,
+            "sample_count": 1827,
+            "mean": 0.35948,
+            "alert": 0.71896,
+            "minor": 1.7974,
+            "major": 3.5948,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "nagalagam_street",
+            "station_name": "Nagalagam Street",
+            "basin": "Kelani Ganga     ",
+            "latitude": 6.958265,
+            "longitude": 79.878642,
+            "sample_count": 1827,
+            "mean": 2.230985,
+            "alert": 4.46197,
+            "minor": 11.154926,
+            "major": 22.309852,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "nakkala",
+            "station_name": "Nakkala",
+            "basin": "Kumbukkan Oya",
+            "latitude": 6.895362,
+            "longitude": 81.297065,
+            "sample_count": 1827,
+            "mean": 4.320389,
+            "alert": 8.640777,
+            "minor": 21.601943,
+            "major": 43.203886,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "nawalapitiya",
+            "station_name": "Nawalapitiya",
+            "basin": "Mahaweli Ganga",
+            "latitude": 7.04894547,
+            "longitude": 80.53616209,
+            "sample_count": 1827,
+            "mean": 2.215561,
+            "alert": 4.431122,
+            "minor": 11.077805,
+            "major": 22.15561,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "norwood",
+            "station_name": "Norwood",
+            "basin": "Kelani Ganga",
+            "latitude": 6.840145,
+            "longitude": 80.611301,
+            "sample_count": 1827,
+            "mean": 6.355632,
+            "alert": 12.711264,
+            "minor": 31.778161,
+            "major": 63.556322,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "padiyathalawa",
+            "station_name": "Padiyathalawa",
+            "basin": "Maduru Oya",
+            "latitude": 7.382251,
+            "longitude": 81.194637,
+            "sample_count": 1827,
+            "mean": 3.003136,
+            "alert": 6.006273,
+            "minor": 15.015681,
+            "major": 30.031363,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "panadugama",
+            "station_name": "Panadugama",
+            "basin": "Nilwala Ganga",
+            "latitude": 6.11178,
+            "longitude": 80.482384,
+            "sample_count": 1827,
+            "mean": 1.073246,
+            "alert": 2.146492,
+            "minor": 5.366229,
+            "major": 10.732458,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "peradeniya",
+            "station_name": "Peradeniya",
+            "basin": "Mahaweli Ganga             ",
+            "latitude": 7.269059,
+            "longitude": 80.593005,
+            "sample_count": 1827,
+            "mean": 67.822447,
+            "alert": 135.644893,
+            "minor": 339.112233,
+            "major": 678.224466,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "pitabeddara",
+            "station_name": "Pitabeddara",
+            "basin": "Nilwala Ganga",
+            "latitude": 6.213746,
+            "longitude": 80.476604,
+            "sample_count": 1827,
+            "mean": 1.255703,
+            "alert": 2.511407,
+            "minor": 6.278517,
+            "major": 12.557033,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "putupaula",
+            "station_name": "Putupaula",
+            "basin": "Kalu Ganga",
+            "latitude": 6.614324,
+            "longitude": 80.061511,
+            "sample_count": 1827,
+            "mean": 66.942573,
+            "alert": 133.885145,
+            "minor": 334.712863,
+            "major": 669.425725,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "rathnapura",
+            "station_name": "Rathnapura",
+            "basin": "Kalu Ganga",
+            "latitude": 6.679067,
+            "longitude": 80.397235,
+            "sample_count": 1827,
+            "mean": 45.003328,
+            "alert": 90.006656,
+            "minor": 225.016639,
+            "major": 450.033279,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "siyambalanduwa",
+            "station_name": "Siyambalanduwa",
+            "basin": "Heda Oya",
+            "latitude": 6.905911,
+            "longitude": 81.54541,
+            "sample_count": 1827,
+            "mean": 0.523875,
+            "alert": 1.04775,
+            "minor": 2.619376,
+            "major": 5.238752,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "thaldena",
+            "station_name": "Thaldena",
+            "basin": "Mahaweli Ganga",
+            "latitude": 7.090653,
+            "longitude": 81.048886,
+            "sample_count": 1827,
+            "mean": 9.080662,
+            "alert": 18.161325,
+            "minor": 45.403311,
+            "major": 90.806623,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "thalgahagoda",
+            "station_name": "Thalgahagoda",
+            "basin": "Nilwala Ganga",
+            "latitude": 6.0103,
+            "longitude": 80.53293,
+            "sample_count": 1827,
+            "mean": 2.924488,
+            "alert": 5.848976,
+            "minor": 14.622441,
+            "major": 29.244882,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "thanamalwila",
+            "station_name": "Thanamalwila",
+            "basin": "Kirindi Oya",
+            "latitude": 6.46905,
+            "longitude": 81.133751,
+            "sample_count": 1827,
+            "mean": 0.214587,
+            "alert": 0.429174,
+            "minor": 1.072934,
+            "major": 2.145868,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "thanthirimale",
+            "station_name": "Thanthirimale",
+            "basin": "Malwathu Oya",
+            "latitude": 8.590081,
+            "longitude": 80.27807,
+            "sample_count": 1827,
+            "mean": 6.732868,
+            "alert": 13.465736,
+            "minor": 33.66434,
+            "major": 67.328681,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "thawalama",
+            "station_name": "Thawalama",
+            "basin": "Gin Ganga",
+            "latitude": 6.341776,
+            "longitude": 80.330616,
+            "sample_count": 1827,
+            "mean": 1.775955,
+            "alert": 3.55191,
+            "minor": 8.879776,
+            "major": 17.759551,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "urawa",
+            "station_name": "Urawa",
+            "basin": "Nilwala Ganga",
+            "latitude": 6.23673,
+            "longitude": 80.572011,
+            "sample_count": 1827,
+            "mean": 0.888643,
+            "alert": 1.777285,
+            "minor": 4.443213,
+            "major": 8.886426,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "wellawaya",
+            "station_name": "Wellawaya",
+            "basin": "Kirindi Oya",
+            "latitude": 6.69576,
+            "longitude": 81.11214,
+            "sample_count": 1827,
+            "mean": 0.521056,
+            "alert": 1.042113,
+            "minor": 2.605282,
+            "major": 5.210564,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "weraganthota",
+            "station_name": "Weraganthota                            ",
+            "basin": "Mahaweli Ganga ",
+            "latitude": 7.31647,
+            "longitude": 80.98911,
+            "sample_count": 1827,
+            "mean": 0.530383,
+            "alert": 1.060766,
+            "minor": 2.651916,
+            "major": 5.303831,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "yaka_wewa",
+            "station_name": "Yaka Wewa",
+            "basin": "Ma Oya",
+            "latitude": 8.726031,
+            "longitude": 80.674968,
+            "sample_count": 1827,
+            "mean": 1.109507,
+            "alert": 2.219015,
+            "minor": 5.547537,
+            "major": 11.095074,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        }
+    ],
+    "skipped": []
+}

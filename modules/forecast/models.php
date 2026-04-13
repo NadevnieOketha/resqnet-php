@@ -3,8 +3,8 @@
 /**
  * Forecast Module - Models
  *
- * Builds daily rainfall and temperature snapshots from Open-Meteo
- * for configured river basin hydrometric stations.
+ * Builds weather snapshots from Open-Meteo and daily river water level
+ * snapshots from Irrigation Department ArcGIS services.
  */
 
 function forecast_station_catalog(): array
@@ -182,6 +182,7 @@ function forecast_snapshot(): array
 
     $fromDate = $now->modify('-2 days')->format('Y-m-d');
     $toDate = $now->modify('+7 days')->format('Y-m-d');
+    $observedToDate = $now->format('Y-m-d');
 
     $cacheDir = BASE_PATH . '/storage/logs/open_meteo';
     $cacheFile = $cacheDir . '/rain_temp_snapshot_' . $now->format('Y-m-d') . '.json';
@@ -191,6 +192,7 @@ function forecast_snapshot(): array
         $cachedData = is_string($cachedJson) ? json_decode($cachedJson, true) : null;
         if (
             is_array($cachedData)
+            && (int) ($cachedData['version'] ?? 1) >= 3
             && is_array($cachedData['rivers'] ?? null)
             && forecast_snapshot_has_weather_data($cachedData)
         ) {
@@ -218,6 +220,38 @@ function forecast_snapshot(): array
                 );
             }
 
+            $dailyWaterLevels = forecast_fetch_station_daily_water_levels(
+                (string) ($station['station_name'] ?? ''),
+                $fromDate,
+                $observedToDate,
+                'Asia/Colombo'
+            );
+
+            if (empty($dailyWaterLevels)) {
+                $dailyWaterLevels = forecast_fetch_station_daily_water_levels(
+                    (string) ($station['station_name'] ?? ''),
+                    $fromDate,
+                    $observedToDate,
+                    'Asia/Colombo'
+                );
+            }
+
+            $dailyDischarge = forecast_fetch_station_daily_discharge(
+                (float) ($station['latitude'] ?? 0),
+                (float) ($station['longitude'] ?? 0),
+                'Asia/Colombo'
+            );
+
+            if (empty($dailyDischarge)) {
+                $dailyDischarge = forecast_fetch_station_daily_discharge(
+                    (float) ($station['latitude'] ?? 0),
+                    (float) ($station['longitude'] ?? 0),
+                    'Asia/Colombo'
+                );
+            }
+
+            $dischargeThresholds = forecast_discharge_threshold_for_station($station);
+
             $stations[] = [
                 'station_key' => (string) ($station['station_key'] ?? ''),
                 'station_name' => (string) ($station['station_name'] ?? ''),
@@ -227,6 +261,9 @@ function forecast_snapshot(): array
                 'longitude' => (float) ($station['longitude'] ?? 0),
                 'description' => (string) ($station['description'] ?? ''),
                 'daily_weather' => $dailyWeather,
+                'daily_water_levels' => $dailyWaterLevels,
+                'daily_discharge' => $dailyDischarge,
+                'discharge_thresholds' => $dischargeThresholds,
             ];
         }
 
@@ -238,12 +275,22 @@ function forecast_snapshot(): array
     }
 
     $snapshot = [
-        'source' => 'Open-Meteo Weather Forecast API',
-        'endpoint' => 'https://api.open-meteo.com/v1/forecast',
+        'version' => 3,
+        'source' => [
+            'weather' => 'Open-Meteo Weather Forecast API',
+            'discharge' => 'Open-Meteo Flood API (GloFAS)',
+            'water_levels' => 'Irrigation Department ArcGIS Realtime Water Level Dashboard',
+        ],
+        'endpoint' => [
+            'weather' => 'https://api.open-meteo.com/v1/forecast',
+            'discharge' => 'https://flood-api.open-meteo.com/v1/flood',
+            'water_levels' => 'https://services3.arcgis.com/J7ZFXmR8rSmQ3FGf/arcgis/rest/services/gauges_2_view/FeatureServer/0',
+        ],
         'fetched_at' => $now->format('Y-m-d H:i:s T'),
         'window' => [
             'from' => $fromDate,
             'to' => $toDate,
+            'observed_to' => $observedToDate,
         ],
         'rivers' => $rivers,
     ];
@@ -695,6 +742,297 @@ function forecast_fetch_station_daily_weather(float $latitude, float $longitude,
     }
 
     return $rows;
+}
+
+function forecast_fetch_station_daily_discharge(float $latitude, float $longitude, string $timeZone = 'Asia/Colombo'): array
+{
+    if ($latitude === 0.0 && $longitude === 0.0) {
+        return [];
+    }
+
+    $query = http_build_query([
+        'latitude' => $latitude,
+        'longitude' => $longitude,
+        'daily' => 'river_discharge',
+        'timezone' => $timeZone,
+        'past_days' => 2,
+        'forecast_days' => 8,
+    ], '', '&', PHP_QUERY_RFC3986);
+
+    $url = 'https://flood-api.open-meteo.com/v1/flood?' . $query;
+    $payload = forecast_http_get_json($url);
+    if (!is_array($payload)) {
+        return [];
+    }
+
+    $daily = (array) ($payload['daily'] ?? []);
+    $dates = (array) ($daily['time'] ?? []);
+    $today = (new DateTimeImmutable('now', new DateTimeZone($timeZone)))->format('Y-m-d');
+
+    $rows = [];
+    foreach ($dates as $index => $date) {
+        $dateString = trim((string) $date);
+        if ($dateString === '') {
+            continue;
+        }
+
+        $rows[] = [
+            'date' => $dateString,
+            'river_discharge' => forecast_nullable_float($daily['river_discharge'][$index] ?? null),
+            'is_forecast_day' => $dateString > $today,
+        ];
+    }
+
+    return $rows;
+}
+
+function forecast_discharge_threshold_for_station(array $station): array
+{
+    $thresholdMap = forecast_discharge_threshold_map();
+    if (empty($thresholdMap)) {
+        return [];
+    }
+
+    $stationKey = (string) ($station['station_key'] ?? '');
+    $stationName = (string) ($station['station_name'] ?? '');
+
+    $candidates = [
+        $stationKey,
+        forecast_discharge_threshold_alias_for_station_key($stationKey),
+        forecast_discharge_key_from_station_name($stationName),
+    ];
+
+    foreach ($candidates as $candidate) {
+        $candidateKey = trim((string) $candidate);
+        if ($candidateKey === '') {
+            continue;
+        }
+
+        if (isset($thresholdMap[$candidateKey]) && is_array($thresholdMap[$candidateKey])) {
+            return (array) $thresholdMap[$candidateKey];
+        }
+    }
+
+    return [];
+}
+
+function forecast_discharge_threshold_alias_for_station_key(string $stationKey): string
+{
+    $map = [
+        'kalawellawa' => 'kalawellawa_millakanda',
+        'rathnapura' => 'rathnapura',
+    ];
+
+    return (string) ($map[$stationKey] ?? '');
+}
+
+function forecast_discharge_key_from_station_name(string $stationName): string
+{
+    $normalized = forecast_normalize_text($stationName);
+    if ($normalized === '') {
+        return '';
+    }
+
+    $slug = preg_replace('/[^a-z0-9]+/', '_', strtolower(trim($stationName))) ?? '';
+    return trim($slug, '_');
+}
+
+function forecast_discharge_threshold_map(): array
+{
+    static $thresholds = null;
+    if (is_array($thresholds)) {
+        return $thresholds;
+    }
+
+    $thresholds = [];
+
+    $filePath = __DIR__ . '/discharge_thresholds.php';
+    if (is_file($filePath)) {
+        require_once $filePath;
+    }
+
+    if (function_exists('forecast_discharge_thresholds')) {
+        $data = forecast_discharge_thresholds();
+        if (is_array($data)) {
+            $thresholds = $data;
+        }
+    }
+
+    return $thresholds;
+}
+
+function forecast_fetch_station_daily_water_levels(string $stationName, string $fromDate, string $toDate, string $timeZone = 'Asia/Colombo'): array
+{
+    $stationName = trim($stationName);
+    if ($stationName === '') {
+        return [];
+    }
+
+    $aliases = forecast_station_name_aliases($stationName);
+    if (empty($aliases)) {
+        return [];
+    }
+
+    $gaugeRules = [];
+    foreach ($aliases as $alias) {
+        $safeAlias = forecast_arcgis_escape_sql_string($alias);
+        if ($safeAlias !== '') {
+            $gaugeRules[] = "gauge = '{$safeAlias}'";
+        }
+    }
+
+    if (empty($gaugeRules)) {
+        return [];
+    }
+
+    $where = '(' . implode(' OR ', $gaugeRules) . ') AND CreationDate >= CURRENT_TIMESTAMP - 30';
+
+    $query = http_build_query([
+        'where' => $where,
+        'outFields' => 'gauge,CreationDate,water_level,alertpull,minorpull,majorpull',
+        'orderByFields' => 'CreationDate ASC',
+        'f' => 'json',
+    ], '', '&', PHP_QUERY_RFC3986);
+
+    $url = 'https://services3.arcgis.com/J7ZFXmR8rSmQ3FGf/arcgis/rest/services/gauges_2_view/FeatureServer/0/query?' . $query;
+    $payload = forecast_http_get_json($url);
+    if (!is_array($payload)) {
+        return [];
+    }
+
+    $features = (array) ($payload['features'] ?? []);
+    if (empty($features)) {
+        return [];
+    }
+
+    $daily = [];
+    foreach ($features as $feature) {
+        $attributes = (array) ($feature['attributes'] ?? []);
+        $createdAtRaw = $attributes['CreationDate'] ?? null;
+        $waterLevel = forecast_nullable_float($attributes['water_level'] ?? null);
+
+        if (!is_numeric($createdAtRaw) || $waterLevel === null) {
+            continue;
+        }
+
+        $timestamp = (int) floor(((float) $createdAtRaw) / 1000);
+        if ($timestamp <= 0) {
+            continue;
+        }
+
+        $dt = (new DateTimeImmutable('@' . $timestamp))->setTimezone(new DateTimeZone($timeZone));
+        $dateKey = $dt->format('Y-m-d');
+
+        if ($dateKey < $fromDate || $dateKey > $toDate) {
+            continue;
+        }
+
+        $entry = [
+            'date' => $dateKey,
+            'gauge' => (string) ($attributes['gauge'] ?? $stationName),
+            'water_level' => $waterLevel,
+            'alert_threshold' => forecast_nullable_float($attributes['alertpull'] ?? null),
+            'minor_threshold' => forecast_nullable_float($attributes['minorpull'] ?? null),
+            'major_threshold' => forecast_nullable_float($attributes['majorpull'] ?? null),
+            'unit' => forecast_water_level_unit((string) ($attributes['gauge'] ?? $stationName)),
+        ];
+
+        if (!isset($daily[$dateKey]) || $waterLevel > (float) ($daily[$dateKey]['water_level'] ?? -INF)) {
+            $daily[$dateKey] = $entry;
+        }
+    }
+
+    if (empty($daily)) {
+        return [];
+    }
+
+    ksort($daily);
+    $rows = [];
+    foreach ($daily as $dateKey => $entry) {
+        $status = forecast_water_level_status(
+            forecast_nullable_float($entry['water_level'] ?? null),
+            forecast_nullable_float($entry['alert_threshold'] ?? null),
+            forecast_nullable_float($entry['minor_threshold'] ?? null),
+            forecast_nullable_float($entry['major_threshold'] ?? null)
+        );
+
+        $entry['status'] = $status;
+        $entry['is_forecast_day'] = false;
+        $rows[] = $entry;
+    }
+
+    return $rows;
+}
+
+function forecast_station_name_aliases(string $stationName): array
+{
+    $stationName = trim($stationName);
+    if ($stationName === '') {
+        return [];
+    }
+
+    $aliases = [
+        $stationName,
+    ];
+
+    $normalized = forecast_normalize_text($stationName);
+    if ($normalized === 'kalawellawa') {
+        $aliases[] = 'Kalawellawa (Millakanda)';
+    }
+
+    if ($normalized === 'rathnapura') {
+        $aliases[] = 'Ratnapura';
+    }
+
+    if ($normalized === 'ratnapura') {
+        $aliases[] = 'Rathnapura';
+    }
+
+    $unique = [];
+    foreach ($aliases as $alias) {
+        $key = forecast_normalize_text((string) $alias);
+        if ($key === '') {
+            continue;
+        }
+
+        if (!isset($unique[$key])) {
+            $unique[$key] = (string) $alias;
+        }
+    }
+
+    return array_values($unique);
+}
+
+function forecast_arcgis_escape_sql_string(string $value): string
+{
+    return str_replace("'", "''", trim($value));
+}
+
+function forecast_water_level_unit(string $gaugeName): string
+{
+    $normalized = forecast_normalize_text($gaugeName);
+    return $normalized === 'nagalagam street' ? 'ft' : 'm';
+}
+
+function forecast_water_level_status(?float $waterLevel, ?float $alertThreshold, ?float $minorThreshold, ?float $majorThreshold): string
+{
+    if ($waterLevel === null) {
+        return 'safe';
+    }
+
+    if ($majorThreshold !== null && $waterLevel >= $majorThreshold) {
+        return 'major';
+    }
+
+    if ($minorThreshold !== null && $waterLevel >= $minorThreshold) {
+        return 'minor';
+    }
+
+    if ($alertThreshold !== null && $waterLevel >= $alertThreshold) {
+        return 'alert';
+    }
+
+    return 'safe';
 }
 
 function forecast_http_get_json(string $url, int $timeout = 20): ?array

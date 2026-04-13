@@ -118,8 +118,16 @@ $defaultJson = is_string($defaultJson) ? $defaultJson : '{}';
         border-left-color: #0284c7;
     }
 
+    .wx-discharge {
+        border-left-color: #2563eb;
+    }
+
     .wx-temp {
         border-left-color: #ea580c;
+    }
+
+    .wx-water {
+        border-left-color: #0f766e;
     }
 
     .wx-head {
@@ -200,16 +208,6 @@ $defaultJson = is_string($defaultJson) ? $defaultJson : '{}';
         font-weight: 600;
     }
 
-    .wx-flag {
-        font-size: 0.62rem;
-        border-radius: 999px;
-        border: 1px solid #bbd3e4;
-        background: #f1f8ff;
-        color: #1f2937;
-        padding: 0.08rem 0.46rem;
-        font-weight: 700;
-    }
-
     .wx-track {
         width: 28px;
         height: 160px;
@@ -227,6 +225,31 @@ $defaultJson = is_string($defaultJson) ? $defaultJson : '{}';
         bottom: 0;
         border-radius: 8px 8px 4px 4px;
         background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+    }
+
+    .wx-discharge-bar {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: 8px 8px 4px 4px;
+        background: linear-gradient(180deg, #93c5fd 0%, #2563eb 100%);
+    }
+
+    .wx-threshold-line {
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: #ef4444;
+        box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.4);
+    }
+
+    .wx-threshold-note {
+        margin-top: 0.55rem;
+        color: #334155;
+        font-size: 0.76rem;
+        font-weight: 700;
     }
 
     .wx-temp-track {
@@ -267,6 +290,74 @@ $defaultJson = is_string($defaultJson) ? $defaultJson : '{}';
         background: #ef4444;
     }
 
+    .wx-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+        margin-top: 0.45rem;
+    }
+
+    .wx-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        border-radius: 999px;
+        padding: 0.22rem 0.52rem;
+        border: 1px solid #cbd5e1;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        color: #0f172a;
+        background: #ffffff;
+    }
+
+    .wx-dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .wx-dot-safe {
+        background: #16a34a;
+    }
+
+    .wx-dot-alert {
+        background: #eab308;
+    }
+
+    .wx-dot-minor {
+        background: #f97316;
+    }
+
+    .wx-dot-major {
+        background: #dc2626;
+    }
+
+    .wx-water-bar {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: 8px 8px 4px 4px;
+    }
+
+    .wx-water-safe {
+        background: linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
+    }
+
+    .wx-water-alert {
+        background: linear-gradient(180deg, #fde047 0%, #eab308 100%);
+    }
+
+    .wx-water-minor {
+        background: linear-gradient(180deg, #fdba74 0%, #f97316 100%);
+    }
+
+    .wx-water-major {
+        background: linear-gradient(180deg, #f87171 0%, #dc2626 100%);
+    }
+
     @media (max-width: 760px) {
         .wx-meta-grid {
             grid-template-columns: 1fr;
@@ -292,10 +383,10 @@ $defaultJson = is_string($defaultJson) ? $defaultJson : '{}';
 <section class="section-card" aria-label="River basin weather dashboard">
     <div class="wx-wrap">
         <div class="wx-hero">
-            <h2 class="wx-title">River Basin Rainfall and Temperature Forecast</h2>
+            <h2 class="wx-title">River Basin Rainfall, Discharge, Temperature, and Water Level Dashboard</h2>
             <p class="wx-subtitle">
-                Data is fetched from Open-Meteo Weather Forecast API for day-before-yesterday, yesterday, today, and the next 7 forecast days.
-                Select a river to filter its hydrometric basin locations.
+                Daily river discharge is fetched from the Open-Meteo Flood API (day-before-yesterday, yesterday, today, and next 7 days).
+                Alert baseline thresholds are shown per basin location together with rainfall, temperature, and realtime water level context.
             </p>
         </div>
 
@@ -321,12 +412,34 @@ $defaultJson = is_string($defaultJson) ? $defaultJson : '{}';
                 <div class="wx-surface" id="rainfallChart"></div>
             </section>
 
+            <section class="wx-card wx-discharge">
+                <div class="wx-head">
+                    <h3>Daily River Discharge</h3>
+                    <p class="wx-caption">Unit: m3/s</p>
+                </div>
+                <div class="wx-surface" id="dischargeChart"></div>
+            </section>
+
             <section class="wx-card wx-temp">
                 <div class="wx-head">
                     <h3>Daily Temperature Range</h3>
                     <p class="wx-caption">Unit: C (max/min)</p>
                 </div>
                 <div class="wx-surface" id="temperatureChart"></div>
+            </section>
+
+            <section class="wx-card wx-water">
+                <div class="wx-head">
+                    <h3>Daily River Water Level</h3>
+                    <p class="wx-caption">Peak level by day</p>
+                </div>
+                <div class="wx-legend">
+                    <span class="wx-chip"><span class="wx-dot wx-dot-safe"></span>Safe</span>
+                    <span class="wx-chip"><span class="wx-dot wx-dot-alert"></span>Alert</span>
+                    <span class="wx-chip"><span class="wx-dot wx-dot-minor"></span>Minor Flood</span>
+                    <span class="wx-chip"><span class="wx-dot wx-dot-major"></span>Major Flood</span>
+                </div>
+                <div class="wx-surface" id="waterLevelChart"></div>
             </section>
         </div>
     </div>
@@ -338,17 +451,16 @@ $defaultJson = is_string($defaultJson) ? $defaultJson : '{}';
     const defaults = <?= $defaultJson ?>;
 
     const rivers = Array.isArray(snapshot.rivers) ? snapshot.rivers : [];
-    const source = String(snapshot.source || 'Open-Meteo');
-    const fetchedAt = String(snapshot.fetched_at || '-');
     const windowInfo = snapshot.window || {};
-
     const riverSelect = document.getElementById('riverSelect');
     const basinSelect = document.getElementById('basinSelect');
     const metaBox = document.getElementById('metaBox');
     const rainfallChart = document.getElementById('rainfallChart');
+    const dischargeChart = document.getElementById('dischargeChart');
     const temperatureChart = document.getElementById('temperatureChart');
+    const waterLevelChart = document.getElementById('waterLevelChart');
 
-    if (!riverSelect || !basinSelect || !metaBox || !rainfallChart || !temperatureChart) {
+    if (!riverSelect || !basinSelect || !metaBox || !rainfallChart || !dischargeChart || !temperatureChart || !waterLevelChart) {
         return;
     }
 
@@ -391,6 +503,14 @@ $defaultJson = is_string($defaultJson) ? $defaultJson : '{}';
         return Array.isArray(station && station.daily_weather) ? station.daily_weather : [];
     }
 
+    function rowsForWater(station) {
+        return Array.isArray(station && station.daily_water_levels) ? station.daily_water_levels : [];
+    }
+
+    function rowsForDischarge(station) {
+        return Array.isArray(station && station.daily_discharge) ? station.daily_discharge : [];
+    }
+
     function renderEmpty(element, text) {
         element.innerHTML = '<div class="wx-empty">' + esc(text) + '</div>';
     }
@@ -401,20 +521,43 @@ $defaultJson = is_string($defaultJson) ? $defaultJson : '{}';
             return;
         }
 
-        const fromDate = windowInfo.from || '-';
-        const toDate = windowInfo.to || '-';
+        const fromDate = String(windowInfo.from || '-');
+        const toDate = String(windowInfo.to || '-');
+        const waterRows = rowsForWater(station);
+        const latestWater = waterRows.length ? waterRows[waterRows.length - 1] : null;
+        const latestStatus = latestWater ? statusLabel(latestWater.status || 'safe') : 'No data';
+        const latestValue = latestWater ? (fmt(latestWater.water_level, 2) + ' ' + String(latestWater.unit || 'm')) : '-';
+        const dischargeRows = rowsForDischarge(station);
+        const latestDischarge = dischargeRows.length ? toNum(dischargeRows[dischargeRows.length - 1].river_discharge) : null;
+        const alertThreshold = toNum(station && station.discharge_thresholds && station.discharge_thresholds.alert);
 
         metaBox.innerHTML = ''
             + '<div class="wx-meta-grid">'
-            + '<div class="wx-meta-item"><strong>River:</strong> ' + esc(river.river_name || '-') + '</div>'
-            + '<div class="wx-meta-item"><strong>Hydrometric Station:</strong> ' + esc(station.station_name || '-') + '</div>'
             + '<div class="wx-meta-item"><strong>District:</strong> ' + esc(station.district || '-') + '</div>'
             + '<div class="wx-meta-item"><strong>GN / Local Area:</strong> ' + esc(station.local_area || '-') + '</div>'
             + '<div class="wx-meta-item"><strong>Coordinates:</strong> ' + esc(fmt(station.latitude, 4)) + ', ' + esc(fmt(station.longitude, 4)) + '</div>'
             + '<div class="wx-meta-item"><strong>Date Window:</strong> ' + esc(fromDate) + ' to ' + esc(toDate) + '</div>'
-            + '<div class="wx-meta-item"><strong>Source:</strong> ' + esc(source) + '</div>'
-            + '<div class="wx-meta-item"><strong>Fetched At:</strong> ' + esc(fetchedAt) + '</div>'
+            + '<div class="wx-meta-item"><strong>Latest Discharge:</strong> ' + esc(latestDischarge === null ? '-' : fmt(latestDischarge, 2) + ' m3/s') + '</div>'
+            + '<div class="wx-meta-item"><strong>Alert Baseline:</strong> ' + esc(alertThreshold === null ? '-' : fmt(alertThreshold, 2) + ' m3/s') + '</div>'
+            + '<div class="wx-meta-item"><strong>Latest Water Level:</strong> ' + esc(latestValue) + '</div>'
+            + '<div class="wx-meta-item"><strong>Latest Status:</strong> ' + esc(latestStatus) + '</div>'
             + '</div>';
+    }
+
+    function statusLabel(status) {
+        const value = String(status || '').toLowerCase();
+        if (value === 'major') return 'Major Flood';
+        if (value === 'minor') return 'Minor Flood';
+        if (value === 'alert') return 'Alert';
+        return 'Safe';
+    }
+
+    function statusClass(status) {
+        const value = String(status || '').toLowerCase();
+        if (value === 'major') return 'wx-water-major';
+        if (value === 'minor') return 'wx-water-minor';
+        if (value === 'alert') return 'wx-water-alert';
+        return 'wx-water-safe';
     }
 
     function renderRainfall(station) {
@@ -435,13 +578,10 @@ $defaultJson = is_string($defaultJson) ? $defaultJson : '{}';
             const value = amount === null ? 0 : amount;
             const ratio = Math.max(0, Math.min(1, value / maxValue));
             const height = Math.max(8, ratio * 150);
-            const period = row && row.is_forecast_day ? 'Forecast' : 'Observed';
-
             return ''
                 + '<div class="wx-col">'
                 + '<div class="wx-value">' + esc(fmt(value, 1)) + ' mm</div>'
                 + '<div class="wx-track"><span class="wx-rain-bar" style="height:' + height.toFixed(1) + 'px"></span></div>'
-                + '<span class="wx-flag">' + esc(period) + '</span>'
                 + '<div class="wx-date">' + esc(shortDate(row && row.date)) + '</div>'
                 + '</div>';
         }).join('');
@@ -471,14 +611,11 @@ $defaultJson = is_string($defaultJson) ? $defaultJson : '{}';
         const bars = rows.map((row) => {
             const tMax = toNum(row && row.temperature_2m_max);
             const tMin = toNum(row && row.temperature_2m_min);
-            const period = row && row.is_forecast_day ? 'Forecast' : 'Observed';
-
             if (tMax === null || tMin === null) {
                 return ''
                     + '<div class="wx-col">'
                     + '<div class="wx-value">-</div>'
                     + '<div class="wx-temp-track"></div>'
-                    + '<span class="wx-flag">' + esc(period) + '</span>'
                     + '<div class="wx-date">' + esc(shortDate(row && row.date)) + '</div>'
                     + '</div>';
             }
@@ -497,12 +634,90 @@ $defaultJson = is_string($defaultJson) ? $defaultJson : '{}';
                 + '<span class="wx-temp-min-dot" style="bottom:' + Math.max(0, lowPx - 4).toFixed(1) + 'px"></span>'
                 + '<span class="wx-temp-max-dot" style="bottom:' + Math.max(0, highPx - 4).toFixed(1) + 'px"></span>'
                 + '</div>'
-                + '<span class="wx-flag">' + esc(period) + '</span>'
                 + '<div class="wx-date">' + esc(shortDate(row && row.date)) + '</div>'
                 + '</div>';
         }).join('');
 
         temperatureChart.innerHTML = '<div class="wx-bars">' + bars + '</div>';
+    }
+
+    function renderDischarge(station) {
+        const rows = rowsForDischarge(station);
+        if (rows.length === 0) {
+            renderEmpty(dischargeChart, 'No Open-Meteo flood discharge data available for the selected basin location.');
+            return;
+        }
+
+        const alertThreshold = toNum(station && station.discharge_thresholds && station.discharge_thresholds.alert);
+
+        const values = rows
+            .map((row) => toNum(row && row.river_discharge))
+            .filter((value) => value !== null);
+
+        const maxData = values.length ? Math.max(...values) : 0;
+        const maxValue = Math.max(maxData, alertThreshold || 0, 1) * 1.15;
+
+        const bars = rows.map((row) => {
+            const discharge = toNum(row && row.river_discharge);
+            const value = discharge === null ? 0 : discharge;
+            const ratio = Math.max(0, Math.min(1, value / maxValue));
+            const height = Math.max(8, ratio * 150);
+
+            let thresholdMarkup = '';
+            if (alertThreshold !== null) {
+                const thresholdRatio = Math.max(0, Math.min(1, alertThreshold / maxValue));
+                const thresholdPx = thresholdRatio * 150;
+                thresholdMarkup = '<span class="wx-threshold-line" style="bottom:' + Math.max(0, thresholdPx - 1).toFixed(1) + 'px"></span>';
+            }
+
+            return ''
+                + '<div class="wx-col">'
+                + '<div class="wx-value">' + esc(fmt(value, 2)) + ' m3/s</div>'
+                + '<div class="wx-track">'
+                + '<span class="wx-discharge-bar" style="height:' + height.toFixed(1) + 'px"></span>'
+                + thresholdMarkup
+                + '</div>'
+                + '<div class="wx-date">' + esc(shortDate(row && row.date)) + '</div>'
+                + '</div>';
+        }).join('');
+
+        const thresholdNote = alertThreshold === null
+            ? 'Alert baseline threshold is unavailable for this location.'
+            : ('Alert baseline: ' + fmt(alertThreshold, 2) + ' m3/s');
+
+        dischargeChart.innerHTML = '<div class="wx-bars">' + bars + '</div><div class="wx-threshold-note">' + esc(thresholdNote) + '</div>';
+    }
+
+    function renderWaterLevels(station) {
+        const rows = rowsForWater(station);
+        if (rows.length === 0) {
+            renderEmpty(waterLevelChart, 'No ArcGIS water-level data available for the selected basin location.');
+            return;
+        }
+
+        const values = rows
+            .map((row) => toNum(row && row.water_level))
+            .filter((value) => value !== null);
+
+        const maxValue = Math.max(values.length ? Math.max(...values) : 0, 1) * 1.15;
+
+        const bars = rows.map((row) => {
+            const waterLevel = toNum(row && row.water_level);
+            const value = waterLevel === null ? 0 : waterLevel;
+            const ratio = Math.max(0, Math.min(1, value / maxValue));
+            const height = Math.max(8, ratio * 150);
+            const unit = String((row && row.unit) || 'm');
+            const status = String((row && row.status) || 'safe');
+
+            return ''
+                + '<div class="wx-col">'
+                + '<div class="wx-value">' + esc(fmt(value, 2)) + ' ' + esc(unit) + '<br>' + esc(statusLabel(status)) + '</div>'
+                + '<div class="wx-track"><span class="wx-water-bar ' + esc(statusClass(status)) + '" style="height:' + height.toFixed(1) + 'px"></span></div>'
+                + '<div class="wx-date">' + esc(shortDate(row && row.date)) + '</div>'
+                + '</div>';
+        }).join('');
+
+        waterLevelChart.innerHTML = '<div class="wx-bars">' + bars + '</div>';
     }
 
     function currentSelection() {
@@ -520,8 +735,10 @@ $defaultJson = is_string($defaultJson) ? $defaultJson : '{}';
             riverSelect.innerHTML = '<option value="">No rivers available</option>';
             basinSelect.innerHTML = '<option value="">No basin locations available</option>';
             renderEmpty(rainfallChart, 'No rainfall data available.');
+            renderEmpty(dischargeChart, 'No discharge data available.');
             renderEmpty(temperatureChart, 'No temperature data available.');
-            metaBox.textContent = 'No Open-Meteo data is currently available.';
+            renderEmpty(waterLevelChart, 'No water-level data available.');
+            metaBox.textContent = 'No forecast or water-level data is currently available.';
             return;
         }
 
@@ -575,12 +792,16 @@ $defaultJson = is_string($defaultJson) ? $defaultJson : '{}';
 
         if (!selection.station) {
             renderEmpty(rainfallChart, 'No rainfall data available for the selected river.');
+            renderEmpty(dischargeChart, 'No discharge data available for the selected river.');
             renderEmpty(temperatureChart, 'No temperature data available for the selected river.');
+            renderEmpty(waterLevelChart, 'No water-level data available for the selected river.');
             return;
         }
 
         renderRainfall(selection.station);
+        renderDischarge(selection.station);
         renderTemperature(selection.station);
+        renderWaterLevels(selection.station);
     }
 
     riverSelect.addEventListener('change', () => {
