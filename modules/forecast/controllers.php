@@ -8,9 +8,15 @@ function forecast_dashboard_index(): void
 {
     $requestedRiverKey = trim((string) request_query('river', ''));
     $requestedStationKey = trim((string) request_query('station', ''));
+    $profile = null;
+
+    if (auth_check()) {
+        $role = (string) (user_role() ?? '');
+        $profile = auth_get_profile((int) auth_id(), $role);
+    }
 
     $snapshot = forecast_snapshot();
-    $defaultSelection = forecast_default_selection($snapshot, $requestedRiverKey, $requestedStationKey);
+    $defaultSelection = forecast_default_selection($snapshot, $requestedRiverKey, $requestedStationKey, $profile);
 
     view('forecast::index', [
         'breadcrumb' => 'River Forecast',

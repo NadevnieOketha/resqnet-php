@@ -260,7 +260,7 @@ function forecast_snapshot(): array
     return $snapshot;
 }
 
-function forecast_default_selection(array $snapshot, string $requestedRiverKey = '', string $requestedStationKey = ''): array
+function forecast_default_selection(array $snapshot, string $requestedRiverKey = '', string $requestedStationKey = '', ?array $profile = null): array
 {
     $rivers = (array) ($snapshot['rivers'] ?? []);
     if (empty($rivers)) {
@@ -270,48 +270,380 @@ function forecast_default_selection(array $snapshot, string $requestedRiverKey =
         ];
     }
 
-    $selectedRiver = null;
+    if ($requestedRiverKey !== '' || $requestedStationKey !== '') {
+        $selection = forecast_selection_from_request($snapshot, $requestedRiverKey, $requestedStationKey);
+        if ((string) ($selection['river_key'] ?? '') !== '' && (string) ($selection['station_key'] ?? '') !== '') {
+            return $selection;
+        }
+    }
+
+    $mappedStationKey = forecast_station_key_from_profile($profile);
+    if ($mappedStationKey !== '') {
+        $mappedSelection = forecast_selection_from_station_key($snapshot, $mappedStationKey);
+        if ((string) ($mappedSelection['river_key'] ?? '') !== '' && (string) ($mappedSelection['station_key'] ?? '') !== '') {
+            return $mappedSelection;
+        }
+    }
+
+    return forecast_fallback_selection($snapshot);
+}
+
+function forecast_selection_from_request(array $snapshot, string $requestedRiverKey, string $requestedStationKey): array
+{
+    $rivers = (array) ($snapshot['rivers'] ?? []);
+
     if ($requestedRiverKey !== '') {
         foreach ($rivers as $river) {
-            if ((string) ($river['river_key'] ?? '') === $requestedRiverKey) {
-                $selectedRiver = $river;
-                break;
+            $riverKey = (string) ($river['river_key'] ?? '');
+            if ($riverKey !== $requestedRiverKey) {
+                continue;
+            }
+
+            $stations = (array) ($river['stations'] ?? []);
+            if ($requestedStationKey !== '') {
+                foreach ($stations as $station) {
+                    if ((string) ($station['station_key'] ?? '') === $requestedStationKey) {
+                        return [
+                            'river_key' => $riverKey,
+                            'station_key' => $requestedStationKey,
+                        ];
+                    }
+                }
+            }
+
+            $fallbackStation = forecast_first_station_with_data($stations);
+            if ($fallbackStation !== '') {
+                return [
+                    'river_key' => $riverKey,
+                    'station_key' => $fallbackStation,
+                ];
+            }
+
+            if (!empty($stations)) {
+                return [
+                    'river_key' => $riverKey,
+                    'station_key' => (string) ($stations[0]['station_key'] ?? ''),
+                ];
             }
         }
     }
-
-    if (!$selectedRiver) {
-        $selectedRiver = $rivers[0];
-    }
-
-    $stations = (array) ($selectedRiver['stations'] ?? []);
-    $selectedStationKey = '';
 
     if ($requestedStationKey !== '') {
-        foreach ($stations as $station) {
-            if ((string) ($station['station_key'] ?? '') === $requestedStationKey) {
-                $selectedStationKey = $requestedStationKey;
-                break;
-            }
-        }
+        return forecast_selection_from_station_key($snapshot, $requestedStationKey);
     }
 
-    if ($selectedStationKey === '' && !empty($stations)) {
-        foreach ($stations as $station) {
-            if (count((array) ($station['daily_weather'] ?? [])) > 0) {
-                $selectedStationKey = (string) ($station['station_key'] ?? '');
-                break;
-            }
-        }
+    return [
+        'river_key' => '',
+        'station_key' => '',
+    ];
+}
 
-        if ($selectedStationKey === '') {
-            $selectedStationKey = (string) ($stations[0]['station_key'] ?? '');
+function forecast_selection_from_station_key(array $snapshot, string $stationKey): array
+{
+    $target = forecast_normalize_text($stationKey);
+    if ($target === '') {
+        return [
+            'river_key' => '',
+            'station_key' => '',
+        ];
+    }
+
+    foreach ((array) ($snapshot['rivers'] ?? []) as $river) {
+        $riverKey = (string) ($river['river_key'] ?? '');
+        foreach ((array) ($river['stations'] ?? []) as $station) {
+            $candidate = forecast_normalize_text((string) ($station['station_key'] ?? ''));
+            if ($candidate === $target) {
+                return [
+                    'river_key' => $riverKey,
+                    'station_key' => (string) ($station['station_key'] ?? ''),
+                ];
+            }
         }
     }
 
     return [
-        'river_key' => (string) ($selectedRiver['river_key'] ?? ''),
-        'station_key' => $selectedStationKey,
+        'river_key' => '',
+        'station_key' => '',
+    ];
+}
+
+function forecast_fallback_selection(array $snapshot): array
+{
+    $rivers = (array) ($snapshot['rivers'] ?? []);
+    if (empty($rivers)) {
+        return [
+            'river_key' => '',
+            'station_key' => '',
+        ];
+    }
+
+    foreach ($rivers as $river) {
+        $stations = (array) ($river['stations'] ?? []);
+        $stationKey = forecast_first_station_with_data($stations);
+        if ($stationKey !== '') {
+            return [
+                'river_key' => (string) ($river['river_key'] ?? ''),
+                'station_key' => $stationKey,
+            ];
+        }
+    }
+
+    $firstRiver = $rivers[0];
+    $firstStations = (array) ($firstRiver['stations'] ?? []);
+
+    return [
+        'river_key' => (string) ($firstRiver['river_key'] ?? ''),
+        'station_key' => (string) (($firstStations[0]['station_key'] ?? '') ?: ''),
+    ];
+}
+
+function forecast_first_station_with_data(array $stations): string
+{
+    foreach ($stations as $station) {
+        if (count((array) ($station['daily_weather'] ?? [])) > 0) {
+            return (string) ($station['station_key'] ?? '');
+        }
+    }
+
+    return '';
+}
+
+function forecast_station_key_from_profile(?array $profile): string
+{
+    if (!is_array($profile) || empty($profile)) {
+        return '';
+    }
+
+    $district = forecast_normalize_text((string) ($profile['district'] ?? ''));
+    $candidates = forecast_profile_location_candidates($profile);
+    if (empty($candidates)) {
+        return '';
+    }
+
+    $bestStation = '';
+    $bestScore = 0;
+
+    foreach (forecast_station_mapping_groups() as $group) {
+        $groupDistrict = forecast_normalize_text((string) ($group['district'] ?? ''));
+        $stationKey = (string) ($group['station_key'] ?? '');
+        $areas = (array) ($group['areas'] ?? []);
+
+        if ($stationKey === '' || empty($areas)) {
+            continue;
+        }
+
+        $score = 0;
+        if ($district !== '' && $groupDistrict !== '' && $district === $groupDistrict) {
+            $score += 60;
+        }
+
+        foreach ($areas as $area) {
+            $areaNorm = forecast_normalize_text((string) $area);
+            if ($areaNorm === '') {
+                continue;
+            }
+
+            foreach ($candidates as $candidate) {
+                if ($candidate === $areaNorm) {
+                    $score += 120;
+                } elseif (
+                    strlen($candidate) >= 4
+                    && (str_contains($candidate, $areaNorm) || str_contains($areaNorm, $candidate))
+                ) {
+                    $score += 40;
+                }
+            }
+        }
+
+        if ($score > $bestScore) {
+            $bestScore = $score;
+            $bestStation = $stationKey;
+        }
+    }
+
+    return $bestScore > 0 ? $bestStation : '';
+}
+
+function forecast_profile_location_candidates(array $profile): array
+{
+    $fields = [
+        (string) ($profile['gn_division'] ?? ''),
+        (string) ($profile['city'] ?? ''),
+        (string) ($profile['address'] ?? ''),
+        (string) ($profile['street'] ?? ''),
+        (string) ($profile['organization_name'] ?? ''),
+    ];
+
+    $candidates = [];
+    foreach ($fields as $value) {
+        $value = trim($value);
+        if ($value === '') {
+            continue;
+        }
+
+        $normalized = forecast_normalize_text($value);
+        if ($normalized !== '') {
+            $candidates[$normalized] = true;
+        }
+
+        $parts = preg_split('/[,;\/\\|\-]+/', $value) ?: [];
+        foreach ($parts as $part) {
+            $partNorm = forecast_normalize_text((string) $part);
+            if ($partNorm !== '') {
+                $candidates[$partNorm] = true;
+            }
+        }
+    }
+
+    return array_keys($candidates);
+}
+
+function forecast_normalize_text(string $value): string
+{
+    $normalized = strtolower(trim($value));
+    $normalized = preg_replace('/[^a-z0-9]+/', ' ', $normalized) ?? '';
+    $normalized = trim(preg_replace('/\s+/', ' ', $normalized) ?? '');
+    return $normalized;
+}
+
+function forecast_station_mapping_groups(): array
+{
+    return [
+        [
+            'district' => 'Colombo',
+            'station_key' => 'nagalagam_street',
+            'areas' => ['Colombo', 'Kolonnawa', 'Nagalagam Street', 'Sri Jayawardenepura Kotte', 'Thimbirigasyaya', 'Dehiwala', 'Ratmalana', 'Moratuwa'],
+        ],
+        [
+            'district' => 'Colombo',
+            'station_key' => 'hanwella',
+            'areas' => ['Kaduwela', 'Maharagama', 'Kesbewa', 'Homagama', 'Padukka', 'Hanwella (Seethawaka)', 'Hanwella'],
+        ],
+        [
+            'district' => 'Gampaha',
+            'station_key' => 'nagalagam_street',
+            'areas' => ['Wattala', 'Kelaniya', 'Biyagama', 'Ja-Ela'],
+        ],
+        [
+            'district' => 'Gampaha',
+            'station_key' => 'hanwella',
+            'areas' => ['Gampaha', 'Mahara', 'Dompe', 'Attanagalla'],
+        ],
+        [
+            'district' => 'Gampaha',
+            'station_key' => 'holombuwa',
+            'areas' => ['Negombo', 'Katana', 'Divulapitiya', 'Mirigama', 'Minuwangoda'],
+        ],
+        [
+            'district' => 'Kalutara',
+            'station_key' => 'glencourse',
+            'areas' => ['Avissawella', 'Glencourse'],
+        ],
+        [
+            'district' => 'Kalutara',
+            'station_key' => 'ellagawa',
+            'areas' => ['Ingiriya', 'Horana'],
+        ],
+        [
+            'district' => 'Kalutara',
+            'station_key' => 'kalawellawa',
+            'areas' => ['Bandaragama', 'Millaniya', 'Madurawala', 'Bulathsinhala'],
+        ],
+        [
+            'district' => 'Kalutara',
+            'station_key' => 'putupaula',
+            'areas' => ['Panadura', 'Kalutara', 'Beruwala', 'Dodangoda'],
+        ],
+        [
+            'district' => 'Kalutara',
+            'station_key' => 'magura',
+            'areas' => ['Matugama', 'Agalawatta', 'Palindanuwara', 'Walallavita'],
+        ],
+        [
+            'district' => 'Kandy',
+            'station_key' => 'nawalapitiya',
+            'areas' => ['Nawalapitiya', 'Pasbage Korale', 'Ganga Ihala Korale'],
+        ],
+        [
+            'district' => 'Kandy',
+            'station_key' => 'peradeniya',
+            'areas' => ['Peradeniya', 'Kandy Four Gravets', 'Gangawata Korale', 'Yatinuwara', 'Udunuwara', 'Doluwa', 'Hatharaliyadda', 'Thumpane', 'Pujapitiya', 'Akurana', 'Udapalatha', 'Pathahewaheta', 'Delthota'],
+        ],
+        [
+            'district' => 'Kandy',
+            'station_key' => 'weraganthota',
+            'areas' => ['Weraganthota', 'Minipe', 'Ududumbara', 'Medadumbara', 'Pathadumbara', 'Panvila', 'Kundasale'],
+        ],
+        [
+            'district' => 'Kegalle',
+            'station_key' => 'deraniyagala',
+            'areas' => ['Deraniyagala'],
+        ],
+        [
+            'district' => 'Kegalle',
+            'station_key' => 'kithulgala',
+            'areas' => ['Kithulgala', 'Yatiyanthota', 'Ruwanwella'],
+        ],
+        [
+            'district' => 'Kegalle',
+            'station_key' => 'holombuwa',
+            'areas' => ['Holombuwa', 'Warakapola', 'Mawanella'],
+        ],
+        [
+            'district' => 'Ratnapura',
+            'station_key' => 'rathnapura',
+            'areas' => ['Rathnapura', 'Kuruwita', 'Pelmadulla', 'Balangoda', 'Godakawela'],
+        ],
+        [
+            'district' => 'Ratnapura',
+            'station_key' => 'ellagawa',
+            'areas' => ['Eheliyagoda', 'Ellagawa'],
+        ],
+        [
+            'district' => 'Ratnapura',
+            'station_key' => 'kalawellawa',
+            'areas' => ['Kalawellawa'],
+        ],
+        [
+            'district' => 'Ratnapura',
+            'station_key' => 'magura',
+            'areas' => ['Magura'],
+        ],
+        [
+            'district' => 'Ratnapura',
+            'station_key' => 'putupaula',
+            'areas' => ['Putupaula'],
+        ],
+        [
+            'district' => 'Polonnaruwa',
+            'station_key' => 'manampitiya',
+            'areas' => ['Manampitiya', 'Dimbulagala', 'Polonnaruwa', 'Hingurakgoda', 'Lankapura', 'Welikanda'],
+        ],
+        [
+            'district' => 'Badulla',
+            'station_key' => 'thaldena',
+            'areas' => ['Thaldena', 'Welimada', 'Badulla', 'Passara', 'Bandarawela', 'Hali-Ela'],
+        ],
+        [
+            'district' => 'Galle',
+            'station_key' => 'putupaula',
+            'areas' => ['Bentota', 'Balapitiya', 'Karandeniya', 'Elpitiya', 'Ambalangoda', 'Hikkaduwa', 'Gonapinuwala', 'Baddegama', 'Welivitiya-Divithura', 'Bope-Poddala', 'Galle Four Gravets', 'Akmeemana', 'Habaraduwa', 'Talape'],
+        ],
+        [
+            'district' => 'Galle',
+            'station_key' => 'magura',
+            'areas' => ['Nagoda', 'Yakkalamulla', 'Imaduwa', 'Neluwa', 'Thawalama'],
+        ],
+        [
+            'district' => 'Matara',
+            'station_key' => 'magura',
+            'areas' => ['Pitabeddara', 'Kotapola', 'Pasgoda', 'Mulatiyana', 'Akuressa'],
+        ],
+        [
+            'district' => 'Matara',
+            'station_key' => 'putupaula',
+            'areas' => ['Athuraliya', 'Welipitiya', 'Malimbada', 'Kamburupitiya', 'Hakmana', 'Kirinda-Puhulwella', 'Thihagoda', 'Weligama', 'Matara Four Gravets', 'Devinuwara', 'Dickwella'],
+        ],
     ];
 }
 
