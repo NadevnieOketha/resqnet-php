@@ -19,6 +19,10 @@
         <span class="icon" data-lucide="boxes"></span>
         <span>Inventory Management</span>
     </a>
+    <a href="/dashboard/forecast" class="nav-item <?= is_current_url('/dashboard/forecast') ? 'active' : '' ?>" data-section="forecast-dashboard">
+        <span class="icon" data-lucide="cloud-rain"></span>
+        <span>Forecast Dashboard</span>
+    </a>
     <a href="/profile" class="nav-item <?= is_current_url('/profile') ? 'active' : '' ?>" data-section="profile-settings">
         <span class="icon" data-lucide="user"></span>
         <span>Profile Settings</span>

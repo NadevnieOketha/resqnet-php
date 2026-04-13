@@ -28,6 +28,7 @@ route('POST', '/reset-password',   'auth_reset_password_post', ['middleware_gues
 // Authenticated
 route('GET',  '/logout',              'auth_logout',             ['middleware_auth']);
 route('GET',  '/dashboard',           'dashboard_index',         ['middleware_auth']);
+route('GET',  '/dashboard/forecast',  'forecast_dashboard_index',['middleware_auth']);
 route('GET',  '/profile',             'auth_profile',            ['middleware_auth']);
 route('POST', '/profile',             'auth_profile_post',       ['middleware_auth']);
 route('POST', '/profile/sms-alert',   'auth_profile_sms_toggle', ['middleware_auth']);

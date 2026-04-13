@@ -23,6 +23,11 @@
         <a href="/safe-locations" class="btn btn-primary">Open Map</a>
     </article>
     <article class="action-card">
+        <h3><span data-lucide="cloud-rain" style="width:14px;height:14px;vertical-align:-2px;"></span> Forecast Dashboard</h3>
+        <p>Monitor rainfall and temperature outlook at river-basin stations.</p>
+        <a href="/dashboard/forecast" class="btn btn-primary">Open Forecast</a>
+    </article>
+    <article class="action-card">
         <h3><span data-lucide="gift" style="width:14px;height:14px;vertical-align:-2px;"></span> Make a Donation</h3>
         <p>Donate supplies to NGO collection points in your district and GN division.</p>
         <a href="/make-donation" class="btn btn-primary">Open Donation Form</a>

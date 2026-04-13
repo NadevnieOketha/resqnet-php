@@ -23,6 +23,11 @@
         <a href="/dashboard/ngo/donations" class="btn btn-primary">Open Donations</a>
     </article>
     <article class="action-card">
+        <h3><span data-lucide="cloud-rain" style="width:14px;height:14px;vertical-align:-2px;"></span> Forecast Dashboard</h3>
+        <p>Check river-basin rainfall and temperature conditions for response planning.</p>
+        <a href="/dashboard/forecast" class="btn btn-primary">Open Forecast</a>
+    </article>
+    <article class="action-card">
         <h3>Inventory Management</h3>
         <p>Track stock by collection point, monitor low inventory, and update quantities.</p>
         <a href="/dashboard/ngo/inventory" class="btn btn-primary">Open Inventory</a>
