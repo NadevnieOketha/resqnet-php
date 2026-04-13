@@ -1,16 +1,16 @@
 # Discharge Baseline Thresholds
 
-This folder contains a standalone script to compute river discharge baselines and flood thresholds for active hydrostations.
+This folder contains a standalone script to compute river discharge baselines and flood thresholds for the 16 monitored river basin locations used in the forecast module.
 
 ## What It Computes
 
 - Historical window: `2020-01-01` to `2024-12-31`
-- Source stations: ArcGIS hydrostations, filtered to active gauges
+- Source stations: ArcGIS/Irrigation hydrostation coordinates for 16 monitored basin locations (mirrored into the forecast station catalog)
 - Source discharge: Open-Meteo Flood API (`daily=river_discharge`)
 - Threshold formula:
   - `alert = 2 x mean`
-  - `minor = 5 x mean`
-  - `major = 10 x mean`
+  - `minor = 3 x mean`
+  - `major = 5 x mean`
 
 ## Run
 

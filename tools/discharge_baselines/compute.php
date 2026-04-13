@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 /**
- * Compute river discharge baseline thresholds for active hydrostations.
+ * Compute river discharge baseline thresholds for monitored forecast stations.
  *
  * Usage:
  *   php tools/discharge_baselines/compute.php
@@ -10,6 +10,11 @@ declare(strict_types=1);
 
 const HIST_START_DATE = '2020-01-01';
 const HIST_END_DATE = '2024-12-31';
+
+const TARGET_STATION_COUNT = 16;
+const THRESHOLD_ALERT_MULTIPLIER = 2.0;
+const THRESHOLD_MINOR_MULTIPLIER = 3.0;
+const THRESHOLD_MAJOR_MULTIPLIER = 5.0;
 
 const ARC_HYDROSTATIONS_ENDPOINT = 'https://services3.arcgis.com/J7ZFXmR8rSmQ3FGf/arcgis/rest/services/hydrostations/FeatureServer/0/query';
 const ARC_GAUGES_VIEW_ENDPOINT = 'https://services3.arcgis.com/J7ZFXmR8rSmQ3FGf/arcgis/rest/services/gauges_2_view/FeatureServer/0/query';
@@ -28,56 +33,41 @@ exit($exitCode);
 
 function run_baseline_computation(): int
 {
-    $hydrostations = fetch_hydrostations();
-    if (empty($hydrostations)) {
-        fwrite(STDERR, "Failed: no hydrostations returned from ArcGIS.\n");
+    $stations = monitored_station_catalog();
+    if (empty($stations)) {
+        fwrite(STDERR, "Failed: monitored station catalog is empty.\n");
         return 1;
+    }
+
+    if (count($stations) !== TARGET_STATION_COUNT) {
+        fwrite(STDERR, "Warning: expected " . TARGET_STATION_COUNT . " monitored stations, got " . count($stations) . ".\n");
     }
 
     $activeGauges = fetch_active_gauges();
-    if (empty($activeGauges)) {
-        fwrite(STDERR, "Failed: no active gauges returned from ArcGIS.\n");
-        return 1;
-    }
-
     $activeLookup = [];
     foreach ($activeGauges as $gaugeName) {
         $activeLookup[normalize_name($gaugeName)] = true;
     }
 
-    $stations = [];
-    foreach ($hydrostations as $station) {
-        $name = (string) ($station['station'] ?? '');
-        if ($name === '') {
-            continue;
-        }
-
-        if (isset($activeLookup[normalize_name($name)])) {
-            $stations[] = $station;
-        }
-    }
-
-    if (count($stations) === 0) {
-        fwrite(STDERR, "Failed: 0 matching stations after active-gauge filtering.\n");
-        return 1;
-    }
-
-    if (count($stations) !== 40) {
-        fwrite(STDERR, "Warning: expected 40 active stations, got " . count($stations) . ".\n");
-    }
-
     usort(
         $stations,
-        static fn(array $a, array $b): int => strcmp((string) ($a['station'] ?? ''), (string) ($b['station'] ?? ''))
+        static fn(array $a, array $b): int => strcmp((string) ($a['station_key'] ?? ''), (string) ($b['station_key'] ?? ''))
     );
 
     $rows = [];
     $skipped = [];
+    $activeGaugeUnmatched = [];
     $usedKeys = [];
     $total = count($stations);
 
     foreach ($stations as $index => $station) {
-        $stationName = (string) ($station['station'] ?? '');
+        $stationName = (string) ($station['station_name'] ?? '');
+        $stationAliases = (array) ($station['station_aliases'] ?? []);
+        $gaugeActive = station_has_active_gauge($stationName, $activeLookup, $stationAliases);
+        if (!$gaugeActive) {
+            $activeGaugeUnmatched[] = $stationName;
+        }
+
         $lat = to_nullable_float($station['latitude'] ?? null);
         $lon = to_nullable_float($station['longitude'] ?? null);
 
@@ -104,11 +94,14 @@ function run_baseline_computation(): int
 
         $sampleCount = count($dischargeSeries);
         $mean = array_sum($dischargeSeries) / max(1, $sampleCount);
-        $alert = $mean * 2.0;
-        $minor = $mean * 5.0;
-        $major = $mean * 10.0;
+        $alert = $mean * THRESHOLD_ALERT_MULTIPLIER;
+        $minor = $mean * THRESHOLD_MINOR_MULTIPLIER;
+        $major = $mean * THRESHOLD_MAJOR_MULTIPLIER;
 
-        $stationKey = unique_station_key($stationName, $usedKeys);
+        $stationKey = (string) ($station['station_key'] ?? '');
+        if ($stationKey === '') {
+            $stationKey = unique_station_key($stationName, $usedKeys);
+        }
 
         $rows[] = [
             'station_key' => $stationKey,
@@ -116,6 +109,7 @@ function run_baseline_computation(): int
             'basin' => (string) ($station['basin'] ?? ''),
             'latitude' => (float) $lat,
             'longitude' => (float) $lon,
+            'active_gauge_match' => $gaugeActive,
             'sample_count' => $sampleCount,
             'mean' => round($mean, 6),
             'alert' => round($alert, 6),
@@ -141,6 +135,7 @@ function run_baseline_computation(): int
         'generated_at_utc' => $generatedAt,
         'source' => [
             'hydrostations' => ARC_HYDROSTATIONS_ENDPOINT,
+            'station_catalog' => 'tools/discharge_baselines/compute.php::monitored_station_catalog',
             'active_gauges' => ARC_GAUGES_VIEW_ENDPOINT,
             'flood_api' => OPEN_METEO_FLOOD_ENDPOINT,
         ],
@@ -148,9 +143,18 @@ function run_baseline_computation(): int
             'start' => HIST_START_DATE,
             'end' => HIST_END_DATE,
         ],
+        'target_station_count' => TARGET_STATION_COUNT,
         'active_station_count' => count($stations),
+        'active_gauge_count' => count($activeLookup),
+        'active_gauge_unmatched_count' => count($activeGaugeUnmatched),
+        'active_gauge_unmatched' => $activeGaugeUnmatched,
         'computed_count' => count($rows),
         'skipped_count' => count($skipped),
+        'threshold_policy' => [
+            'alert_multiplier' => THRESHOLD_ALERT_MULTIPLIER,
+            'minor_multiplier' => THRESHOLD_MINOR_MULTIPLIER,
+            'major_multiplier' => THRESHOLD_MAJOR_MULTIPLIER,
+        ],
         'stations' => $rows,
         'skipped' => $skipped,
     ];
@@ -171,37 +175,6 @@ function run_baseline_computation(): int
     fwrite(STDOUT, '- ' . relative_path(OUTPUT_PHP_PATH) . "\n");
 
     return 0;
-}
-
-function fetch_hydrostations(): array
-{
-    $query = http_build_query([
-        'where' => '1=1',
-        'outFields' => 'station,latitude,longitude,basin',
-        'orderByFields' => 'station ASC',
-        'resultRecordCount' => 1000,
-        'f' => 'json',
-    ], '', '&', PHP_QUERY_RFC3986);
-
-    $url = ARC_HYDROSTATIONS_ENDPOINT . '?' . $query;
-    $payload = http_get_json($url);
-    if (!is_array($payload)) {
-        return [];
-    }
-
-    $features = (array) ($payload['features'] ?? []);
-    $stations = [];
-    foreach ($features as $feature) {
-        $attributes = (array) ($feature['attributes'] ?? []);
-        $stations[] = [
-            'station' => (string) ($attributes['station'] ?? ''),
-            'latitude' => $attributes['latitude'] ?? null,
-            'longitude' => $attributes['longitude'] ?? null,
-            'basin' => (string) ($attributes['basin'] ?? ''),
-        ];
-    }
-
-    return $stations;
 }
 
 function fetch_active_gauges(): array
@@ -285,9 +258,9 @@ function render_thresholds_php(array $rows, string $generatedAt): string
     $lines[] = '<?php';
     $lines[] = '';
     $lines[] = '/**';
-    $lines[] = ' * River discharge flood thresholds per station.';
+    $lines[] = ' * River discharge flood thresholds for monitored basin locations.';
     $lines[] = ' * Derived from 5-year historical mean (2020-2024) via Open-Meteo GloFAS.';
-    $lines[] = ' * Thresholds: alert = 2x mean, minor = 5x mean, major = 10x mean.';
+    $lines[] = ' * Thresholds: alert = 2x mean, minor = 3x mean, major = 5x mean.';
     $lines[] = ' *';
     $lines[] = ' * Generated by: php tools/discharge_baselines/compute.php';
     $lines[] = ' * Generated at (UTC): ' . $generatedAt;
@@ -309,10 +282,10 @@ function render_thresholds_php(array $rows, string $generatedAt): string
 
         $lines[] = "        '" . addslashes($key) . "' => [";
         $lines[] = "            // " . addslashes($stationName);
-        $lines[] = '            \'' . 'mean' . '\'' . ' => ' . float_literal($mean) . ',';
-        $lines[] = '            \'' . 'alert' . '\'' . ' => ' . float_literal($alert) . ',';
-        $lines[] = '            \'' . 'minor' . '\'' . ' => ' . float_literal($minor) . ',';
-        $lines[] = '            \'' . 'major' . '\'' . ' => ' . float_literal($major) . ',';
+        $lines[] = '            \'mean\' => ' . float_literal($mean) . ',';
+        $lines[] = '            \'alert\' => ' . float_literal($alert) . ',';
+        $lines[] = '            \'minor\' => ' . float_literal($minor) . ',';
+        $lines[] = '            \'major\' => ' . float_literal($major) . ',';
         $lines[] = '        ],';
     }
 
@@ -358,6 +331,142 @@ function normalize_name(string $name): string
     $name = strtolower(trim($name));
     $name = preg_replace('/[^a-z0-9]+/', ' ', $name) ?? '';
     return trim(preg_replace('/\s+/', ' ', $name) ?? '');
+}
+
+function monitored_station_catalog(): array
+{
+    return [
+        [
+            'station_key' => 'manampitiya',
+            'station_name' => 'Manampitiya',
+            'basin' => 'Mahaweli Ganga',
+            'latitude' => 7.912987,
+            'longitude' => 81.090594,
+        ],
+        [
+            'station_key' => 'nawalapitiya',
+            'station_name' => 'Nawalapitiya',
+            'basin' => 'Mahaweli Ganga',
+            'latitude' => 7.04894547,
+            'longitude' => 80.53616209,
+        ],
+        [
+            'station_key' => 'peradeniya',
+            'station_name' => 'Peradeniya',
+            'basin' => 'Mahaweli Ganga',
+            'latitude' => 7.269059,
+            'longitude' => 80.593005,
+        ],
+        [
+            'station_key' => 'thaldena',
+            'station_name' => 'Thaldena',
+            'basin' => 'Mahaweli Ganga',
+            'latitude' => 7.090653,
+            'longitude' => 81.048886,
+        ],
+        [
+            'station_key' => 'weraganthota',
+            'station_name' => 'Weraganthota',
+            'basin' => 'Mahaweli Ganga',
+            'latitude' => 7.31647,
+            'longitude' => 80.98911,
+        ],
+        [
+            'station_key' => 'ellagawa',
+            'station_name' => 'Ellagawa',
+            'basin' => 'Kalu Ganga',
+            'latitude' => 6.731554,
+            'longitude' => 80.218254,
+        ],
+        [
+            'station_key' => 'kalawellawa',
+            'station_name' => 'Kalawellawa',
+            'station_aliases' => ['Kalawellawa (Millakanda)'],
+            'basin' => 'Kalu Ganga',
+            'latitude' => 6.631166,
+            'longitude' => 80.16069,
+        ],
+        [
+            'station_key' => 'magura',
+            'station_name' => 'Magura',
+            'basin' => 'Kalu Ganga',
+            'latitude' => 6.513727,
+            'longitude' => 80.243935,
+        ],
+        [
+            'station_key' => 'putupaula',
+            'station_name' => 'Putupaula',
+            'basin' => 'Kalu Ganga',
+            'latitude' => 6.614324,
+            'longitude' => 80.061511,
+        ],
+        [
+            'station_key' => 'rathnapura',
+            'station_name' => 'Rathnapura',
+            'basin' => 'Kalu Ganga',
+            'latitude' => 6.679067,
+            'longitude' => 80.397235,
+        ],
+        [
+            'station_key' => 'deraniyagala',
+            'station_name' => 'Deraniyagala',
+            'basin' => 'Kelani Ganga',
+            'latitude' => 6.925934,
+            'longitude' => 80.339212,
+        ],
+        [
+            'station_key' => 'glencourse',
+            'station_name' => 'Glencourse',
+            'basin' => 'Kelani Ganga',
+            'latitude' => 6.976981,
+            'longitude' => 80.194247,
+        ],
+        [
+            'station_key' => 'hanwella',
+            'station_name' => 'Hanwella',
+            'basin' => 'Kelani Ganga',
+            'latitude' => 6.9097,
+            'longitude' => 80.083126,
+        ],
+        [
+            'station_key' => 'holombuwa',
+            'station_name' => 'Holombuwa',
+            'basin' => 'Kelani Ganga',
+            'latitude' => 7.188201,
+            'longitude' => 80.266331,
+        ],
+        [
+            'station_key' => 'kithulgala',
+            'station_name' => 'Kithulgala',
+            'basin' => 'Kelani Ganga',
+            'latitude' => 6.991259,
+            'longitude' => 80.419213,
+        ],
+        [
+            'station_key' => 'nagalagam_street',
+            'station_name' => 'Nagalagam Street',
+            'basin' => 'Kelani Ganga',
+            'latitude' => 6.958265,
+            'longitude' => 79.878642,
+        ],
+    ];
+}
+
+function station_has_active_gauge(string $stationName, array $activeLookup, array $aliases = []): bool
+{
+    if (empty($activeLookup)) {
+        return false;
+    }
+
+    $candidates = array_merge([$stationName], $aliases);
+    foreach ($candidates as $candidate) {
+        $key = normalize_name((string) $candidate);
+        if ($key !== '' && isset($activeLookup[$key])) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 function to_nullable_float(mixed $value): ?float

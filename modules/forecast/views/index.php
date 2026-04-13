@@ -511,6 +511,34 @@ $defaultJson = is_string($defaultJson) ? $defaultJson : '{}';
         return Array.isArray(station && station.daily_discharge) ? station.daily_discharge : [];
     }
 
+    function latestObservedDischarge(rows) {
+        if (!Array.isArray(rows) || rows.length === 0) {
+            return null;
+        }
+
+        for (let i = rows.length - 1; i >= 0; i -= 1) {
+            const row = rows[i];
+            if (!row || row.is_forecast_day === true) {
+                continue;
+            }
+
+            const discharge = toNum(row.river_discharge);
+            if (discharge !== null) {
+                return discharge;
+            }
+        }
+
+        // Fallback to the most recent value if observed rows are unavailable.
+        for (let i = rows.length - 1; i >= 0; i -= 1) {
+            const discharge = toNum(rows[i] && rows[i].river_discharge);
+            if (discharge !== null) {
+                return discharge;
+            }
+        }
+
+        return null;
+    }
+
     function renderEmpty(element, text) {
         element.innerHTML = '<div class="wx-empty">' + esc(text) + '</div>';
     }
@@ -528,7 +556,7 @@ $defaultJson = is_string($defaultJson) ? $defaultJson : '{}';
         const latestStatus = latestWater ? statusLabel(latestWater.status || 'safe') : 'No data';
         const latestValue = latestWater ? (fmt(latestWater.water_level, 2) + ' ' + String(latestWater.unit || 'm')) : '-';
         const dischargeRows = rowsForDischarge(station);
-        const latestDischarge = dischargeRows.length ? toNum(dischargeRows[dischargeRows.length - 1].river_discharge) : null;
+        const latestDischarge = latestObservedDischarge(dischargeRows);
         const alertThreshold = toNum(station && station.discharge_thresholds && station.discharge_thresholds.alert);
 
         metaBox.innerHTML = ''
@@ -537,7 +565,7 @@ $defaultJson = is_string($defaultJson) ? $defaultJson : '{}';
             + '<div class="wx-meta-item"><strong>GN / Local Area:</strong> ' + esc(station.local_area || '-') + '</div>'
             + '<div class="wx-meta-item"><strong>Coordinates:</strong> ' + esc(fmt(station.latitude, 4)) + ', ' + esc(fmt(station.longitude, 4)) + '</div>'
             + '<div class="wx-meta-item"><strong>Date Window:</strong> ' + esc(fromDate) + ' to ' + esc(toDate) + '</div>'
-            + '<div class="wx-meta-item"><strong>Latest Discharge:</strong> ' + esc(latestDischarge === null ? '-' : fmt(latestDischarge, 2) + ' m3/s') + '</div>'
+            + '<div class="wx-meta-item"><strong>Latest Observed Discharge:</strong> ' + esc(latestDischarge === null ? '-' : fmt(latestDischarge, 2) + ' m3/s') + '</div>'
             + '<div class="wx-meta-item"><strong>Alert Baseline:</strong> ' + esc(alertThreshold === null ? '-' : fmt(alertThreshold, 2) + ' m3/s') + '</div>'
             + '<div class="wx-meta-item"><strong>Latest Water Level:</strong> ' + esc(latestValue) + '</div>'
             + '<div class="wx-meta-item"><strong>Latest Status:</strong> ' + esc(latestStatus) + '</div>'
