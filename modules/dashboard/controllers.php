@@ -45,6 +45,7 @@ function dashboard_index(): void
             $data['pending_users'] = $pendingUsers;
             $data['pending_count'] = count($pendingUsers);
             $data['gn_users'] = auth_list_grama_niladhari_users();
+            $data['analytics'] = dashboard_dmc_analytics($data['pending_count']);
             $viewName = 'dmc';
             break;
 
