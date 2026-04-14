@@ -1,12 +1,18 @@
 <?php
 $snapshot = is_array($rainfall_snapshot ?? null) ? $rainfall_snapshot : [];
 $defaultSelection = is_array($default_selection ?? null) ? $default_selection : [];
+$smsAlertPreference = is_array($sms_alert_preference ?? null) ? $sms_alert_preference : [];
+$userRole = (string) ($role ?? '');
+$canManageSms = in_array($userRole, ['general', 'volunteer'], true);
 
 $snapshotJson = json_encode($snapshot, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 $snapshotJson = is_string($snapshotJson) ? $snapshotJson : '{}';
 
 $defaultJson = json_encode($defaultSelection, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 $defaultJson = is_string($defaultJson) ? $defaultJson : '{}';
+
+$smsAlertJson = json_encode($smsAlertPreference, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+$smsAlertJson = is_string($smsAlertJson) ? $smsAlertJson : '{}';
 ?>
 
 <style>
@@ -46,6 +52,57 @@ $defaultJson = is_string($defaultJson) ? $defaultJson : '{}';
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
         gap: 0.8rem;
+    }
+
+    .wx-sms-box {
+        border: 1px solid #c8d9ea;
+        border-radius: 12px;
+        background: #f7fbff;
+        padding: 0.85rem;
+    }
+
+    .wx-sms-title {
+        margin: 0 0 0.55rem;
+        color: #0f172a;
+        font-size: 0.98rem;
+    }
+
+    .wx-sms-help {
+        margin: 0 0 0.75rem;
+        color: #334155;
+        font-size: 0.86rem;
+    }
+
+    .wx-sms-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 0.8rem;
+        align-items: end;
+    }
+
+    .wx-sms-toggle {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        color: #0f172a;
+    }
+
+    .wx-sms-toggle input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+    }
+
+    .wx-sms-actions {
+        margin-top: 0.75rem;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .wx-sms-note {
+        margin-top: 0.45rem;
+        font-size: 0.82rem;
+        color: #475569;
     }
 
     .wx-field {
@@ -401,6 +458,36 @@ $defaultJson = is_string($defaultJson) ? $defaultJson : '{}';
             </div>
         </div>
 
+        <?php if ($canManageSms): ?>
+            <div class="wx-sms-box" aria-label="Forecast SMS alerts">
+                <h3 class="wx-sms-title">SMS Alerts</h3>
+                <p class="wx-sms-help">Enable alerts and optionally pick a river and gauge station. If station is not selected, your closest GN-mapped station will be used.</p>
+                <form method="POST" action="/dashboard/forecast/sms-alert" id="forecastSmsForm">
+                    <?= csrf_field() ?>
+                    <div class="wx-sms-row">
+                        <div class="wx-field">
+                            <label class="wx-sms-toggle" for="smsAlertCheckbox">
+                                <input type="checkbox" id="smsAlertCheckbox" name="sms_alert" value="1">
+                                Receive forecast SMS alerts
+                            </label>
+                            <div class="wx-sms-note">Available for general users and volunteers.</div>
+                        </div>
+                        <div class="wx-field">
+                            <label for="smsRiverSelect">Alert River (optional)</label>
+                            <select id="smsRiverSelect" name="sms_river_key"></select>
+                        </div>
+                        <div class="wx-field">
+                            <label for="smsStationSelect">Alert Gauge Station (optional)</label>
+                            <select id="smsStationSelect" name="sms_station_key"></select>
+                        </div>
+                    </div>
+                    <div class="wx-sms-actions">
+                        <button type="submit" class="btn btn-primary">Save SMS Alert Preference</button>
+                    </div>
+                </form>
+            </div>
+        <?php endif; ?>
+
         <div id="metaBox" class="wx-meta">Select a river basin location to view details.</div>
 
         <div class="wx-grid">
@@ -449,6 +536,8 @@ $defaultJson = is_string($defaultJson) ? $defaultJson : '{}';
 (() => {
     const snapshot = <?= $snapshotJson ?>;
     const defaults = <?= $defaultJson ?>;
+    const smsPref = <?= $smsAlertJson ?>;
+    const canManageSms = <?= $canManageSms ? 'true' : 'false' ?>;
 
     const rivers = Array.isArray(snapshot.rivers) ? snapshot.rivers : [];
     const windowInfo = snapshot.window || {};
@@ -459,6 +548,9 @@ $defaultJson = is_string($defaultJson) ? $defaultJson : '{}';
     const dischargeChart = document.getElementById('dischargeChart');
     const temperatureChart = document.getElementById('temperatureChart');
     const waterLevelChart = document.getElementById('waterLevelChart');
+    const smsAlertCheckbox = document.getElementById('smsAlertCheckbox');
+    const smsRiverSelect = document.getElementById('smsRiverSelect');
+    const smsStationSelect = document.getElementById('smsStationSelect');
 
     if (!riverSelect || !basinSelect || !metaBox || !rainfallChart || !dischargeChart || !temperatureChart || !waterLevelChart) {
         return;
@@ -832,12 +924,76 @@ $defaultJson = is_string($defaultJson) ? $defaultJson : '{}';
         renderWaterLevels(selection.station);
     }
 
+    function populateSmsRiverOptions() {
+        if (!canManageSms || !smsRiverSelect) {
+            return;
+        }
+
+        smsRiverSelect.innerHTML = '<option value="">Auto (use GN mapping)</option>';
+        rivers.forEach((river) => {
+            const option = document.createElement('option');
+            option.value = river.river_key || '';
+            option.textContent = river.river_name || river.river_key || 'Unnamed river';
+            smsRiverSelect.appendChild(option);
+        });
+
+        const selectedRiver = String(smsPref.river_key || '');
+        if (selectedRiver && rivers.some((river) => String(river.river_key || '') === selectedRiver)) {
+            smsRiverSelect.value = selectedRiver;
+        }
+    }
+
+    function populateSmsStationOptions() {
+        if (!canManageSms || !smsStationSelect || !smsRiverSelect) {
+            return;
+        }
+
+        const river = riverByKey(smsRiverSelect.value);
+        const stations = river && Array.isArray(river.stations) ? river.stations : [];
+
+        smsStationSelect.innerHTML = '<option value="">Auto (closest GN-mapped station)</option>';
+        stations.forEach((station) => {
+            const option = document.createElement('option');
+            option.value = station.station_key || '';
+            option.textContent = station.station_name || station.station_key || 'Unnamed location';
+            smsStationSelect.appendChild(option);
+        });
+
+        const selectedStation = String(smsPref.station_key || '');
+        if (selectedStation && stations.some((station) => String(station.station_key || '') === selectedStation)) {
+            smsStationSelect.value = selectedStation;
+        }
+    }
+
+    function syncSmsControlState() {
+        if (!canManageSms || !smsAlertCheckbox || !smsRiverSelect || !smsStationSelect) {
+            return;
+        }
+
+        const enabled = smsAlertCheckbox.checked;
+        smsRiverSelect.disabled = !enabled;
+        smsStationSelect.disabled = !enabled;
+    }
+
     riverSelect.addEventListener('change', () => {
         populateBasins();
         renderSelected();
     });
 
     basinSelect.addEventListener('change', renderSelected);
+
+    if (canManageSms && smsAlertCheckbox && smsRiverSelect && smsStationSelect) {
+        smsAlertCheckbox.checked = Boolean(smsPref.enabled);
+        populateSmsRiverOptions();
+        populateSmsStationOptions();
+        syncSmsControlState();
+
+        smsAlertCheckbox.addEventListener('change', syncSmsControlState);
+        smsRiverSelect.addEventListener('change', () => {
+            smsPref.station_key = '';
+            populateSmsStationOptions();
+        });
+    }
 
     populateRivers();
 })();

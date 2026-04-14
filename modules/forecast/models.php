@@ -335,6 +335,160 @@ function forecast_default_selection(array $snapshot, string $requestedRiverKey =
     return forecast_fallback_selection($snapshot);
 }
 
+function forecast_sms_alert_supported_role(string $role): bool
+{
+    return in_array($role, ['general', 'volunteer'], true);
+}
+
+function forecast_sms_alert_preference(int $userId, string $role, array $snapshot, ?array $profile = null): array
+{
+    $fallback = forecast_default_selection($snapshot, '', '', $profile);
+    $preference = [
+        'enabled' => false,
+        'river_key' => (string) ($fallback['river_key'] ?? ''),
+        'station_key' => '',
+        'fallback_river_key' => (string) ($fallback['river_key'] ?? ''),
+        'fallback_station_key' => (string) ($fallback['station_key'] ?? ''),
+    ];
+
+    if (!forecast_sms_alert_supported_role($role) || $userId <= 0) {
+        return $preference;
+    }
+
+    forecast_sms_alert_ensure_table();
+
+    $row = db_fetch(
+        'SELECT sms_alert, river_key, station_key FROM forecast_sms_alert_subscription WHERE user_id = ? LIMIT 1',
+        [$userId]
+    );
+
+    if (!is_array($row)) {
+        if ($role === 'general' && !empty($profile['sms_alert'])) {
+            $preference['enabled'] = true;
+            $preference['station_key'] = (string) ($fallback['station_key'] ?? '');
+        }
+        return $preference;
+    }
+
+    $enabled = (int) ($row['sms_alert'] ?? 0) === 1;
+    $savedStation = trim((string) ($row['station_key'] ?? ''));
+    $savedRiver = trim((string) ($row['river_key'] ?? ''));
+    $resolved = [
+        'river_key' => '',
+        'station_key' => '',
+    ];
+
+    if ($savedStation !== '') {
+        $resolved = forecast_selection_from_station_key($snapshot, $savedStation);
+    } elseif ($savedRiver !== '') {
+        $resolved = forecast_selection_from_request($snapshot, $savedRiver, '');
+    }
+
+    if ((string) ($resolved['station_key'] ?? '') === '') {
+        $resolved = $fallback;
+    }
+
+    $preference['enabled'] = $enabled;
+    $preference['river_key'] = (string) ($resolved['river_key'] ?? (string) ($fallback['river_key'] ?? ''));
+    $preference['station_key'] = $enabled ? (string) ($resolved['station_key'] ?? '') : '';
+
+    return $preference;
+}
+
+function forecast_sms_alert_save_preference(
+    int $userId,
+    string $role,
+    bool $enabled,
+    string $requestedRiverKey,
+    string $requestedStationKey,
+    array $snapshot,
+    ?array $profile = null
+): array {
+    if (!forecast_sms_alert_supported_role($role) || $userId <= 0) {
+        return [
+            'enabled' => false,
+            'river_key' => '',
+            'station_key' => '',
+            'used_fallback' => false,
+        ];
+    }
+
+    forecast_sms_alert_ensure_table();
+
+    $finalEnabled = $enabled;
+    $usedFallback = false;
+    $selection = [
+        'river_key' => '',
+        'station_key' => '',
+    ];
+
+    if ($finalEnabled) {
+        $requestedStationKey = trim($requestedStationKey);
+        $requestedRiverKey = trim($requestedRiverKey);
+
+        if ($requestedStationKey !== '') {
+            $selection = forecast_selection_from_station_key($snapshot, $requestedStationKey);
+        }
+
+        if ((string) ($selection['station_key'] ?? '') === '') {
+            $selection = forecast_default_selection($snapshot, '', '', $profile);
+            $usedFallback = true;
+        }
+
+        if ((string) ($selection['station_key'] ?? '') === '') {
+            $finalEnabled = false;
+        }
+    }
+
+    $riverKey = $finalEnabled ? (string) ($selection['river_key'] ?? '') : null;
+    $stationKey = $finalEnabled ? (string) ($selection['station_key'] ?? '') : null;
+    $smsValue = $finalEnabled ? 1 : 0;
+
+    db_query(
+        'INSERT INTO forecast_sms_alert_subscription (user_id, role, sms_alert, river_key, station_key)
+         VALUES (?, ?, ?, ?, ?)
+         ON DUPLICATE KEY UPDATE role = VALUES(role), sms_alert = VALUES(sms_alert), river_key = VALUES(river_key), station_key = VALUES(station_key)',
+        [$userId, $role, $smsValue, $riverKey, $stationKey]
+    );
+
+    if ($role === 'general') {
+        auth_set_general_sms_alert($userId, $finalEnabled);
+    }
+
+    return [
+        'enabled' => $finalEnabled,
+        'river_key' => (string) ($riverKey ?? ''),
+        'station_key' => (string) ($stationKey ?? ''),
+        'used_fallback' => $usedFallback,
+    ];
+}
+
+function forecast_sms_alert_ensure_table(): void
+{
+    static $ready = false;
+    if ($ready) {
+        return;
+    }
+
+    db_query(
+        'CREATE TABLE IF NOT EXISTS forecast_sms_alert_subscription (
+            user_id INT NOT NULL,
+            role ENUM(\'general\', \'volunteer\') NOT NULL,
+            sms_alert TINYINT(1) NOT NULL DEFAULT 0,
+            river_key VARCHAR(64) DEFAULT NULL,
+            station_key VARCHAR(128) DEFAULT NULL,
+            created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (user_id),
+            KEY idx_forecast_sms_alert_status (sms_alert),
+            KEY idx_forecast_sms_alert_station (station_key),
+            CONSTRAINT fk_forecast_sms_alert_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+        ) ENGINE=InnoDB'
+    );
+
+    $ready = true;
+}
+
 function forecast_selection_from_request(array $snapshot, string $requestedRiverKey, string $requestedStationKey): array
 {
     $rivers = (array) ($snapshot['rivers'] ?? []);

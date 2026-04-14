@@ -44,8 +44,8 @@
     </article>
     <article class="action-card">
         <h3>SMS Alerts</h3>
-        <p>Enable or disable SMS alerts for early warnings.</p>
-        <a href="/profile" class="btn">Manage SMS</a>
+        <p>Enable alerts and choose river/gauge targets from Forecast Dashboard.</p>
+        <a href="/dashboard/forecast" class="btn">Manage SMS</a>
     </article>
 </section>
 

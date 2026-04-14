@@ -119,6 +119,20 @@ CREATE TABLE IF NOT EXISTS `volunteers` (
   CONSTRAINT `fk_volunteers_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS `forecast_sms_alert_subscription` (
+  `user_id` int NOT NULL,
+  `role` enum('general','volunteer') NOT NULL,
+  `sms_alert` tinyint(1) NOT NULL DEFAULT '0',
+  `river_key` varchar(64) DEFAULT NULL,
+  `station_key` varchar(128) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`user_id`),
+  KEY `idx_forecast_sms_alert_status` (`sms_alert`),
+  KEY `idx_forecast_sms_alert_station` (`station_key`),
+  CONSTRAINT `fk_forecast_sms_alert_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
 CREATE TABLE IF NOT EXISTS `grama_niladhari` (
   `user_id` int NOT NULL,
   `name` varchar(150) NOT NULL,
