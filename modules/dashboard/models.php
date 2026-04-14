@@ -519,3 +519,234 @@ function dashboard_dmc_analytics(int $pendingCount = 0): array
 
     return $analytics;
 }
+
+function dashboard_general_snapshot(int $userId, array $profile = []): array
+{
+    $snapshot = [
+        'my_reports' => 0,
+        'my_donations_total' => 0,
+        'my_donations_pending' => 0,
+        'my_donations_received' => 0,
+        'nearest_shelter_name' => '-',
+        'nearest_shelter_available' => 0,
+    ];
+
+    if ($userId <= 0) {
+        return $snapshot;
+    }
+
+    if (dashboard_table_exists('disaster_reports')) {
+        $row = db_fetch('SELECT COUNT(*) AS value FROM disaster_reports WHERE user_id = ?', [$userId]);
+        $snapshot['my_reports'] = (int) ($row['value'] ?? 0);
+    }
+
+    if (dashboard_table_exists('donations')) {
+        $row = db_fetch(
+            "SELECT COUNT(*) AS total,
+                    SUM(CASE WHEN status = 'Pending' THEN 1 ELSE 0 END) AS pending,
+                    SUM(CASE WHEN status = 'Received' THEN 1 ELSE 0 END) AS received
+             FROM donations
+             WHERE (submitted_by_user_id = ? AND submitted_by_role = 'general')
+                OR user_id = ?",
+            [$userId, $userId]
+        ) ?? [];
+
+        $snapshot['my_donations_total'] = (int) ($row['total'] ?? 0);
+        $snapshot['my_donations_pending'] = (int) ($row['pending'] ?? 0);
+        $snapshot['my_donations_received'] = (int) ($row['received'] ?? 0);
+    }
+
+    if (dashboard_table_exists('safe_locations')) {
+        $district = trim((string) ($profile['district'] ?? ''));
+        $gnDivision = trim((string) ($profile['gn_division'] ?? ''));
+
+        $queries = [];
+        if ($district !== '' && $gnDivision !== '') {
+            $queries[] = ['sql' => 'sl.district = ? AND sl.gn_division = ?', 'params' => [$district, $gnDivision]];
+        }
+        if ($gnDivision !== '') {
+            $queries[] = ['sql' => 'sl.gn_division = ?', 'params' => [$gnDivision]];
+        }
+        if ($district !== '') {
+            $queries[] = ['sql' => 'sl.district = ?', 'params' => [$district]];
+        }
+        $queries[] = ['sql' => '1 = 1', 'params' => []];
+
+        foreach ($queries as $query) {
+            $row = db_fetch(
+                'SELECT sl.location_name,
+                        GREATEST(sl.max_capacity - COALESCE(o.toddlers + o.children + o.adults + o.elderly + o.pregnant_women, 0), 0) AS available_capacity
+                 FROM safe_locations sl
+                 LEFT JOIN safe_location_occupancy o ON o.location_id = sl.location_id
+                 WHERE ' . $query['sql'] . '
+                 ORDER BY available_capacity DESC, sl.max_capacity DESC, sl.location_name ASC
+                 LIMIT 1',
+                (array) ($query['params'] ?? [])
+            );
+
+            if ($row) {
+                $snapshot['nearest_shelter_name'] = (string) ($row['location_name'] ?? '-');
+                $snapshot['nearest_shelter_available'] = max(0, (int) ($row['available_capacity'] ?? 0));
+                break;
+            }
+        }
+    }
+
+    return $snapshot;
+}
+
+function dashboard_volunteer_snapshot(int $userId): array
+{
+    $snapshot = [
+        'active_tasks' => 0,
+        'completed_tasks' => 0,
+        'latest_task' => null,
+    ];
+
+    if ($userId <= 0 || !dashboard_table_exists('volunteer_task')) {
+        return $snapshot;
+    }
+
+    $counts = db_fetch(
+        "SELECT
+            SUM(CASE WHEN status IN ('Assigned', 'Accepted', 'In Progress') THEN 1 ELSE 0 END) AS active_tasks,
+            SUM(CASE WHEN status IN ('Completed', 'Verified') THEN 1 ELSE 0 END) AS completed_tasks
+         FROM volunteer_task
+         WHERE volunteer_id = ?",
+        [$userId]
+    ) ?? [];
+
+    $snapshot['active_tasks'] = (int) ($counts['active_tasks'] ?? 0);
+    $snapshot['completed_tasks'] = (int) ($counts['completed_tasks'] ?? 0);
+
+    if (dashboard_table_exists('disaster_reports')) {
+        $snapshot['latest_task'] = db_fetch(
+            'SELECT vt.status,
+                    vt.date_assigned,
+                    dr.report_id,
+                    dr.disaster_type,
+                    dr.other_disaster_type,
+                    dr.district,
+                    dr.gn_division
+             FROM volunteer_task vt
+             LEFT JOIN disaster_reports dr ON dr.report_id = vt.disaster_id
+             WHERE vt.volunteer_id = ?
+             ORDER BY vt.date_assigned DESC, vt.id DESC
+             LIMIT 1',
+            [$userId]
+        );
+    } else {
+        $snapshot['latest_task'] = db_fetch(
+            'SELECT status, date_assigned
+             FROM volunteer_task
+             WHERE volunteer_id = ?
+             ORDER BY date_assigned DESC, id DESC
+             LIMIT 1',
+            [$userId]
+        );
+    }
+
+    return $snapshot;
+}
+
+function dashboard_ngo_snapshot(int $userId): array
+{
+    $snapshot = [
+        'collection_points' => 0,
+        'low_stock_items' => 0,
+        'pending_donations' => 0,
+        'open_requirements' => 0,
+    ];
+
+    if ($userId <= 0) {
+        return $snapshot;
+    }
+
+    if (dashboard_table_exists('collection_points')) {
+        $row = db_fetch('SELECT COUNT(*) AS value FROM collection_points WHERE ngo_id = ?', [$userId]);
+        $snapshot['collection_points'] = (int) ($row['value'] ?? 0);
+    }
+
+    if (dashboard_table_exists('inventory')) {
+        $row = db_fetch('SELECT COUNT(*) AS value FROM inventory WHERE ngo_id = ? AND quantity < 20', [$userId]);
+        $snapshot['low_stock_items'] = (int) ($row['value'] ?? 0);
+    }
+
+    if (dashboard_table_exists('donations') && dashboard_table_exists('collection_points')) {
+        $row = db_fetch(
+            "SELECT COUNT(*) AS value
+             FROM donations d
+             INNER JOIN collection_points cp ON cp.collection_point_id = d.collection_point_id
+             WHERE cp.ngo_id = ?
+               AND d.status = 'Pending'",
+            [$userId]
+        );
+        $snapshot['pending_donations'] = (int) ($row['value'] ?? 0);
+    }
+
+    if (dashboard_table_exists('donation_request_requirements')) {
+        $row = db_fetch(
+            "SELECT COUNT(*) AS value
+             FROM donation_request_requirements
+             WHERE fulfillment_status = 'Open'"
+        );
+        $snapshot['open_requirements'] = (int) ($row['value'] ?? 0);
+    }
+
+    return $snapshot;
+}
+
+function dashboard_gn_snapshot(int $userId, array $profile = []): array
+{
+    $snapshot = [
+        'occupancy_total' => 0,
+        'capacity_total' => 0,
+        'open_requests' => 0,
+        'active_reports' => 0,
+    ];
+
+    if ($userId <= 0) {
+        return $snapshot;
+    }
+
+    if (dashboard_table_exists('safe_locations')) {
+        $row = db_fetch(
+            'SELECT COALESCE(SUM(sl.max_capacity), 0) AS capacity_total,
+                    COALESCE(SUM(o.toddlers + o.children + o.adults + o.elderly + o.pregnant_women), 0) AS occupancy_total
+             FROM safe_locations sl
+             LEFT JOIN safe_location_occupancy o ON o.location_id = sl.location_id
+             WHERE sl.assigned_gn_user_id = ?',
+            [$userId]
+        ) ?? [];
+
+        $snapshot['capacity_total'] = (int) ($row['capacity_total'] ?? 0);
+        $snapshot['occupancy_total'] = (int) ($row['occupancy_total'] ?? 0);
+    }
+
+    if (dashboard_table_exists('donation_request_requirements')) {
+        $row = db_fetch(
+            "SELECT COUNT(*) AS value
+             FROM donation_request_requirements
+             WHERE gn_user_id = ?
+               AND fulfillment_status IN ('Open', 'Reserved')",
+            [$userId]
+        );
+        $snapshot['open_requests'] = (int) ($row['value'] ?? 0);
+    }
+
+    if (dashboard_table_exists('disaster_reports')) {
+        $gnDivision = trim((string) ($profile['gn_division'] ?? ''));
+        if ($gnDivision !== '') {
+            $row = db_fetch(
+                "SELECT COUNT(*) AS value
+                 FROM disaster_reports
+                 WHERE status = 'Approved'
+                   AND gn_division = ?",
+                [$gnDivision]
+            );
+            $snapshot['active_reports'] = (int) ($row['value'] ?? 0);
+        }
+    }
+
+    return $snapshot;
+}

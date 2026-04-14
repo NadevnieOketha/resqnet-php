@@ -44,6 +44,29 @@
     </article>
 </section>
 
+<?php
+$volunteerSnapshot = (array) ($volunteer_snapshot ?? []);
+$latestTask = (array) ($volunteerSnapshot['latest_task'] ?? []);
+$latestTaskLabel = !empty($latestTask) ? disaster_reports_disaster_label($latestTask) : '-';
+$latestTaskDistrict = trim((string) ($latestTask['district'] ?? ''));
+$latestTaskStatus = trim((string) ($latestTask['status'] ?? ''));
+?>
+<section class="kpi-grid" aria-label="Volunteer assignments summary">
+    <article class="kpi-card">
+        <div class="label">Active Tasks</div>
+        <div class="value"><?= (int) ($volunteerSnapshot['active_tasks'] ?? 0) ?></div>
+    </article>
+    <article class="kpi-card">
+        <div class="label">Completed + Verified</div>
+        <div class="value"><?= (int) ($volunteerSnapshot['completed_tasks'] ?? 0) ?></div>
+    </article>
+    <article class="kpi-card">
+        <div class="label">Latest Task</div>
+        <div class="value" style="font-size:1.05rem;"><?= e($latestTaskStatus !== '' ? $latestTaskStatus : '-') ?></div>
+        <div class="muted" style="font-size:0.72rem;"><?= e($latestTaskLabel . ($latestTaskDistrict !== '' ? ' | ' . $latestTaskDistrict : '')) ?></div>
+    </article>
+</section>
+
 <section class="section-card" aria-label="Volunteer account">
     <h2>Volunteer Account</h2>
     <div class="form-grid-2">

@@ -44,6 +44,26 @@
     </article>
 </section>
 
+<?php $ngoSnapshot = (array) ($ngo_snapshot ?? []); ?>
+<section class="kpi-grid" aria-label="NGO operations snapshot">
+    <article class="kpi-card">
+        <div class="label">Collection Points</div>
+        <div class="value"><?= (int) ($ngoSnapshot['collection_points'] ?? 0) ?></div>
+    </article>
+    <article class="kpi-card">
+        <div class="label">Low Stock Items</div>
+        <div class="value"><?= (int) ($ngoSnapshot['low_stock_items'] ?? 0) ?></div>
+    </article>
+    <article class="kpi-card">
+        <div class="label">Pending Donations</div>
+        <div class="value"><?= (int) ($ngoSnapshot['pending_donations'] ?? 0) ?></div>
+    </article>
+    <article class="kpi-card">
+        <div class="label">Open Requirements</div>
+        <div class="value"><?= (int) ($ngoSnapshot['open_requirements'] ?? 0) ?></div>
+    </article>
+</section>
+
 <section class="section-card" aria-label="Organization account">
     <h2>Organization Account</h2>
     <div class="form-grid-2">

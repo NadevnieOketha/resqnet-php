@@ -22,19 +22,23 @@ function dashboard_index(): void
 
     switch ($role) {
         case 'general':
+            $data['general_snapshot'] = dashboard_general_snapshot((int) auth_id(), (array) $profile);
             $viewName = 'general';
             break;
 
         case 'volunteer':
+            $data['volunteer_snapshot'] = dashboard_volunteer_snapshot((int) auth_id());
             $viewName = 'volunteer';
             break;
 
         case 'ngo':
+            $data['ngo_snapshot'] = dashboard_ngo_snapshot((int) auth_id());
             $viewName = 'ngo';
             break;
 
         case 'grama_niladhari':
             $gnDivision = trim((string) ($profile['gn_division'] ?? ''));
+            $data['gn_snapshot'] = dashboard_gn_snapshot((int) auth_id(), (array) $profile);
             $data['gn_disaster_notifications'] = disaster_reports_list_gn_active_notifications($gnDivision);
             $data['gn_disaster_notification_count'] = count((array) ($data['gn_disaster_notifications'] ?? []));
             $viewName = 'grama_niladhari';

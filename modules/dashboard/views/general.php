@@ -49,6 +49,24 @@
     </article>
 </section>
 
+<?php $generalSnapshot = (array) ($general_snapshot ?? []); ?>
+<section class="kpi-grid" aria-label="General user summary">
+    <article class="kpi-card">
+        <div class="label">My Reports</div>
+        <div class="value"><?= (int) ($generalSnapshot['my_reports'] ?? 0) ?></div>
+    </article>
+    <article class="kpi-card">
+        <div class="label">My Donations</div>
+        <div class="value"><?= (int) ($generalSnapshot['my_donations_total'] ?? 0) ?></div>
+        <div class="muted" style="font-size:0.72rem;">Pending: <?= (int) ($generalSnapshot['my_donations_pending'] ?? 0) ?> | Received: <?= (int) ($generalSnapshot['my_donations_received'] ?? 0) ?></div>
+    </article>
+    <article class="kpi-card">
+        <div class="label">Nearest Shelter</div>
+        <div class="value" style="font-size:1.05rem;"><?= e((string) ($generalSnapshot['nearest_shelter_name'] ?? '-')) ?></div>
+        <div class="muted" style="font-size:0.72rem;">Available capacity: <?= (int) ($generalSnapshot['nearest_shelter_available'] ?? 0) ?></div>
+    </article>
+</section>
+
 <section class="section-card" aria-label="Account overview">
     <h2>Account Overview</h2>
     <div class="form-grid-2">
