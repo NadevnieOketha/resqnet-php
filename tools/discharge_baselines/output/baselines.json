@@ -1,0 +1,300 @@
+{
+    "generated_at_utc": "2026-04-13T10:49:43+00:00",
+    "source": {
+        "hydrostations": "https://services3.arcgis.com/J7ZFXmR8rSmQ3FGf/arcgis/rest/services/hydrostations/FeatureServer/0/query",
+        "station_catalog": "tools/discharge_baselines/compute.php::monitored_station_catalog",
+        "active_gauges": "https://services3.arcgis.com/J7ZFXmR8rSmQ3FGf/arcgis/rest/services/gauges_2_view/FeatureServer/0/query",
+        "flood_api": "https://flood-api.open-meteo.com/v1/flood"
+    },
+    "window": {
+        "start": "2020-01-01",
+        "end": "2024-12-31"
+    },
+    "target_station_count": 16,
+    "active_station_count": 16,
+    "active_gauge_count": 40,
+    "active_gauge_unmatched_count": 0,
+    "active_gauge_unmatched": [],
+    "computed_count": 16,
+    "skipped_count": 0,
+    "threshold_policy": {
+        "alert_multiplier": 2,
+        "minor_multiplier": 3,
+        "major_multiplier": 5
+    },
+    "stations": [
+        {
+            "station_key": "deraniyagala",
+            "station_name": "Deraniyagala",
+            "basin": "Kelani Ganga",
+            "latitude": 6.925934,
+            "longitude": 80.339212,
+            "active_gauge_match": true,
+            "sample_count": 1827,
+            "mean": 15.277712,
+            "alert": 30.555424,
+            "minor": 45.833136,
+            "major": 76.38856,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "ellagawa",
+            "station_name": "Ellagawa",
+            "basin": "Kalu Ganga",
+            "latitude": 6.731554,
+            "longitude": 80.218254,
+            "active_gauge_match": true,
+            "sample_count": 1827,
+            "mean": 106.344143,
+            "alert": 212.688287,
+            "minor": 319.03243,
+            "major": 531.720717,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "glencourse",
+            "station_name": "Glencourse",
+            "basin": "Kelani Ganga",
+            "latitude": 6.976981,
+            "longitude": 80.194247,
+            "active_gauge_match": true,
+            "sample_count": 1827,
+            "mean": 132.148161,
+            "alert": 264.296322,
+            "minor": 396.444483,
+            "major": 660.740805,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "hanwella",
+            "station_name": "Hanwella",
+            "basin": "Kelani Ganga",
+            "latitude": 6.9097,
+            "longitude": 80.083126,
+            "active_gauge_match": true,
+            "sample_count": 1827,
+            "mean": 7.758084,
+            "alert": 15.516169,
+            "minor": 23.274253,
+            "major": 38.790421,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "holombuwa",
+            "station_name": "Holombuwa",
+            "basin": "Kelani Ganga",
+            "latitude": 7.188201,
+            "longitude": 80.266331,
+            "active_gauge_match": true,
+            "sample_count": 1827,
+            "mean": 8.197115,
+            "alert": 16.394231,
+            "minor": 24.591346,
+            "major": 40.985577,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "kalawellawa",
+            "station_name": "Kalawellawa",
+            "basin": "Kalu Ganga",
+            "latitude": 6.631166,
+            "longitude": 80.16069,
+            "active_gauge_match": true,
+            "sample_count": 1827,
+            "mean": 56.09965,
+            "alert": 112.199299,
+            "minor": 168.298949,
+            "major": 280.498248,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "kithulgala",
+            "station_name": "Kithulgala",
+            "basin": "Kelani Ganga",
+            "latitude": 6.991259,
+            "longitude": 80.419213,
+            "active_gauge_match": true,
+            "sample_count": 1827,
+            "mean": 20.97491,
+            "alert": 41.949819,
+            "minor": 62.924729,
+            "major": 104.874548,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "magura",
+            "station_name": "Magura",
+            "basin": "Kalu Ganga",
+            "latitude": 6.513727,
+            "longitude": 80.243935,
+            "active_gauge_match": true,
+            "sample_count": 1827,
+            "mean": 4.033498,
+            "alert": 8.066995,
+            "minor": 12.100493,
+            "major": 20.167488,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "manampitiya",
+            "station_name": "Manampitiya",
+            "basin": "Mahaweli Ganga",
+            "latitude": 7.912987,
+            "longitude": 81.090594,
+            "active_gauge_match": true,
+            "sample_count": 1827,
+            "mean": 177.465441,
+            "alert": 354.930881,
+            "minor": 532.396322,
+            "major": 887.327203,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "nagalagam_street",
+            "station_name": "Nagalagam Street",
+            "basin": "Kelani Ganga",
+            "latitude": 6.958265,
+            "longitude": 79.878642,
+            "active_gauge_match": true,
+            "sample_count": 1827,
+            "mean": 2.230985,
+            "alert": 4.46197,
+            "minor": 6.692956,
+            "major": 11.154926,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "nawalapitiya",
+            "station_name": "Nawalapitiya",
+            "basin": "Mahaweli Ganga",
+            "latitude": 7.04894547,
+            "longitude": 80.53616209,
+            "active_gauge_match": true,
+            "sample_count": 1827,
+            "mean": 2.215561,
+            "alert": 4.431122,
+            "minor": 6.646683,
+            "major": 11.077805,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "peradeniya",
+            "station_name": "Peradeniya",
+            "basin": "Mahaweli Ganga",
+            "latitude": 7.269059,
+            "longitude": 80.593005,
+            "active_gauge_match": true,
+            "sample_count": 1827,
+            "mean": 67.822447,
+            "alert": 135.644893,
+            "minor": 203.46734,
+            "major": 339.112233,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "putupaula",
+            "station_name": "Putupaula",
+            "basin": "Kalu Ganga",
+            "latitude": 6.614324,
+            "longitude": 80.061511,
+            "active_gauge_match": true,
+            "sample_count": 1827,
+            "mean": 66.942573,
+            "alert": 133.885145,
+            "minor": 200.827718,
+            "major": 334.712863,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "rathnapura",
+            "station_name": "Rathnapura",
+            "basin": "Kalu Ganga",
+            "latitude": 6.679067,
+            "longitude": 80.397235,
+            "active_gauge_match": true,
+            "sample_count": 1827,
+            "mean": 45.003328,
+            "alert": 90.006656,
+            "minor": 135.009984,
+            "major": 225.016639,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "thaldena",
+            "station_name": "Thaldena",
+            "basin": "Mahaweli Ganga",
+            "latitude": 7.090653,
+            "longitude": 81.048886,
+            "active_gauge_match": true,
+            "sample_count": 1827,
+            "mean": 9.080662,
+            "alert": 18.161325,
+            "minor": 27.241987,
+            "major": 45.403311,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        },
+        {
+            "station_key": "weraganthota",
+            "station_name": "Weraganthota",
+            "basin": "Mahaweli Ganga",
+            "latitude": 7.31647,
+            "longitude": 80.98911,
+            "active_gauge_match": true,
+            "sample_count": 1827,
+            "mean": 0.530383,
+            "alert": 1.060766,
+            "minor": 1.591149,
+            "major": 2.651916,
+            "window": {
+                "start": "2020-01-01",
+                "end": "2024-12-31"
+            }
+        }
+    ],
+    "skipped": []
+}

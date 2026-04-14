@@ -292,7 +292,6 @@ function auth_profile_post(): void
 
     if ($role === 'general') {
         $payload = array_merge($payload, auth_collect_general_fields($errors));
-        $payload['sms_alert'] = (int) request_input('sms_alert', 0);
     }
 
     if ($role === 'volunteer') {
@@ -329,21 +328,6 @@ function auth_profile_post(): void
 
     clear_old_input();
     flash('success', 'Profile updated successfully.');
-    redirect('/profile');
-}
-
-function auth_profile_sms_toggle(): void
-{
-    csrf_check();
-
-    if (!is_role('general')) {
-        abort(403, 'Only general users can update SMS alerts.');
-    }
-
-    $enabled = (string) request_input('sms_alert', '0') === '1';
-    auth_set_general_sms_alert((int) auth_id(), $enabled);
-
-    flash('success', 'SMS alert preference updated.');
     redirect('/profile');
 }
 

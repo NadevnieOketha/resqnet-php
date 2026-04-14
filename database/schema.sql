@@ -119,6 +119,38 @@ CREATE TABLE IF NOT EXISTS `volunteers` (
   CONSTRAINT `fk_volunteers_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS `forecast_sms_alert_subscription` (
+  `user_id` int NOT NULL,
+  `role` enum('general','volunteer') NOT NULL,
+  `sms_alert` tinyint(1) NOT NULL DEFAULT '0',
+  `river_key` varchar(64) DEFAULT NULL,
+  `station_key` varchar(128) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`user_id`),
+  KEY `idx_forecast_sms_alert_status` (`sms_alert`),
+  KEY `idx_forecast_sms_alert_station` (`station_key`),
+  CONSTRAINT `fk_forecast_sms_alert_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `forecast_sms_alert_delivery_log` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `station_key` varchar(128) NOT NULL,
+  `river_key` varchar(64) DEFAULT NULL,
+  `forecast_date` date NOT NULL,
+  `forecast_level` enum('alert','minor','major') NOT NULL,
+  `forecast_discharge` decimal(12,3) DEFAULT NULL,
+  `message_text` text NOT NULL,
+  `delivery_status` enum('sent','failed') NOT NULL DEFAULT 'failed',
+  `provider_response` text,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_forecast_sms_delivery_user` (`user_id`),
+  KEY `idx_forecast_sms_delivery_target` (`station_key`,`forecast_date`,`forecast_level`),
+  CONSTRAINT `fk_forecast_sms_delivery_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
 CREATE TABLE IF NOT EXISTS `grama_niladhari` (
   `user_id` int NOT NULL,
   `name` varchar(150) NOT NULL,

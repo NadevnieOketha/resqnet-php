@@ -254,7 +254,6 @@ function auth_update_profile(int $userId, string $role, array $data): void
                     'city' => $data['city'] ?? null,
                     'district' => $data['district'] ?? null,
                     'gn_division' => $data['gn_division'] ?? null,
-                    'sms_alert' => (int) ($data['sms_alert'] ?? 0),
                 ], ['user_id' => $userId]);
                 break;
 

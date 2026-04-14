@@ -23,6 +23,11 @@
         <a href="/safe-locations" class="btn btn-primary">Open Map</a>
     </article>
     <article class="action-card">
+        <h3><span data-lucide="cloud-rain" style="width:14px;height:14px;vertical-align:-2px;"></span> Forecast Dashboard</h3>
+        <p>View river-basin rainfall and temperature trends for alerts and planning.</p>
+        <a href="/dashboard/forecast" class="btn btn-primary">Open Forecast</a>
+    </article>
+    <article class="action-card">
         <h3><span data-lucide="heart-handshake" style="width:14px;height:14px;vertical-align:-2px;"></span> Request a Donation</h3>
         <p>Submit a donation request for your GN division safe location.</p>
         <a href="/donation-requests/create" class="btn btn-primary">Open Request Form</a>
@@ -39,8 +44,8 @@
     </article>
     <article class="action-card">
         <h3>SMS Alerts</h3>
-        <p>Enable or disable SMS alerts for early warnings.</p>
-        <a href="/profile" class="btn">Manage SMS</a>
+        <p>Enable alerts and choose river/gauge targets from Forecast Dashboard.</p>
+        <a href="/dashboard/forecast" class="btn">Manage SMS</a>
     </article>
 </section>
 

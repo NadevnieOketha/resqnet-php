@@ -15,6 +15,10 @@
         <span class="icon" data-lucide="building"></span>
         <span>Safe Locations</span>
     </a>
+    <a href="/dashboard/forecast" class="nav-item <?= is_current_url('/dashboard/forecast') ? 'active' : '' ?>" data-section="river-forecast">
+        <span class="icon" data-lucide="cloud-rain"></span>
+        <span>Forecast Dashboard</span>
+    </a>
     <a href="/dashboard/donation-requirements" class="nav-item <?= is_current_url('/dashboard/donation-requirements') ? 'active' : '' ?>" data-section="donation-requirements">
         <span class="icon" data-lucide="package-search"></span>
         <span>Donation Requirements</span>

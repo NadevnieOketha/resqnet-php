@@ -280,27 +280,6 @@ if (
     </div>
 </div>
 
-<?php if ($role === 'general'): ?>
-    <div class="card">
-        <div class="card-header">
-            <h2>SMS Alerts</h2>
-        </div>
-        <div class="card-body">
-            <form method="POST" action="/profile/sms-alert">
-                <?= csrf_field() ?>
-                <div class="form-group">
-                    <label for="sms_alert">Receive SMS alerts for emergency updates</label>
-                    <select id="sms_alert" name="sms_alert">
-                        <option value="1" <?= !empty($profile['sms_alert']) ? 'selected' : '' ?>>Enabled</option>
-                        <option value="0" <?= empty($profile['sms_alert']) ? 'selected' : '' ?>>Disabled</option>
-                    </select>
-                </div>
-                <button type="submit" class="btn btn-primary">Update SMS Preference</button>
-            </form>
-        </div>
-    </div>
-<?php endif; ?>
-
 <?php if (in_array($role, ['general', 'volunteer'], true)): ?>
 <script>
 (() => {
