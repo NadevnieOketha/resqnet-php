@@ -2,8 +2,8 @@
 
 /**
  * Database Layer
- * 
- * PDO-based database helpers. No ORM — just clean prepared statements.
+ *
+ * PDO-based database helpers.
  */
 
 function db_connect(bool $forceReconnect = false): PDO
@@ -26,62 +26,43 @@ function db_connect(bool $forceReconnect = false): PDO
         );
 
         $options = [
-            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::ATTR_EMULATE_PREPARES   => false,
-            PDO::ATTR_TIMEOUT            => (int) ($config['connect_timeout'] ?? 10),
+            PDO::ATTR_EMULATE_PREPARES => false,
+            PDO::ATTR_TIMEOUT => (int) ($config['connect_timeout'] ?? 10),
         ];
 
+        // ✅ SSL FIX (PHP 8.5 compatible)
         $sslMode = strtolower((string) ($config['ssl_mode'] ?? 'disable'));
+
         if ($sslMode !== '' && $sslMode !== 'disable') {
-            if (defined('PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT')) {
-                // Managed DB providers often use CA-signed certs; allow disabling strict verify when CA isn't configured.
-                $options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = false;
+
+            // Use new constants if available, else fallback
+            $sslVerifyConst = class_exists('Pdo\\Mysql') && defined('Pdo\\Mysql::ATTR_SSL_VERIFY_SERVER_CERT')
+                ? Pdo\Mysql::ATTR_SSL_VERIFY_SERVER_CERT
+                : (defined('PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT') ? PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT : null);
+
+            $sslCaConst = class_exists('Pdo\\Mysql') && defined('Pdo\\Mysql::ATTR_SSL_CA')
+                ? Pdo\Mysql::ATTR_SSL_CA
+                : (defined('PDO::MYSQL_ATTR_SSL_CA') ? PDO::MYSQL_ATTR_SSL_CA : null);
+
+            // Disable strict verification (safe for DO managed DB)
+            if ($sslVerifyConst !== null) {
+                $options[$sslVerifyConst] = false;
             }
 
+            // Load CA file if exists
             $sslCa = (string) ($config['ssl_ca'] ?? '');
-            if ($sslCa === '') {
-                // Common CA bundle locations on macOS/Linux.
-                $candidateCAs = [
-                    '/etc/ssl/cert.pem',
-                    '/etc/ssl/certs/ca-certificates.crt',
-                    '/opt/homebrew/etc/openssl@3/cert.pem',
-                ];
 
-                foreach ($candidateCAs as $candidate) {
-                    if (file_exists($candidate)) {
-                        $sslCa = $candidate;
-                        break;
-                    }
-                }
-            }
-
-            if ($sslCa !== '' && file_exists($sslCa) && defined('PDO::MYSQL_ATTR_SSL_CA')) {
-                $options[PDO::MYSQL_ATTR_SSL_CA] = $sslCa;
-            }
-
-            $sslCert = (string) ($config['ssl_cert'] ?? '');
-            if ($sslCert !== '' && file_exists($sslCert) && defined('PDO::MYSQL_ATTR_SSL_CERT')) {
-                $options[PDO::MYSQL_ATTR_SSL_CERT] = $sslCert;
-            }
-
-            $sslKey = (string) ($config['ssl_key'] ?? '');
-            if ($sslKey !== '' && file_exists($sslKey) && defined('PDO::MYSQL_ATTR_SSL_KEY')) {
-                $options[PDO::MYSQL_ATTR_SSL_KEY] = $sslKey;
+            if ($sslCa !== '' && file_exists($sslCa) && $sslCaConst !== null) {
+                $options[$sslCaConst] = $sslCa;
             }
         }
 
         try {
             $pdo = new PDO($dsn, $config['username'], $config['password'], $options);
         } catch (PDOException $e) {
-            if (config('app.debug')) {
-                $msg = 'Database connection failed: ' . $e->getMessage();
-                if (str_contains($e->getMessage(), '2006')) {
-                    $msg .= ' (Check DB host/port reachability and SSL settings in .env: DB_SSL_MODE/DB_SSL_CA.)';
-                }
-                die($msg);
-            }
-            die('Database connection failed.');
+            die('Database connection failed: ' . $e->getMessage());
         }
     }
 
@@ -89,7 +70,7 @@ function db_connect(bool $forceReconnect = false): PDO
 }
 
 /**
- * Execute a query and return the PDOStatement.
+ * Execute query
  */
 function db_query(string $sql, array $params = []): PDOStatement
 {
@@ -105,13 +86,15 @@ function db_query(string $sql, array $params = []): PDOStatement
             throw $e;
         }
 
-        // Retry once with a fresh PDO instance when MySQL drops idle connections.
         $stmt = db_connect(true)->prepare($sql);
         $stmt->execute($params);
         return $stmt;
     }
 }
 
+/**
+ * Detect lost connection
+ */
 function db_is_connection_lost(PDOException $e): bool
 {
     $code = (string) $e->getCode();
@@ -124,7 +107,7 @@ function db_is_connection_lost(PDOException $e): bool
 }
 
 /**
- * Fetch a single row.
+ * Fetch single row
  */
 function db_fetch(string $sql, array $params = []): ?array
 {
@@ -133,7 +116,7 @@ function db_fetch(string $sql, array $params = []): ?array
 }
 
 /**
- * Fetch all rows.
+ * Fetch all rows
  */
 function db_fetch_all(string $sql, array $params = []): array
 {
@@ -141,7 +124,7 @@ function db_fetch_all(string $sql, array $params = []): array
 }
 
 /**
- * Insert a row and return the last insert ID.
+ * Insert
  */
 function db_insert(string $table, array $data): string
 {
@@ -155,22 +138,22 @@ function db_insert(string $table, array $data): string
 }
 
 /**
- * Update rows. $where is an assoc array of column => value for the WHERE clause.
+ * Update
  */
 function db_update(string $table, array $data, array $where): int
 {
     $setParts = [];
-    $params   = [];
+    $params = [];
 
     foreach ($data as $col => $val) {
         $setParts[] = "{$col} = ?";
-        $params[]   = $val;
+        $params[] = $val;
     }
 
     $whereParts = [];
     foreach ($where as $col => $val) {
         $whereParts[] = "{$col} = ?";
-        $params[]     = $val;
+        $params[] = $val;
     }
 
     $sql = "UPDATE {$table} SET " . implode(', ', $setParts)
@@ -180,16 +163,16 @@ function db_update(string $table, array $data, array $where): int
 }
 
 /**
- * Delete rows. $where is an assoc array of column => value.
+ * Delete
  */
 function db_delete(string $table, array $where): int
 {
     $whereParts = [];
-    $params     = [];
+    $params = [];
 
     foreach ($where as $col => $val) {
         $whereParts[] = "{$col} = ?";
-        $params[]     = $val;
+        $params[] = $val;
     }
 
     $sql = "DELETE FROM {$table} WHERE " . implode(' AND ', $whereParts);
@@ -197,21 +180,22 @@ function db_delete(string $table, array $where): int
 }
 
 /**
- * Count rows matching conditions.
+ * Count
  */
 function db_count(string $table, array $where = []): int
 {
     if (empty($where)) {
-        return (int) db_fetch("SELECT COUNT(*) as cnt FROM {$table}")['cnt'];
+        return (int) db_fetch("SELECT COUNT(*) AS cnt FROM {$table}")['cnt'];
     }
 
     $whereParts = [];
-    $params     = [];
+    $params = [];
+
     foreach ($where as $col => $val) {
         $whereParts[] = "{$col} = ?";
-        $params[]     = $val;
+        $params[] = $val;
     }
 
-    $sql = "SELECT COUNT(*) as cnt FROM {$table} WHERE " . implode(' AND ', $whereParts);
+    $sql = "SELECT COUNT(*) AS cnt FROM {$table} WHERE " . implode(' AND ', $whereParts);
     return (int) db_fetch($sql, $params)['cnt'];
 }

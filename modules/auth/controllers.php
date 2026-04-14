@@ -40,7 +40,7 @@ function auth_login_post(): void
     }
 
     if ((int) $user['active'] !== 1) {
-        flash('error', 'Your account is pending DMC approval. Please wait for activation.');
+        flash('error', 'Your account is inactive. Please contact DMC.');
         flash_old_input();
         redirect('/login');
     }

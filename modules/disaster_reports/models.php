@@ -131,7 +131,6 @@ function disaster_reports_list_gn_active_notifications(string $gnDivision): arra
         "SELECT dr.report_id,
                 dr.disaster_type,
                 dr.other_disaster_type,
-                dr.district,
                 dr.gn_division,
                 dr.location,
                 dr.verified_at,
@@ -144,7 +143,6 @@ function disaster_reports_list_gn_active_notifications(string $gnDivision): arra
          GROUP BY dr.report_id,
                   dr.disaster_type,
                   dr.other_disaster_type,
-                  dr.district,
                   dr.gn_division,
                   dr.location,
                   dr.verified_at

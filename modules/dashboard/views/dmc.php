@@ -92,3 +92,60 @@
         </div>
     <?php endif; ?>
 </section>
+
+<section class="section-card" aria-label="Grama Niladhari management">
+    <h2>Grama Niladhari Accounts</h2>
+
+    <?php if (empty($gn_users ?? [])): ?>
+        <p class="muted mb-0">No Grama Niladhari accounts found.</p>
+    <?php else: ?>
+        <div class="table-shell">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>GN Division</th>
+                        <th>Status</th>
+                        <th style="text-align:right;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach (($gn_users ?? []) as $gn): ?>
+                        <tr>
+                            <td><?= e($gn['name']) ?></td>
+                            <td><?= e($gn['username']) ?></td>
+                            <td><?= e($gn['email']) ?></td>
+                            <td><?= e($gn['gn_division'] ?? '-') ?></td>
+
+                            <!-- STATUS -->
+                            <td>
+                                <?php if ((int) $gn['active'] === 1): ?>
+                                    <span class="badge" style="background: #e6f4ea; color: #1e7e34;">Active</span>
+                                <?php else: ?>
+                                    <span class="badge" style="background: #fdecea; color: #c82333;">Inactive</span>
+                                <?php endif; ?>
+                            </td>
+
+                            <!-- ACTION -->
+                            <td style="text-align:right;">
+                                <?php if ((int) $gn['active'] === 1): ?>
+                                    <form method="POST" action="/dashboard/admin/grama-niladhari/<?= (int) $gn['user_id'] ?>/deactivate" class="inline-form">
+                                        <?= csrf_field() ?>
+                                        <button type="submit" class="btn">Deactivate</button>
+                                    </form>
+                                <?php else: ?>
+                                    <form method="POST" action="/dashboard/admin/grama-niladhari/<?= (int) $gn['user_id'] ?>/activate" class="inline-form">
+                                        <?= csrf_field() ?>
+                                        <button type="submit" class="btn btn-primary">Activate</button>
+                                    </form>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    <?php endif; ?>
+</section>

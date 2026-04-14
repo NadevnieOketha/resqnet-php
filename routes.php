@@ -89,3 +89,17 @@ route('POST', '/dashboard/admin/approve/{userId}',               'auth_dmc_appro
 route('GET',  '/dashboard/admin/grama-niladhari/create',         'auth_dmc_create_gn_form',            ['middleware_auth', fn() => middleware_role('dmc')]);
 route('POST', '/dashboard/admin/grama-niladhari/create',         'auth_dmc_create_gn_post',            ['middleware_auth', fn() => middleware_role('dmc')]);
 route('POST', '/dashboard/admin/grama-niladhari/{userId}/resend','auth_dmc_resend_gn_credentials',     ['middleware_auth', fn() => middleware_role('dmc')]);
+
+route(
+    'POST',
+    '/dashboard/admin/grama-niladhari/{userId}/deactivate',
+    'dashboard_deactivate_gn',
+    ['middleware_auth', fn() => middleware_role('dmc')]
+);
+
+route(
+    'POST',
+    '/dashboard/admin/grama-niladhari/{userId}/activate',
+    'dashboard_activate_gn',
+    ['middleware_auth', fn() => middleware_role('dmc')]
+);
