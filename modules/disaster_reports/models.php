@@ -120,6 +120,35 @@ function disaster_reports_list_approved(): array
     );
 }
 
+function disaster_reports_group_by_gn_and_disaster_type(array $reports): array
+{
+    $grouped = [];
+
+    foreach ($reports as $report) {
+        $gnDivision = trim((string) ($report['gn_division'] ?? ''));
+        if ($gnDivision === '') {
+            $gnDivision = 'Unspecified GN Division';
+        }
+
+        $typeLabel = disaster_reports_disaster_label((array) $report);
+        if ($typeLabel === '') {
+            $typeLabel = 'Unspecified Disaster Type';
+        }
+
+        if (!isset($grouped[$gnDivision])) {
+            $grouped[$gnDivision] = [];
+        }
+
+        if (!isset($grouped[$gnDivision][$typeLabel])) {
+            $grouped[$gnDivision][$typeLabel] = [];
+        }
+
+        $grouped[$gnDivision][$typeLabel][] = $report;
+    }
+
+    return $grouped;
+}
+
 function disaster_reports_list_gn_active_notifications(string $gnDivision): array
 {
     $trimmed = trim($gnDivision);
@@ -281,6 +310,67 @@ function disaster_reports_fetch_assignment_candidates(string $district = ''): ar
     );
 }
 
+function disaster_reports_extract_date_ymd(string $dateTime): string
+{
+    $trimmed = trim($dateTime);
+    if ($trimmed === '') {
+        return '';
+    }
+
+    $timestamp = strtotime($trimmed);
+    if ($timestamp === false) {
+        return '';
+    }
+
+    return date('Y-m-d', $timestamp);
+}
+
+function disaster_reports_volunteer_ids_assigned_for_disaster_date(string $dateYmd, int $excludeDisasterId = 0): array
+{
+    $dateYmd = trim($dateYmd);
+    if ($dateYmd === '') {
+        return [];
+    }
+
+    $excludeSql = '';
+    $params = [$dateYmd];
+    if ($excludeDisasterId > 0) {
+        $excludeSql = ' AND vt.disaster_id <> ?';
+        $params[] = $excludeDisasterId;
+    }
+
+    $rows = db_fetch_all(
+        "SELECT DISTINCT vt.volunteer_id
+         FROM volunteer_task vt
+         INNER JOIN disaster_reports dr ON dr.report_id = vt.disaster_id
+         WHERE DATE(dr.disaster_datetime) = ?
+           AND vt.status <> 'Declined'
+           {$excludeSql}",
+        $params
+    );
+
+    $ids = array_map(
+        static fn(array $row): int => (int) ($row['volunteer_id'] ?? 0),
+        $rows
+    );
+
+    $ids = array_values(array_unique(array_filter($ids, static fn(int $id): bool => $id > 0)));
+    return $ids;
+}
+
+function disaster_reports_is_volunteer_assigned_for_disaster_date(int $volunteerId, string $dateYmd, int $excludeDisasterId = 0): bool
+{
+    if ($volunteerId <= 0 || trim($dateYmd) === '') {
+        return false;
+    }
+
+    return in_array(
+        $volunteerId,
+        disaster_reports_volunteer_ids_assigned_for_disaster_date($dateYmd, $excludeDisasterId),
+        true
+    );
+}
+
 function disaster_reports_assign_volunteers_to_report(int $reportId, int $minimumTotal = 5): array
 {
     $report = disaster_reports_find_by_id($reportId);
@@ -319,6 +409,8 @@ function disaster_reports_assign_volunteers_to_report(int $reportId, int $minimu
 
     $prioritySkills = disaster_reports_priority_skills_for_type((string) ($report['disaster_type'] ?? ''));
     $priorityMap = array_flip($prioritySkills);
+    $disasterDate = disaster_reports_extract_date_ymd((string) ($report['disaster_datetime'] ?? ''));
+    $blockedVolunteerIds = disaster_reports_volunteer_ids_assigned_for_disaster_date($disasterDate, $reportId);
 
     $scored = [];
     foreach ($candidates as $candidate) {
@@ -327,6 +419,9 @@ function disaster_reports_assign_volunteers_to_report(int $reportId, int $minimu
             continue;
         }
         if (in_array($userId, $existingIds, true)) {
+            continue;
+        }
+        if (in_array($userId, $blockedVolunteerIds, true)) {
             continue;
         }
 
@@ -373,9 +468,12 @@ function disaster_reports_assign_volunteers_to_report(int $reportId, int $minimu
 
     $selected = array_slice($scored, 0, $needed);
     if (empty($selected)) {
+        $availabilityNote = $disasterDate !== ''
+            ? ' Volunteers already assigned to other disasters on ' . $disasterDate . ' are excluded.'
+            : '';
         return [
             'assigned' => [],
-            'message' => 'No eligible volunteers were found for assignment.',
+            'message' => 'No eligible volunteers were found for assignment.' . $availabilityNote,
             'report' => $report,
             'total_assigned' => $existingCount,
             'required_minimum' => $minimumTotal,
@@ -671,10 +769,29 @@ function disaster_reports_list_active_volunteers(?string $district = null): arra
     );
 }
 
+function disaster_reports_list_active_volunteers_for_report_day(?string $district, string $disasterDateTime, int $excludeDisasterId = 0): array
+{
+    $volunteers = disaster_reports_list_active_volunteers($district);
+    $dateYmd = disaster_reports_extract_date_ymd($disasterDateTime);
+    if ($dateYmd === '' || empty($volunteers)) {
+        return $volunteers;
+    }
+
+    $blocked = disaster_reports_volunteer_ids_assigned_for_disaster_date($dateYmd, $excludeDisasterId);
+    if (empty($blocked)) {
+        return $volunteers;
+    }
+
+    return array_values(array_filter(
+        $volunteers,
+        static fn(array $vol): bool => !in_array((int) ($vol['user_id'] ?? 0), $blocked, true)
+    ));
+}
+
 function disaster_reports_reassign_task(int $taskId, int $newVolunteerId): array
 {
     $task = db_fetch(
-        'SELECT vt.id, vt.disaster_id, dr.district
+        'SELECT vt.id, vt.disaster_id, dr.district, dr.disaster_datetime
          FROM volunteer_task vt
          INNER JOIN disaster_reports dr ON dr.report_id = vt.disaster_id
          WHERE vt.id = ?
@@ -699,6 +816,11 @@ function disaster_reports_reassign_task(int $taskId, int $newVolunteerId): array
 
     if (!$volunteer) {
         return ['ok' => false, 'message' => 'Selected volunteer is not available.'];
+    }
+
+    $disasterDate = disaster_reports_extract_date_ymd((string) ($task['disaster_datetime'] ?? ''));
+    if (disaster_reports_is_volunteer_assigned_for_disaster_date($newVolunteerId, $disasterDate, (int) ($task['disaster_id'] ?? 0))) {
+        return ['ok' => false, 'message' => 'Volunteer is already assigned to another disaster on the same day. Assign one disaster per volunteer per day.'];
     }
 
     db_query(

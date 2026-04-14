@@ -26,6 +26,8 @@
   .volunteer-notes li { margin-bottom:0.2rem; }
   .volunteer-notes strong { font-size:0.6rem; }
   .no-notes { color:#777; font-size:0.6rem; margin-top:0.35rem; }
+  .group-row td { background:#f7fafc; font-weight:700; color:#0f172a; }
+  .group-row-type td { background:#fefaf0; font-weight:600; color:#1f2937; }
   .empty-state { padding: 1rem; color: var(--color-text-subtle); }
   @media (max-width:780px){
     table.report-table thead { display:none; }
@@ -61,33 +63,43 @@
       <?php if (empty($pending_reports ?? [])): ?>
         <tr><td colspan="7" class="empty-state">No pending reports.</td></tr>
       <?php else: ?>
-        <?php foreach (($pending_reports ?? []) as $report): ?>
-          <tr>
-            <td data-label="Report ID">#<?= (int) $report['report_id'] ?></td>
-            <td data-label="Reported By" class="reported-by">
-              <div><?= e($report['reporter_name']) ?></div>
-              <div><?= e($report['contact_number']) ?></div>
-            </td>
-            <td data-label="Date/Time" class="date-time">
-              <span><?= e(date('Y-m-d', strtotime((string) $report['disaster_datetime']))) ?></span>
-              <span><?= e(date('H:i', strtotime((string) $report['disaster_datetime']))) ?></span>
-            </td>
-            <td data-label="Location"><?= e(trim((string) $report['district'] . ' / ' . $report['gn_division'] . (($report['location'] ?? '') !== '' ? ' / ' . $report['location'] : ''))) ?></td>
-            <td data-label="Disaster Type" class="type-strong"><?= e(disaster_reports_disaster_label($report)) ?></td>
-            <td data-label="Description/Notes"><?= e((string) ($report['description'] ?? '-')) ?></td>
-            <td data-label="Actions">
-              <div class="action-pills">
-                <form method="POST" action="/dashboard/reports/<?= (int) $report['report_id'] ?>/verify" class="inline-form">
-                  <?= csrf_field() ?>
-                  <button type="submit" class="pill"><span data-lucide="check"></span><span>Verify</span></button>
-                </form>
-                <form method="POST" action="/dashboard/reports/<?= (int) $report['report_id'] ?>/reject" class="inline-form">
-                  <?= csrf_field() ?>
-                  <button type="submit" class="pill pill-danger"><span data-lucide="trash-2"></span><span>Reject</span></button>
-                </form>
-              </div>
-            </td>
+        <?php foreach (($pending_reports_grouped ?? []) as $gnDivision => $typeGroups): ?>
+          <tr class="group-row group-row-gn">
+            <td colspan="7">GN Division: <?= e((string) $gnDivision) ?></td>
           </tr>
+          <?php foreach ((array) $typeGroups as $typeLabel => $reports): ?>
+            <tr class="group-row group-row-type">
+              <td colspan="7">Disaster Type: <?= e((string) $typeLabel) ?></td>
+            </tr>
+            <?php foreach ((array) $reports as $report): ?>
+              <tr>
+                <td data-label="Report ID">#<?= (int) $report['report_id'] ?></td>
+                <td data-label="Reported By" class="reported-by">
+                  <div><?= e($report['reporter_name']) ?></div>
+                  <div><?= e($report['contact_number']) ?></div>
+                </td>
+                <td data-label="Date/Time" class="date-time">
+                  <span><?= e(date('Y-m-d', strtotime((string) $report['disaster_datetime']))) ?></span>
+                  <span><?= e(date('H:i', strtotime((string) $report['disaster_datetime']))) ?></span>
+                </td>
+                <td data-label="Location"><?= e(trim((string) $report['district'] . ' / ' . $report['gn_division'] . (($report['location'] ?? '') !== '' ? ' / ' . $report['location'] : ''))) ?></td>
+                <td data-label="Disaster Type" class="type-strong"><?= e(disaster_reports_disaster_label($report)) ?></td>
+                <td data-label="Description/Notes"><?= e((string) ($report['description'] ?? '-')) ?></td>
+                <td data-label="Actions">
+                  <div class="action-pills">
+                    <form method="POST" action="/dashboard/reports/<?= (int) $report['report_id'] ?>/verify" class="inline-form">
+                      <?= csrf_field() ?>
+                      <button type="submit" class="pill"><span data-lucide="check"></span><span>Verify</span></button>
+                    </form>
+                    <form method="POST" action="/dashboard/reports/<?= (int) $report['report_id'] ?>/reject" class="inline-form">
+                      <?= csrf_field() ?>
+                      <button type="submit" class="pill pill-danger"><span data-lucide="trash-2"></span><span>Reject</span></button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            <?php endforeach; ?>
+          <?php endforeach; ?>
         <?php endforeach; ?>
       <?php endif; ?>
       </tbody>
@@ -115,69 +127,79 @@
       <?php if (empty($approved_reports ?? [])): ?>
         <tr><td colspan="9" class="empty-state">No approved reports yet.</td></tr>
       <?php else: ?>
-        <?php foreach (($approved_reports ?? []) as $report): ?>
-          <?php $assignedCount = (int) (($assigned_counts ?? [])[(int) ($report['report_id'] ?? 0)] ?? 0); ?>
-          <?php $assignedVolunteers = (array) (($assigned_volunteers_by_report ?? [])[(int) ($report['report_id'] ?? 0)] ?? []); ?>
-          <tr>
-            <td data-label="Report ID">#<?= (int) $report['report_id'] ?></td>
-            <td data-label="Reported By" class="reported-by">
-              <div><?= e($report['reporter_name']) ?></div>
-              <div><?= e($report['contact_number']) ?></div>
-            </td>
-            <td data-label="Date/Time" class="date-time">
-              <span><?= e(date('Y-m-d', strtotime((string) $report['disaster_datetime']))) ?></span>
-              <span><?= e(date('H:i', strtotime((string) $report['disaster_datetime']))) ?></span>
-            </td>
-            <td data-label="Location"><?= e(trim((string) $report['district'] . ' / ' . $report['gn_division'] . (($report['location'] ?? '') !== '' ? ' / ' . $report['location'] : ''))) ?></td>
-            <td data-label="Disaster Type" class="type-strong"><?= e(disaster_reports_disaster_label($report)) ?></td>
-            <td data-label="Description/Notes"><?= e((string) ($report['description'] ?? '-')) ?></td>
-            <td data-label="Verified At"><?= e((string) ($report['verified_at'] ?? '-')) ?></td>
-            <td data-label="Assigned Volunteers">
-              <?php if (empty($assignedVolunteers)): ?>
-                <small style="color:#666;">No volunteers assigned yet.</small>
-              <?php else: ?>
-                <div class="volunteer-stack">
-                  <?php foreach ($assignedVolunteers as $volunteer): ?>
-                    <?php $notes = (array) ($volunteer['notes'] ?? []); ?>
-                    <div class="volunteer-item">
-                      <div class="volunteer-head">
-                        <span class="volunteer-name"><?= e((string) ($volunteer['volunteer_name'] ?? 'Volunteer')) ?></span>
-                        <span class="volunteer-status"><?= e((string) ($volunteer['status'] ?? '-')) ?></span>
-                      </div>
-
-                      <?php if (empty($notes)): ?>
-                        <div class="no-notes">No notes shared yet.</div>
-                      <?php else: ?>
-                        <ul class="volunteer-notes">
-                          <?php foreach ($notes as $note): ?>
-                            <?php $noteText = trim((string) ($note['update_text'] ?? '')); ?>
-                            <?php if ($noteText === '') continue; ?>
-                            <?php
-                              $stage = trim((string) ($note['stage_status'] ?? ''));
-                              $stageLabel = $stage !== '' ? $stage : 'Update';
-                            ?>
-                            <li>
-                              <strong><?= e($stageLabel) ?>:</strong>
-                              <?= e($noteText) ?>
-                            </li>
-                          <?php endforeach; ?>
-                        </ul>
-                      <?php endif; ?>
-                    </div>
-                  <?php endforeach; ?>
-                </div>
-              <?php endif; ?>
-            </td>
-            <td data-label="Actions">
-              <div class="action-pills" style="flex-direction:column;align-items:flex-start;gap:0.4rem;">
-                <form method="POST" action="/dashboard/reports/<?= (int) $report['report_id'] ?>/assign-volunteers" class="inline-form">
-                  <?= csrf_field() ?>
-                  <button type="submit" class="pill"><span data-lucide="user-plus"></span><span>Assign volunteers</span></button>
-                </form>
-                <small style="color:#666;">Assigned so far: <?= $assignedCount ?> / minimum 5</small>
-              </div>
-            </td>
+        <?php foreach (($approved_reports_grouped ?? []) as $gnDivision => $typeGroups): ?>
+          <tr class="group-row group-row-gn">
+            <td colspan="9">GN Division: <?= e((string) $gnDivision) ?></td>
           </tr>
+          <?php foreach ((array) $typeGroups as $typeLabel => $reports): ?>
+            <tr class="group-row group-row-type">
+              <td colspan="9">Disaster Type: <?= e((string) $typeLabel) ?></td>
+            </tr>
+            <?php foreach ((array) $reports as $report): ?>
+              <?php $assignedCount = (int) (($assigned_counts ?? [])[(int) ($report['report_id'] ?? 0)] ?? 0); ?>
+              <?php $assignedVolunteers = (array) (($assigned_volunteers_by_report ?? [])[(int) ($report['report_id'] ?? 0)] ?? []); ?>
+              <tr>
+                <td data-label="Report ID">#<?= (int) $report['report_id'] ?></td>
+                <td data-label="Reported By" class="reported-by">
+                  <div><?= e($report['reporter_name']) ?></div>
+                  <div><?= e($report['contact_number']) ?></div>
+                </td>
+                <td data-label="Date/Time" class="date-time">
+                  <span><?= e(date('Y-m-d', strtotime((string) $report['disaster_datetime']))) ?></span>
+                  <span><?= e(date('H:i', strtotime((string) $report['disaster_datetime']))) ?></span>
+                </td>
+                <td data-label="Location"><?= e(trim((string) $report['district'] . ' / ' . $report['gn_division'] . (($report['location'] ?? '') !== '' ? ' / ' . $report['location'] : ''))) ?></td>
+                <td data-label="Disaster Type" class="type-strong"><?= e(disaster_reports_disaster_label($report)) ?></td>
+                <td data-label="Description/Notes"><?= e((string) ($report['description'] ?? '-')) ?></td>
+                <td data-label="Verified At"><?= e((string) ($report['verified_at'] ?? '-')) ?></td>
+                <td data-label="Assigned Volunteers">
+                  <?php if (empty($assignedVolunteers)): ?>
+                    <small style="color:#666;">No volunteers assigned yet.</small>
+                  <?php else: ?>
+                    <div class="volunteer-stack">
+                      <?php foreach ($assignedVolunteers as $volunteer): ?>
+                        <?php $notes = (array) ($volunteer['notes'] ?? []); ?>
+                        <div class="volunteer-item">
+                          <div class="volunteer-head">
+                            <span class="volunteer-name"><?= e((string) ($volunteer['volunteer_name'] ?? 'Volunteer')) ?></span>
+                            <span class="volunteer-status"><?= e((string) ($volunteer['status'] ?? '-')) ?></span>
+                          </div>
+
+                          <?php if (empty($notes)): ?>
+                            <div class="no-notes">No notes shared yet.</div>
+                          <?php else: ?>
+                            <ul class="volunteer-notes">
+                              <?php foreach ($notes as $note): ?>
+                                <?php $noteText = trim((string) ($note['update_text'] ?? '')); ?>
+                                <?php if ($noteText === '') continue; ?>
+                                <?php
+                                  $stage = trim((string) ($note['stage_status'] ?? ''));
+                                  $stageLabel = $stage !== '' ? $stage : 'Update';
+                                ?>
+                                <li>
+                                  <strong><?= e($stageLabel) ?>:</strong>
+                                  <?= e($noteText) ?>
+                                </li>
+                              <?php endforeach; ?>
+                            </ul>
+                          <?php endif; ?>
+                        </div>
+                      <?php endforeach; ?>
+                    </div>
+                  <?php endif; ?>
+                </td>
+                <td data-label="Actions">
+                  <div class="action-pills" style="flex-direction:column;align-items:flex-start;gap:0.4rem;">
+                    <form method="POST" action="/dashboard/reports/<?= (int) $report['report_id'] ?>/assign-volunteers" class="inline-form">
+                      <?= csrf_field() ?>
+                      <button type="submit" class="pill"><span data-lucide="user-plus"></span><span>Assign volunteers</span></button>
+                    </form>
+                    <small style="color:#666;">Assigned so far: <?= $assignedCount ?> / minimum 5</small>
+                  </div>
+                </td>
+              </tr>
+            <?php endforeach; ?>
+          <?php endforeach; ?>
         <?php endforeach; ?>
       <?php endif; ?>
       </tbody>
