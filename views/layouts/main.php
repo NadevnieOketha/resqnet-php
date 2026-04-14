@@ -27,6 +27,7 @@ $pageTitle = $page_title ?? config('app.name');
             <nav class="primary-nav" aria-label="Primary navigation">
                 <ul>
                     <li><a href="/" <?= is_current_url('/') ? 'aria-current="page"' : '' ?>>Home</a></li>
+                    <li><a href="/forum" <?= is_current_url('/forum') ? 'aria-current="page"' : '' ?>>Forum</a></li>
                     <li><a href="/safe-locations" <?= is_current_url('/safe-locations') ? 'aria-current="page"' : '' ?>>Safe Locations</a></li>
                     <li><a href="/make-donation" <?= is_current_url('/make-donation') ? 'aria-current="page"' : '' ?>>Make Donation</a></li>
                     <?php if (auth_check()): ?>

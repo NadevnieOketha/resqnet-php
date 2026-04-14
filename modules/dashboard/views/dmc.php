@@ -24,6 +24,11 @@
         <a href="/dashboard/reports" class="btn btn-primary">Open Reports</a>
     </article>
     <article class="action-card">
+        <h3><span data-lucide="message-square" style="width:14px;height:14px;vertical-align:-2px;"></span> Forum Posts</h3>
+        <p>Create, edit, and delete public forum posts.</p>
+        <a href="/dashboard/admin/forum-posts" class="btn btn-primary">Manage Posts</a>
+    </article>
+    <article class="action-card">
         <h3><span data-lucide="building" style="width:14px;height:14px;vertical-align:-2px;"></span> Safe Locations</h3>
         <p>Add shelters, assign GN officers, and maintain capacity records.</p>
         <a href="/dashboard/admin/safe-locations" class="btn btn-primary">Manage Locations</a>

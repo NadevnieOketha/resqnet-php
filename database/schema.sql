@@ -44,6 +44,20 @@ CREATE TABLE IF NOT EXISTS `volunteer_preferences` (
   UNIQUE KEY `uq_preferences_name` (`preference_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+CREATE TABLE IF NOT EXISTS `forum_posts` (
+  `post_id` int NOT NULL AUTO_INCREMENT,
+  `title` varchar(180) NOT NULL,
+  `body` text NOT NULL,
+  `image_path` varchar(255) DEFAULT NULL,
+  `created_by_user_id` int DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`post_id`),
+  KEY `idx_forum_posts_created_at` (`created_at`),
+  KEY `idx_forum_posts_created_by` (`created_by_user_id`),
+  CONSTRAINT `fk_forum_posts_user` FOREIGN KEY (`created_by_user_id`) REFERENCES `users` (`user_id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 CREATE TABLE IF NOT EXISTS `safe_locations` (
   `location_id` int NOT NULL AUTO_INCREMENT,
   `location_name` varchar(255) NOT NULL,

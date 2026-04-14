@@ -7,6 +7,14 @@
         <span class="icon" data-lucide="file-text"></span>
         <span>Disaster Reports</span>
     </a>
+    <a href="/dashboard/admin/forum-posts" class="nav-item <?= is_current_url('/dashboard/admin/forum-posts') ? 'active' : '' ?>" data-section="forum-posts">
+        <span class="icon" data-lucide="message-square"></span>
+        <span>Forum Posts</span>
+    </a>
+    <a href="/forum" class="nav-item <?= is_current_url('/forum') ? 'active' : '' ?>" data-section="forum-public">
+        <span class="icon" data-lucide="messages-square"></span>
+        <span>Public Forum</span>
+    </a>
         <a href="/dashboard/admin/volunteer-tasks" class="nav-item <?= is_current_url('/dashboard/admin/volunteer-tasks') ? 'active' : '' ?>" data-section="volunteer-assignments">
             <span class="icon" data-lucide="clipboard-check"></span>
             <span>Volunteer Assignments</span>

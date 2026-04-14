@@ -8,6 +8,7 @@
 
 // Public
 route('GET', '/', 'home_index');
+route('GET', '/forum', 'forum_public_index');
 route('GET', '/safe-locations', 'safe_locations_public_index');
 route('GET', '/safe-locations/data', 'safe_locations_public_data');
 route('GET', '/make-donation', 'donations_make_form');
@@ -89,3 +90,9 @@ route('POST', '/dashboard/admin/approve/{userId}',               'auth_dmc_appro
 route('GET',  '/dashboard/admin/grama-niladhari/create',         'auth_dmc_create_gn_form',            ['middleware_auth', fn() => middleware_role('dmc')]);
 route('POST', '/dashboard/admin/grama-niladhari/create',         'auth_dmc_create_gn_post',            ['middleware_auth', fn() => middleware_role('dmc')]);
 route('POST', '/dashboard/admin/grama-niladhari/{userId}/resend','auth_dmc_resend_gn_credentials',     ['middleware_auth', fn() => middleware_role('dmc')]);
+
+// DMC forum post management
+route('GET',  '/dashboard/admin/forum-posts',                        'forum_dmc_manage_index',      ['middleware_auth', fn() => middleware_role('dmc')]);
+route('POST', '/dashboard/admin/forum-posts/create',                 'forum_dmc_create_action',     ['middleware_auth', fn() => middleware_role('dmc')]);
+route('POST', '/dashboard/admin/forum-posts/{postId}/update',        'forum_dmc_update_action',     ['middleware_auth', fn() => middleware_role('dmc')]);
+route('POST', '/dashboard/admin/forum-posts/{postId}/delete',        'forum_dmc_delete_action',     ['middleware_auth', fn() => middleware_role('dmc')]);
