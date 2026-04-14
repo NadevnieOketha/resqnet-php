@@ -196,6 +196,7 @@ function forecast_snapshot(): array
             && is_array($cachedData['rivers'] ?? null)
             && forecast_snapshot_has_weather_data($cachedData)
         ) {
+            forecast_dispatch_sms_alerts($cachedData);
             return $cachedData;
         }
     }
@@ -304,7 +305,22 @@ function forecast_snapshot(): array
         json_encode($snapshot, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT)
     );
 
+    forecast_dispatch_sms_alerts($snapshot);
+
     return $snapshot;
+}
+
+function forecast_dispatch_sms_alerts(array $snapshot): void
+{
+    if (!function_exists('sms_alert_forecast_dispatch')) {
+        return;
+    }
+
+    try {
+        sms_alert_forecast_dispatch($snapshot);
+    } catch (Throwable $e) {
+        error_log('Forecast SMS dispatch failed: ' . $e->getMessage());
+    }
 }
 
 function forecast_default_selection(array $snapshot, string $requestedRiverKey = '', string $requestedStationKey = '', ?array $profile = null): array

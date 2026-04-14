@@ -69,6 +69,8 @@ function forecast_sms_alert_update(): void
         $profile
     );
 
+    forecast_dispatch_sms_alerts($snapshot);
+
     if (!$result['enabled']) {
         flash('success', 'Forecast SMS alerts disabled.');
         redirect('/dashboard/forecast');
