@@ -35,9 +35,9 @@
         <span class="icon" data-lucide="users"></span>
         <span>Pending Approvals</span>
     </a>
-    <a href="/dashboard/admin/grama-niladhari/create" class="nav-item <?= is_current_url('/dashboard/admin/grama-niladhari/create') ? 'active' : '' ?>" data-section="gn-registry">
-        <span class="icon" data-lucide="user-plus"></span>
-        <span>Create GN Account</span>
+    <a href="/dashboard/admin/grama-niladhari/accounts" class="nav-item <?= (is_current_url('/dashboard/admin/grama-niladhari/accounts') || is_current_url('/dashboard/admin/grama-niladhari/create')) ? 'active' : '' ?>" data-section="gn-registry">
+        <span class="icon" data-lucide="user-cog"></span>
+        <span>GN Accounts</span>
     </a>
     <a href="/profile" class="nav-item <?= is_current_url('/profile') ? 'active' : '' ?>" data-section="profile-settings">
         <span class="icon" data-lucide="user"></span>

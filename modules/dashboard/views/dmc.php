@@ -51,13 +51,10 @@ $disasterDistricts = (array) ($disasters['districts'] ?? []);
 $disasterMonthly = (array) ($disasters['monthly'] ?? []);
 
 $volunteerStatus = (array) ($volunteers['status'] ?? []);
-$volunteerWorkload = (array) ($volunteers['workload'] ?? []);
-$declineByDistrict = (array) ($volunteers['decline_by_district'] ?? []);
 
 $donationStatus = (array) ($donations['status'] ?? []);
 $donationPoints = (array) ($donations['collection_points'] ?? []);
 $inventoryCategories = (array) ($donations['inventory_categories'] ?? []);
-$lowStockItems = (array) ($donations['low_stock_items'] ?? []);
 
 $shelterTotals = (array) ($shelters['totals'] ?? []);
 $shelterLocations = (array) ($shelters['locations'] ?? []);
@@ -66,10 +63,6 @@ $requirementStatus = (array) ($requirements['status'] ?? []);
 $requirementDistricts = (array) ($requirements['districts'] ?? []);
 $requirementCategories = (array) ($requirements['categories'] ?? []);
 
-$roleCounts = (array) ($users['roles'] ?? []);
-$activityCounts = (array) ($users['activity'] ?? []);
-
-$smsSeverity = (array) ($sms['severity'] ?? []);
 $smsStations = (array) ($sms['stations'] ?? []);
 $smsMonthly = (array) ($sms['monthly'] ?? []);
 ?>
@@ -367,39 +360,19 @@ $smsMonthly = (array) ($sms['monthly'] ?? []);
         </article>
 
         <article class="dmc-chart-card">
-            <h3>Active Tasks per Volunteer</h3>
-            <p class="muted">Workload distribution for ongoing operations.</p>
-            <?php $workloadMax = $maxValue($volunteerWorkload); ?>
+            <h3>Disaster Reports by District</h3>
+            <p class="muted">Districts with highest report volume.</p>
+            <?php $districtMax = $maxValue($disasterDistricts); ?>
             <div class="dmc-bars">
-                <?php if (empty($volunteerWorkload)): ?>
-                    <p class="muted">No active assignments right now.</p>
+                <?php if (empty($disasterDistricts)): ?>
+                    <p class="muted">No district data available.</p>
                 <?php else: ?>
-                    <?php foreach ($volunteerWorkload as $row): ?>
+                    <?php foreach ($disasterDistricts as $row): ?>
                         <?php $value = (int) ($row['value'] ?? 0); ?>
                         <div class="dmc-bar-row">
                             <span><?= e((string) ($row['label'] ?? '-')) ?></span>
-                            <div class="dmc-bar-track"><span class="dmc-bar-fill" style="width: <?= number_format(($value * 100) / $workloadMax, 2, '.', '') ?>%"></span></div>
+                            <div class="dmc-bar-track"><span class="dmc-bar-fill" style="width: <?= number_format(($value * 100) / $districtMax, 2, '.', '') ?>%"></span></div>
                             <strong><?= $value ?></strong>
-                        </div>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </div>
-        </article>
-
-        <article class="dmc-chart-card">
-            <h3>Decline Rate by District</h3>
-            <p class="muted">Higher percentages indicate volunteer coverage risk.</p>
-            <?php $declineMax = $maxValue($declineByDistrict); ?>
-            <div class="dmc-bars">
-                <?php if (empty($declineByDistrict)): ?>
-                    <p class="muted">No decline data available.</p>
-                <?php else: ?>
-                    <?php foreach ($declineByDistrict as $row): ?>
-                        <?php $value = (int) ($row['value'] ?? 0); ?>
-                        <div class="dmc-bar-row">
-                            <span><?= e((string) ($row['label'] ?? '-')) ?></span>
-                            <div class="dmc-bar-track"><span class="dmc-bar-fill" style="width: <?= number_format(($value * 100) / $declineMax, 2, '.', '') ?>%"></span></div>
-                            <strong><?= e($fmtPct((float) $value)) ?></strong>
                         </div>
                     <?php endforeach; ?>
                 <?php endif; ?>
@@ -473,26 +446,6 @@ $smsMonthly = (array) ($sms['monthly'] ?? []);
         </article>
 
         <article class="dmc-chart-card">
-            <h3>Low and Out of Stock</h3>
-            <p class="muted">Actionable replenishment list.</p>
-            <ul class="dmc-risk-list">
-                <?php if (empty($lowStockItems)): ?>
-                    <li class="dmc-risk-item"><span>No low stock risks right now.</span></li>
-                <?php else: ?>
-                    <?php foreach ($lowStockItems as $item): ?>
-                        <li class="dmc-risk-item">
-                            <div>
-                                <strong><?= e((string) ($item['item_name'] ?? '-')) ?></strong>
-                                <div class="meta"><?= e((string) ($item['collection_point'] ?? '-')) ?> • <?= e((string) ($item['category'] ?? '-')) ?></div>
-                            </div>
-                            <span class="tag"><?= (int) ($item['quantity'] ?? 0) ?></span>
-                        </li>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </ul>
-        </article>
-
-        <article class="dmc-chart-card">
             <h3>Requirement Fulfillment Status</h3>
             <p class="muted">Open vs reserved vs fulfilled requests.</p>
             <?php $totalReqStatus = $sumValue($requirementStatus); ?>
@@ -530,6 +483,26 @@ $smsMonthly = (array) ($sms['monthly'] ?? []);
                         <div class="dmc-bar-row">
                             <span><?= e((string) ($row['label'] ?? '-')) ?></span>
                             <div class="dmc-bar-track"><span class="dmc-bar-fill" style="width: <?= number_format(($value * 100) / $reqCatMax, 2, '.', '') ?>%"></span></div>
+                            <strong><?= $value ?></strong>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
+        </article>
+
+        <article class="dmc-chart-card">
+            <h3>Requirements by District</h3>
+            <p class="muted">Where supply demand is concentrated.</p>
+            <?php $reqDistrictMax = $maxValue($requirementDistricts); ?>
+            <div class="dmc-bars">
+                <?php if (empty($requirementDistricts)): ?>
+                    <p class="muted">No requirement district data available.</p>
+                <?php else: ?>
+                    <?php foreach ($requirementDistricts as $row): ?>
+                        <?php $value = (int) ($row['value'] ?? 0); ?>
+                        <div class="dmc-bar-row">
+                            <span><?= e((string) ($row['label'] ?? '-')) ?></span>
+                            <div class="dmc-bar-track"><span class="dmc-bar-fill" style="width: <?= number_format(($value * 100) / $reqDistrictMax, 2, '.', '') ?>%"></span></div>
                             <strong><?= $value ?></strong>
                         </div>
                     <?php endforeach; ?>
@@ -577,35 +550,6 @@ $smsMonthly = (array) ($sms['monthly'] ?? []);
         </article>
 
         <article class="dmc-chart-card">
-            <h3>User Roles and Account Activity</h3>
-            <p class="muted">Platform account composition and activation state.</p>
-            <?php $roleMax = $maxValue($roleCounts); ?>
-            <div class="dmc-bars">
-                <?php if (empty($roleCounts)): ?>
-                    <p class="muted">No account data available.</p>
-                <?php else: ?>
-                    <?php foreach ($roleCounts as $row): ?>
-                        <?php $value = (int) ($row['value'] ?? 0); ?>
-                        <div class="dmc-bar-row">
-                            <span><?= e(role_label((string) ($row['label'] ?? ''))) ?></span>
-                            <div class="dmc-bar-track"><span class="dmc-bar-fill" style="width: <?= number_format(($value * 100) / $roleMax, 2, '.', '') ?>%"></span></div>
-                            <strong><?= $value ?></strong>
-                        </div>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </div>
-            <ul class="dmc-legend">
-                <?php foreach ($activityCounts as $row): ?>
-                    <?php $tone = $statusTone((string) ($row['label'] ?? '')); ?>
-                    <li>
-                        <span class="dmc-legend-label"><span class="dmc-dot dmc-seg-<?= e($tone) ?>"></span><?= e((string) ($row['label'] ?? '-')) ?></span>
-                        <strong><?= (int) ($row['value'] ?? 0) ?></strong>
-                    </li>
-                <?php endforeach; ?>
-            </ul>
-        </article>
-
-        <article class="dmc-chart-card">
             <h3>SMS Alert Throughput</h3>
             <p class="muted">Delivered forecast alerts over current periods.</p>
             <ul class="dmc-legend">
@@ -624,26 +568,6 @@ $smsMonthly = (array) ($sms['monthly'] ?? []);
                         <div class="dmc-column-label"><?= e((string) ($row['label'] ?? '-')) ?></div>
                     </div>
                 <?php endforeach; ?>
-            </div>
-        </article>
-
-        <article class="dmc-chart-card">
-            <h3>SMS Alerts by Severity</h3>
-            <p class="muted">Flood warning levels that triggered deliveries.</p>
-            <?php $smsSevMax = $maxValue($smsSeverity); ?>
-            <div class="dmc-bars">
-                <?php if (empty($smsSeverity)): ?>
-                    <p class="muted">No sent alerts in log yet.</p>
-                <?php else: ?>
-                    <?php foreach ($smsSeverity as $row): ?>
-                        <?php $value = (int) ($row['value'] ?? 0); ?>
-                        <div class="dmc-bar-row">
-                            <span><?= e(ucfirst((string) ($row['label'] ?? '-'))) ?></span>
-                            <div class="dmc-bar-track"><span class="dmc-bar-fill" style="width: <?= number_format(($value * 100) / $smsSevMax, 2, '.', '') ?>%"></span></div>
-                            <strong><?= $value ?></strong>
-                        </div>
-                    <?php endforeach; ?>
-                <?php endif; ?>
             </div>
         </article>
 
@@ -667,45 +591,6 @@ $smsMonthly = (array) ($sms['monthly'] ?? []);
             </div>
         </article>
 
-        <article class="dmc-chart-card">
-            <h3>Disaster Reports by District</h3>
-            <p class="muted">Districts with highest report volume.</p>
-            <?php $districtMax = $maxValue($disasterDistricts); ?>
-            <div class="dmc-bars">
-                <?php if (empty($disasterDistricts)): ?>
-                    <p class="muted">No district data available.</p>
-                <?php else: ?>
-                    <?php foreach ($disasterDistricts as $row): ?>
-                        <?php $value = (int) ($row['value'] ?? 0); ?>
-                        <div class="dmc-bar-row">
-                            <span><?= e((string) ($row['label'] ?? '-')) ?></span>
-                            <div class="dmc-bar-track"><span class="dmc-bar-fill" style="width: <?= number_format(($value * 100) / $districtMax, 2, '.', '') ?>%"></span></div>
-                            <strong><?= $value ?></strong>
-                        </div>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </div>
-        </article>
-
-        <article class="dmc-chart-card">
-            <h3>Requirements by District</h3>
-            <p class="muted">Where supply demand is concentrated.</p>
-            <?php $reqDistrictMax = $maxValue($requirementDistricts); ?>
-            <div class="dmc-bars">
-                <?php if (empty($requirementDistricts)): ?>
-                    <p class="muted">No requirement district data available.</p>
-                <?php else: ?>
-                    <?php foreach ($requirementDistricts as $row): ?>
-                        <?php $value = (int) ($row['value'] ?? 0); ?>
-                        <div class="dmc-bar-row">
-                            <span><?= e((string) ($row['label'] ?? '-')) ?></span>
-                            <div class="dmc-bar-track"><span class="dmc-bar-fill" style="width: <?= number_format(($value * 100) / $reqDistrictMax, 2, '.', '') ?>%"></span></div>
-                            <strong><?= $value ?></strong>
-                        </div>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </div>
-        </article>
     </div>
 </section>
 
@@ -748,9 +633,9 @@ $smsMonthly = (array) ($sms['monthly'] ?? []);
             <a href="/dashboard/admin/pending" class="btn btn-primary">Open Queue</a>
         </article>
         <article class="action-card">
-            <h3>Create GN Account</h3>
-            <p>Create a new Grama Niladhari account with direct credentials.</p>
-            <a href="/dashboard/admin/grama-niladhari/create" class="btn">Create Account</a>
+            <h3>GN Accounts</h3>
+            <p>Create, activate, deactivate, and manage Grama Niladhari account access.</p>
+            <a href="/dashboard/admin/grama-niladhari/accounts" class="btn">Open GN Accounts</a>
         </article>
         <article class="action-card">
             <h3>Profile Settings</h3>

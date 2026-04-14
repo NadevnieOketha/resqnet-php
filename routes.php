@@ -87,9 +87,12 @@ route('POST', '/dashboard/donation-requirements/{requirementId}/reserve', 'donat
 // DMC Auth Operations
 route('GET',  '/dashboard/admin/pending',                        'auth_dmc_pending_approvals',         ['middleware_auth', fn() => middleware_role('dmc')]);
 route('POST', '/dashboard/admin/approve/{userId}',               'auth_dmc_approve_user_action',       ['middleware_auth', fn() => middleware_role('dmc')]);
+route('GET',  '/dashboard/admin/grama-niladhari/accounts',       'auth_dmc_gn_accounts_index',         ['middleware_auth', fn() => middleware_role('dmc')]);
 route('GET',  '/dashboard/admin/grama-niladhari/create',         'auth_dmc_create_gn_form',            ['middleware_auth', fn() => middleware_role('dmc')]);
 route('POST', '/dashboard/admin/grama-niladhari/create',         'auth_dmc_create_gn_post',            ['middleware_auth', fn() => middleware_role('dmc')]);
 route('POST', '/dashboard/admin/grama-niladhari/{userId}/resend','auth_dmc_resend_gn_credentials',     ['middleware_auth', fn() => middleware_role('dmc')]);
+route('POST', '/dashboard/admin/grama-niladhari/{userId}/activate','auth_dmc_activate_gn_account_action',['middleware_auth', fn() => middleware_role('dmc')]);
+route('POST', '/dashboard/admin/grama-niladhari/{userId}/deactivate','auth_dmc_deactivate_gn_account_action',['middleware_auth', fn() => middleware_role('dmc')]);
 
 // DMC forum post management
 route('GET',  '/dashboard/admin/forum-posts',                        'forum_dmc_manage_index',      ['middleware_auth', fn() => middleware_role('dmc')]);

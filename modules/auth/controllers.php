@@ -231,7 +231,18 @@ function auth_reset_password_post(): void
     auth_reset_user_password((int) $tokenData['user_id'], $password);
     auth_mark_password_reset_token_used($token);
 
-    flash('success', 'Password updated successfully. Please sign in.');
+    $userRecord = auth_find_user_by_id((int) $tokenData['user_id']);
+    $autoActivated = false;
+    if ($userRecord && (string) ($userRecord['role'] ?? '') === 'grama_niladhari' && (int) ($userRecord['active'] ?? 0) !== 1) {
+        auth_set_grama_niladhari_active_state((int) $tokenData['user_id'], true);
+        $autoActivated = true;
+    }
+
+    if ($autoActivated) {
+        flash('success', 'Password updated successfully. Your GN account is now active. Please sign in.');
+    } else {
+        flash('success', 'Password updated successfully. Please sign in.');
+    }
     redirect('/login');
 }
 
@@ -334,12 +345,20 @@ function auth_profile_post(): void
 function auth_dmc_pending_approvals(): void
 {
     $pendingUsers = auth_pending_approval_users();
-    $gnUsers = auth_list_grama_niladhari_users();
 
     view('auth::dmc_pending', [
         'pending_users' => $pendingUsers,
-        'gn_users' => $gnUsers,
         'breadcrumb' => 'Pending Approvals',
+    ], 'dashboard');
+}
+
+function auth_dmc_gn_accounts_index(): void
+{
+    $gnUsers = auth_list_grama_niladhari_users();
+
+    view('auth::dmc_gn_accounts', [
+        'gn_users' => $gnUsers,
+        'breadcrumb' => 'GN Accounts',
     ], 'dashboard');
 }
 
@@ -360,7 +379,7 @@ function auth_dmc_approve_user_action(string $userId): void
 function auth_dmc_create_gn_form(): void
 {
     view('auth::dmc_create_gn', array_merge(auth_registration_options(), [
-        'breadcrumb' => 'Create GN Account',
+        'breadcrumb' => 'GN Accounts',
     ]), 'dashboard');
 }
 
@@ -403,22 +422,26 @@ function auth_dmc_create_gn_post(): void
         redirect('/dashboard/admin/grama-niladhari/create');
     }
 
-    $subject = 'resqnet Grama Niladhari account created';
-    $html = '<p>Your account has been created by DMC.</p>'
-        . '<p>Username: <strong>' . e($username) . '</strong></p>'
-        . '<p>Password: <strong>' . e($password) . '</strong></p>'
-        . '<p>Login URL: <a href="' . e(base_url('/login')) . '">' . e(base_url('/login')) . '</a></p>';
+    $token = auth_create_password_reset_token($userId);
+    $resetLink = base_url('/reset-password?token=' . urlencode($token));
 
-    $sent = mail_send($email, $subject, $html, "Username: {$username}\nPassword: {$password}\nLogin: " . base_url('/login'));
+    $subject = 'resqnet Grama Niladhari account access confirmation';
+    $html = '<p>Your Grama Niladhari account has been created by DMC.</p>'
+        . '<p>Username: <strong>' . e($username) . '</strong></p>'
+        . '<p>Use this link to set your password and confirm account access:</p>'
+        . '<p><a href="' . e($resetLink) . '">' . e($resetLink) . '</a></p>'
+        . '<p>After this step, your account becomes active.</p>';
+
+    $sent = mail_send($email, $subject, $html, "Username: {$username}\nActivation link: {$resetLink}");
 
     clear_old_input();
     if ($sent) {
-        flash('success', 'Grama Niladhari account created and credentials emailed.');
+        flash('success', 'GN account created. Activation link sent to email; account becomes active after confirmation.');
     } else {
-        flash('warning', 'Account created, but email sending failed. Share credentials manually.');
+        flash('warning', 'GN account created, but email failed. Share this activation link manually: ' . $resetLink);
     }
 
-    redirect('/dashboard/admin/pending');
+    redirect('/dashboard/admin/grama-niladhari/accounts');
 }
 
 function auth_dmc_resend_gn_credentials(string $userId): void
@@ -428,7 +451,7 @@ function auth_dmc_resend_gn_credentials(string $userId): void
     $user = auth_find_user_by_id((int) $userId);
     if (!$user || $user['role'] !== 'grama_niladhari') {
         flash('error', 'Selected user is not a Grama Niladhari account.');
-        redirect('/dashboard/admin/pending');
+        redirect('/dashboard/admin/grama-niladhari/accounts');
     }
 
     $token = auth_create_password_reset_token((int) $user['user_id']);
@@ -448,7 +471,35 @@ function auth_dmc_resend_gn_credentials(string $userId): void
         flash('warning', 'Email failed. Share this reset link manually: ' . $resetLink);
     }
 
-    redirect('/dashboard/admin/pending');
+    redirect('/dashboard/admin/grama-niladhari/accounts');
+}
+
+function auth_dmc_activate_gn_account_action(string $userId): void
+{
+    csrf_check();
+
+    $affected = auth_set_grama_niladhari_active_state((int) $userId, true);
+    if ($affected > 0) {
+        flash('success', 'GN account activated.');
+    } else {
+        flash('warning', 'No GN account was activated.');
+    }
+
+    redirect('/dashboard/admin/grama-niladhari/accounts');
+}
+
+function auth_dmc_deactivate_gn_account_action(string $userId): void
+{
+    csrf_check();
+
+    $affected = auth_set_grama_niladhari_active_state((int) $userId, false);
+    if ($affected > 0) {
+        flash('success', 'GN account deactivated.');
+    } else {
+        flash('warning', 'No GN account was deactivated.');
+    }
+
+    redirect('/dashboard/admin/grama-niladhari/accounts');
 }
 
 function auth_logout(): void
