@@ -1,5 +1,7 @@
 <?php
 $hideHeader = !empty($hide_header);
+$useContentContainer = (bool) ($content_container ?? true);
+$useAuthShell = $hideHeader && $useContentContainer;
 $pageTitle = $page_title ?? config('app.name');
 ?>
 <!DOCTYPE html>
@@ -52,24 +54,38 @@ $pageTitle = $page_title ?? config('app.name');
     </header>
 <?php endif; ?>
 
-<main class="app-main <?= $hideHeader ? 'auth-shell' : '' ?>">
-    <div class="container">
-        <?php
-        $error = get_flash('error');
-        $warning = get_flash('warning');
-        $success = get_flash('success');
-        ?>
+<main class="app-main<?= $useAuthShell ? ' auth-shell' : '' ?><?= !$useContentContainer ? ' app-main-plain' : '' ?>">
+    <?php
+    $error = get_flash('error');
+    $warning = get_flash('warning');
+    $success = get_flash('success');
+    ?>
 
+    <?php if ($useContentContainer): ?>
+        <div class="container">
+            <?php if ($error || $warning || $success): ?>
+                <div class="flash-stack">
+                    <?php if ($error): ?><div class="app-flash app-flash-error"><?= e($error) ?></div><?php endif; ?>
+                    <?php if ($warning): ?><div class="app-flash app-flash-warning"><?= e($warning) ?></div><?php endif; ?>
+                    <?php if ($success): ?><div class="app-flash app-flash-success"><?= e($success) ?></div><?php endif; ?>
+                </div>
+            <?php endif; ?>
+
+            <?= $content ?>
+        </div>
+    <?php else: ?>
         <?php if ($error || $warning || $success): ?>
-            <div class="flash-stack">
-                <?php if ($error): ?><div class="app-flash app-flash-error"><?= e($error) ?></div><?php endif; ?>
-                <?php if ($warning): ?><div class="app-flash app-flash-warning"><?= e($warning) ?></div><?php endif; ?>
-                <?php if ($success): ?><div class="app-flash app-flash-success"><?= e($success) ?></div><?php endif; ?>
+            <div class="container">
+                <div class="flash-stack">
+                    <?php if ($error): ?><div class="app-flash app-flash-error"><?= e($error) ?></div><?php endif; ?>
+                    <?php if ($warning): ?><div class="app-flash app-flash-warning"><?= e($warning) ?></div><?php endif; ?>
+                    <?php if ($success): ?><div class="app-flash app-flash-success"><?= e($success) ?></div><?php endif; ?>
+                </div>
             </div>
         <?php endif; ?>
 
         <?= $content ?>
-    </div>
+    <?php endif; ?>
 </main>
 
 <script>
