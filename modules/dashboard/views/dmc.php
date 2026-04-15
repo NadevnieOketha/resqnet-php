@@ -9,6 +9,13 @@ $shelters = (array) ($analytics['shelters'] ?? []);
 $requirements = (array) ($analytics['requirements'] ?? []);
 $users = (array) ($analytics['users'] ?? []);
 $sms = (array) ($analytics['sms'] ?? []);
+$reportDistricts = array_values(array_filter(array_map(
+    static fn($value): string => trim((string) $value),
+    (array) ($report_districts ?? [])
+), static fn(string $value): bool => $value !== ''));
+$selectedReportDistrict = trim((string) request_query('district', ''));
+$reportFrom = trim((string) request_query('from', ''));
+$reportTo = trim((string) request_query('to', ''));
 
 $maxValue = static function (array $rows): int {
     $max = 0;
@@ -241,6 +248,53 @@ $smsMonthly = (array) ($sms['monthly'] ?? []);
     .dmc-badge-green { background: #e9f8ee; color: #1f7a3f; }
     .dmc-badge-yellow { background: #fff8e6; color: #a55f00; }
     .dmc-badge-red { background: #fff0ed; color: #b02a00; }
+
+    .dmc-export-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 0.9rem;
+    }
+
+    .dmc-export-form {
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        padding: 0.9rem;
+        display: grid;
+        gap: 0.55rem;
+        background: #fff;
+    }
+
+    .dmc-export-form h3 {
+        margin: 0;
+        font-size: 0.86rem;
+    }
+
+    .dmc-export-row {
+        display: grid;
+        gap: 0.55rem;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .dmc-export-field {
+        display: grid;
+        gap: 0.3rem;
+    }
+
+    .dmc-export-field label {
+        font-size: 0.72rem;
+        color: var(--color-text-subtle);
+    }
+
+    .dmc-export-field select,
+    .dmc-export-field input {
+        width: 100%;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-md);
+        padding: 0.45rem 0.5rem;
+        font: inherit;
+        font-size: 0.78rem;
+        background: #fff;
+    }
 </style>
 
 <section class="welcome">
@@ -248,6 +302,53 @@ $smsMonthly = (array) ($sms['monthly'] ?? []);
     <div class="alert">
         <span class="alert-icon" data-lucide="line-chart"></span>
         <p>Operational analytics are now shown first while all existing DMC management actions remain available below.</p>
+    </div>
+</section>
+
+<section class="section-card" aria-label="Operational report exports">
+    <h2>Operational PDF Exports</h2>
+    <p class="muted">Generate district-wise reports with GN breakdown or download a full operational report of the overview modules.</p>
+    <div class="dmc-export-grid">
+        <form method="GET" action="/dashboard/export/district-report" class="dmc-export-form">
+            <h3>District Operational Report</h3>
+            <div class="dmc-export-field">
+                <label for="district-report-district">District</label>
+                <select id="district-report-district" name="district" required>
+                    <option value="">Select district</option>
+                    <?php foreach ($reportDistricts as $districtOption): ?>
+                        <option value="<?= e($districtOption) ?>" <?= strcasecmp($selectedReportDistrict, $districtOption) === 0 ? 'selected' : '' ?>>
+                            <?= e($districtOption) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="dmc-export-row">
+                <div class="dmc-export-field">
+                    <label for="district-report-from">From date (optional)</label>
+                    <input id="district-report-from" type="date" name="from" value="<?= e($reportFrom) ?>">
+                </div>
+                <div class="dmc-export-field">
+                    <label for="district-report-to">To date (optional)</label>
+                    <input id="district-report-to" type="date" name="to" value="<?= e($reportTo) ?>">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Download District PDF</button>
+        </form>
+
+        <form method="GET" action="/dashboard/export/full-report" class="dmc-export-form">
+            <h3>Full Operational Report</h3>
+            <div class="dmc-export-row">
+                <div class="dmc-export-field">
+                    <label for="full-report-from">From date (optional)</label>
+                    <input id="full-report-from" type="date" name="from" value="<?= e($reportFrom) ?>">
+                </div>
+                <div class="dmc-export-field">
+                    <label for="full-report-to">To date (optional)</label>
+                    <input id="full-report-to" type="date" name="to" value="<?= e($reportTo) ?>">
+                </div>
+            </div>
+            <button type="submit" class="btn">Download Full PDF</button>
+        </form>
     </div>
 </section>
 
