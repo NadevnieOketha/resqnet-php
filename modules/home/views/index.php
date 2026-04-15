@@ -418,7 +418,7 @@ $registerHref = "/register";
                     <h4 class="footer__title">Contact</h4>
                     <ul class="footer__links">
                         <li><a href="#about">About Platform</a></li>
-                        <li><a href="#contact">Contact Section</a></li>
+
                         <li><a href="<?= e($loginHref) ?>">Login</a></li>
                         <li><a href="<?= e(
                             $registerHref,
