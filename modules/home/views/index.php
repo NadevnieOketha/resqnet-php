@@ -1,7 +1,9 @@
 <section class="panel" style="padding:clamp(1.8rem,3vw,2.4rem);">
-    <h1 class="mb-3">Disaster readiness starts with shared information</h1>
+    <h1 class="mb-3">I love u my sweetheart 💕</h1>
     <p class="page-subheading" style="margin-bottom:1.2rem;max-width:820px;">
-        <?= e(config('app.name')) ?> connects early warning operations and post-disaster donation coordination through a role-based platform for General Public, Volunteers, NGOs, Grama Niladhari officers, and DMC administrators.
+        <?= e(
+            config("app.name"),
+        ) ?> connects early warning operations and post-disaster donation coordination through a role-based platform for General Public, Volunteers, NGOs, Grama Niladhari officers, and DMC administrators.
     </p>
 
     <div class="form-actions">
