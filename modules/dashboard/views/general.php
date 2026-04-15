@@ -13,6 +13,11 @@
         <a href="/profile" class="btn btn-primary">Open Profile</a>
     </article>
     <article class="action-card">
+        <h3><span data-lucide="users" style="width:14px;height:14px;vertical-align:-2px;"></span> Be a Volunteer</h3>
+        <p>Use your existing profile data to switch your account role to volunteer.</p>
+        <a href="/dashboard/become-volunteer" class="btn btn-primary">Open Volunteer Form</a>
+    </article>
+    <article class="action-card">
         <h3><span data-lucide="alert-triangle" style="width:14px;height:14px;vertical-align:-2px;"></span> Report a Disaster</h3>
         <p>Submit a verified incident report with location and proof image.</p>
         <a href="/report-disaster" class="btn btn-primary">Open Report Form</a>

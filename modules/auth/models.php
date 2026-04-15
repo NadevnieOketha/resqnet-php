@@ -9,6 +9,19 @@ function auth_allowed_roles(): array
     return ['general', 'volunteer', 'ngo', 'grama_niladhari', 'dmc'];
 }
 
+function auth_table_exists(string $tableName): bool
+{
+    $row = db_fetch(
+        'SELECT COUNT(*) AS cnt
+         FROM information_schema.TABLES
+         WHERE TABLE_SCHEMA = DATABASE()
+           AND TABLE_NAME = ?',
+        [$tableName]
+    );
+
+    return ((int) ($row['cnt'] ?? 0)) > 0;
+}
+
 function auth_find_by_identifier(string $usernameOrEmail): ?array
 {
     return db_fetch(
@@ -310,6 +323,78 @@ function auth_update_profile(int $userId, string $role, array $data): void
 function auth_set_general_sms_alert(int $userId, bool $enabled): int
 {
     return db_update('general_user', ['sms_alert' => $enabled ? 1 : 0], ['user_id' => $userId]);
+}
+
+function auth_convert_general_to_volunteer(int $userId, array $data): void
+{
+    $pdo = db_connect();
+    $pdo->beginTransaction();
+
+    try {
+        $user = auth_find_user_by_id($userId);
+        if (!$user) {
+            throw new RuntimeException('User not found for conversion.');
+        }
+
+        if ((string) ($user['role'] ?? '') !== 'general') {
+            throw new RuntimeException('Only general users can be converted to volunteer.');
+        }
+
+        $volunteerData = [
+            'name' => (string) ($data['name'] ?? ''),
+            'age' => ($data['age'] ?? '') !== '' ? (int) $data['age'] : null,
+            'gender' => ($data['gender'] ?? '') !== '' ? (string) $data['gender'] : null,
+            'contact_number' => (string) ($data['contact_number'] ?? ''),
+            'house_no' => (string) ($data['house_no'] ?? ''),
+            'street' => (string) ($data['street'] ?? ''),
+            'city' => (string) ($data['city'] ?? ''),
+            'district' => (string) ($data['district'] ?? ''),
+            'gn_division' => (string) ($data['gn_division'] ?? ''),
+        ];
+
+        $existingVolunteer = db_fetch('SELECT user_id FROM volunteers WHERE user_id = ?', [$userId]);
+        if ($existingVolunteer) {
+            db_update('volunteers', $volunteerData, ['user_id' => $userId]);
+        } else {
+            db_query(
+                'INSERT INTO volunteers (user_id, name, age, gender, contact_number, house_no, street, city, district, gn_division)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                [
+                    $userId,
+                    $volunteerData['name'],
+                    $volunteerData['age'],
+                    $volunteerData['gender'],
+                    $volunteerData['contact_number'],
+                    $volunteerData['house_no'],
+                    $volunteerData['street'],
+                    $volunteerData['city'],
+                    $volunteerData['district'],
+                    $volunteerData['gn_division'],
+                ]
+            );
+        }
+
+        auth_sync_volunteer_preferences($userId, (array) ($data['preferences'] ?? []));
+        auth_sync_volunteer_skills($userId, (array) ($data['skills'] ?? []));
+
+        db_update('users', ['role' => 'volunteer'], ['user_id' => $userId]);
+
+        if (auth_table_exists('forecast_sms_alert_subscription')) {
+            db_query(
+                'UPDATE forecast_sms_alert_subscription
+                 SET role = ?
+                 WHERE user_id = ?',
+                ['volunteer', $userId]
+            );
+        }
+
+        $pdo->commit();
+    } catch (Throwable $e) {
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
+        throw $e;
+    }
 }
 
 function auth_create_password_reset_token(int $userId, int $ttlMinutes = 30): string
