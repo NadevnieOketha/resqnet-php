@@ -1,10 +1,10 @@
 <?php
 $isAuthenticated = auth_check();
-$appName = (string) config('app.name');
+$appName = (string) config("app.name");
 
-$dashboardHref = $isAuthenticated ? '/dashboard' : '/login';
-$loginHref = '/login';
-$registerHref = '/register';
+$dashboardHref = $isAuthenticated ? "/dashboard" : "/login";
+$loginHref = "/login";
+$registerHref = "/register";
 ?>
 
 <div class="landing-page">
@@ -19,7 +19,9 @@ $registerHref = '/register';
                     Saving Lives Through<br>Smart Disaster Response
                 </h1>
                 <p class="hero__subtitle">
-                    <?= e($appName) ?> connects communities, responders, and relief partners on one trusted platform for
+                    <?= e(
+                        $appName,
+                    ) ?> connects communities, responders, and relief partners on one trusted platform for
                     early warnings, verified incident reporting, and transparent post-disaster donation management.
                 </p>
                 <div class="hero__actions">
@@ -66,10 +68,7 @@ $registerHref = '/register';
 
     <section class="impact-strip">
         <div class="impact-strip__container">
-            <article class="impact-card">
-                <div class="impact-card__value">25 Districts</div>
-                <p class="impact-card__label">Designed for islandwide coordination</p>
-            </article>
+
             <article class="impact-card">
                 <div class="impact-card__value">5 Core Roles</div>
                 <p class="impact-card__label">Public, Volunteer, NGO, GN, and DMC</p>
@@ -363,7 +362,9 @@ $registerHref = '/register';
         <div class="cta__container">
             <h2 class="cta__title">Ready to Make a Difference?</h2>
             <p class="cta__subtitle">
-                Join <?= e($appName) ?> and help build resilient communities through timely alerts, coordinated response,
+                Join <?= e(
+                    $appName,
+                ) ?> and help build resilient communities through timely alerts, coordinated response,
                 and transparent donation delivery.
             </p>
             <div class="cta__actions">
@@ -382,17 +383,23 @@ $registerHref = '/register';
             <div class="footer__grid">
                 <div>
                     <div class="footer__brand">
-                        <img src="<?= asset('img/logo.svg') ?>" alt="<?= e($appName) ?>">
+                        <img src="<?= asset("img/logo.svg") ?>" alt="<?= e(
+    $appName,
+) ?>">
                     </div>
                     <p class="footer__desc">
-                        <?= e($appName) ?> is a disaster early warning and post-disaster donation management platform built
+                        <?= e(
+                            $appName,
+                        ) ?> is a disaster early warning and post-disaster donation management platform built
                         for coordinated public safety and accountable relief operations.
                     </p>
                 </div>
                 <div>
                     <h4 class="footer__title">Platform</h4>
                     <ul class="footer__links">
-                        <li><a href="<?= e($dashboardHref) ?>">Dashboard</a></li>
+                        <li><a href="<?= e(
+                            $dashboardHref,
+                        ) ?>">Dashboard</a></li>
                         <li><a href="/register?role=volunteer">Become a Volunteer</a></li>
                         <li><a href="/register?role=ngo">Join as NGO</a></li>
                         <li><a href="#workflow">How It Works</a></li>
@@ -413,13 +420,17 @@ $registerHref = '/register';
                         <li><a href="#about">About Platform</a></li>
                         <li><a href="#contact">Contact Section</a></li>
                         <li><a href="<?= e($loginHref) ?>">Login</a></li>
-                        <li><a href="<?= e($registerHref) ?>">Create Account</a></li>
+                        <li><a href="<?= e(
+                            $registerHref,
+                        ) ?>">Create Account</a></li>
                     </ul>
                 </div>
             </div>
             <div class="footer__bottom">
                 <div class="footer__copyright">
-                    © <?= e((string) date('Y')) ?> <?= e($appName) ?>. All rights reserved.
+                    © <?= e((string) date("Y")) ?> <?= e(
+     $appName,
+ ) ?>. All rights reserved.
                 </div>
                 <div class="footer__social">
                     <a href="/forum" class="social-link" aria-label="Open Forum">
@@ -431,7 +442,9 @@ $registerHref = '/register';
                     <a href="/make-donation" class="social-link" aria-label="Make Donation">
                         <span data-lucide="heart-handshake"></span>
                     </a>
-                    <a href="<?= e($dashboardHref) ?>" class="social-link" aria-label="Dashboard">
+                    <a href="<?= e(
+                        $dashboardHref,
+                    ) ?>" class="social-link" aria-label="Dashboard">
                         <span data-lucide="layout-dashboard"></span>
                     </a>
                 </div>
