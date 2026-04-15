@@ -371,8 +371,20 @@ function auth_approve_user(int $userId): int
 
 function auth_create_grama_niladhari_account(array $data): int
 {
-    $data['active'] = 1;
+    // GN accounts stay inactive until the officer confirms access via the email link.
+    $data['active'] = 0;
     return auth_create_user($data, 'grama_niladhari');
+}
+
+function auth_set_grama_niladhari_active_state(int $userId, bool $active): int
+{
+    return db_query(
+        'UPDATE users
+         SET active = ?
+         WHERE user_id = ?
+           AND role = ?',
+        [$active ? 1 : 0, $userId, 'grama_niladhari']
+    )->rowCount();
 }
 
 function auth_list_grama_niladhari_users(): array

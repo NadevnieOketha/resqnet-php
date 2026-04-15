@@ -69,7 +69,11 @@
         <?php foreach (($tasks ?? []) as $task): ?>
           <?php
             $district = (string) ($task['district'] ?? '');
-            $availableVolunteers = disaster_reports_list_active_volunteers($district);
+            $availableVolunteers = disaster_reports_list_active_volunteers_for_report_day(
+              $district,
+              (string) ($task['disaster_datetime'] ?? ''),
+              (int) ($task['report_id'] ?? 0)
+            );
             $notes = (array) (($task_notes ?? [])[(int) ($task['id'] ?? 0)] ?? []);
           ?>
           <tr>

@@ -15,6 +15,10 @@
         <span class="icon" data-lucide="cloud-rain"></span>
         <span>Forecast Dashboard</span>
     </a>
+    <a href="/forum" class="nav-item <?= is_current_url('/forum') ? 'active' : '' ?>" data-section="forum">
+        <span class="icon" data-lucide="message-square"></span>
+        <span>Forum</span>
+    </a>
     <a href="/dashboard/gn/donation-requests" class="nav-item <?= is_current_url('/dashboard/gn/donation-requests') ? 'active' : '' ?>" data-section="donation-requests">
         <span class="icon" data-lucide="clipboard-list"></span>
         <span>Donation Requests</span>

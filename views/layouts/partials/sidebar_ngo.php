@@ -23,6 +23,10 @@
         <span class="icon" data-lucide="cloud-rain"></span>
         <span>Forecast Dashboard</span>
     </a>
+    <a href="/forum" class="nav-item <?= is_current_url('/forum') ? 'active' : '' ?>" data-section="forum">
+        <span class="icon" data-lucide="message-square"></span>
+        <span>Forum</span>
+    </a>
     <a href="/profile" class="nav-item <?= is_current_url('/profile') ? 'active' : '' ?>" data-section="profile-settings">
         <span class="icon" data-lucide="user"></span>
         <span>Profile Settings</span>

@@ -2,7 +2,7 @@
     <h1>Create Grama Niladhari Account</h1>
     <div class="alert">
         <span class="alert-icon" data-lucide="user-plus"></span>
-        <p>Create a GN account and send credentials to the official email.</p>
+        <p>Create a GN account and send an email confirmation link to activate access.</p>
     </div>
 </section>
 
@@ -84,7 +84,7 @@
 
         <div class="form-actions">
             <button type="submit" class="btn btn-primary">Create Account</button>
-            <a href="/dashboard/admin/pending" class="btn">Back</a>
+            <a href="/dashboard/admin/grama-niladhari/accounts" class="btn">Back</a>
         </div>
     </form>
 </section>

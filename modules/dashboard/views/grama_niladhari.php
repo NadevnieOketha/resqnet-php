@@ -34,6 +34,22 @@
     </article>
 </section>
 
+<?php $gnSnapshot = (array) ($gn_snapshot ?? []); ?>
+<section class="kpi-grid" aria-label="GN division snapshot">
+    <article class="kpi-card">
+        <div class="label">Shelter Occupancy</div>
+        <div class="value" style="font-size:1.2rem;"><?= (int) ($gnSnapshot['occupancy_total'] ?? 0) ?>/<?= (int) ($gnSnapshot['capacity_total'] ?? 0) ?></div>
+    </article>
+    <article class="kpi-card">
+        <div class="label">Open Requests</div>
+        <div class="value"><?= (int) ($gnSnapshot['open_requests'] ?? 0) ?></div>
+    </article>
+    <article class="kpi-card">
+        <div class="label">Active Reports</div>
+        <div class="value"><?= (int) ($gnSnapshot['active_reports'] ?? 0) ?></div>
+    </article>
+</section>
+
 <section class="section-card" aria-label="Active disaster notifications" style="margin-top:1rem;">
     <h2>Disaster Notifications</h2>
     <?php $notifications = (array) ($gn_disaster_notifications ?? []); ?>

@@ -19,6 +19,10 @@
         <span class="icon" data-lucide="cloud-rain"></span>
         <span>Forecast Dashboard</span>
     </a>
+    <a href="/forum" class="nav-item <?= is_current_url('/forum') ? 'active' : '' ?>" data-section="forum">
+        <span class="icon" data-lucide="message-square"></span>
+        <span>Forum</span>
+    </a>
     <a href="/make-donation" class="nav-item <?= is_current_url('/make-donation') ? 'active' : '' ?>" data-section="make-donation">
         <span class="icon" data-lucide="gift"></span>
         <span>Make a Donation</span>

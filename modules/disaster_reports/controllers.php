@@ -157,6 +157,7 @@ function disaster_reports_store_action(): void
 
 function disaster_reports_review_index(): void
 {
+    $pendingReports = disaster_reports_list_pending();
     $approvedReports = disaster_reports_list_approved();
     $assignedCounts = [];
     $approvedIds = [];
@@ -172,8 +173,10 @@ function disaster_reports_review_index(): void
 
     view('disaster_reports::review', [
         'breadcrumb' => 'Disaster Reports',
-        'pending_reports' => disaster_reports_list_pending(),
+        'pending_reports' => $pendingReports,
+        'pending_reports_grouped' => disaster_reports_group_by_gn_and_disaster_type($pendingReports),
         'approved_reports' => $approvedReports,
+        'approved_reports_grouped' => disaster_reports_group_by_gn_and_disaster_type($approvedReports),
         'assigned_counts' => $assignedCounts,
         'assigned_volunteers_by_report' => $assignedVolunteersByReport,
     ], 'dashboard');

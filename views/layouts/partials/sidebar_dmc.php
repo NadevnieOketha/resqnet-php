@@ -7,6 +7,14 @@
         <span class="icon" data-lucide="file-text"></span>
         <span>Disaster Reports</span>
     </a>
+    <a href="/dashboard/admin/forum-posts" class="nav-item <?= is_current_url('/dashboard/admin/forum-posts') ? 'active' : '' ?>" data-section="forum-posts">
+        <span class="icon" data-lucide="message-square"></span>
+        <span>Forum Posts</span>
+    </a>
+    <a href="/forum" class="nav-item <?= is_current_url('/forum') ? 'active' : '' ?>" data-section="forum-public">
+        <span class="icon" data-lucide="messages-square"></span>
+        <span>Public Forum</span>
+    </a>
         <a href="/dashboard/admin/volunteer-tasks" class="nav-item <?= is_current_url('/dashboard/admin/volunteer-tasks') ? 'active' : '' ?>" data-section="volunteer-assignments">
             <span class="icon" data-lucide="clipboard-check"></span>
             <span>Volunteer Assignments</span>
@@ -27,9 +35,9 @@
         <span class="icon" data-lucide="users"></span>
         <span>Pending Approvals</span>
     </a>
-    <a href="/dashboard/admin/grama-niladhari/create" class="nav-item <?= is_current_url('/dashboard/admin/grama-niladhari/create') ? 'active' : '' ?>" data-section="gn-registry">
-        <span class="icon" data-lucide="user-plus"></span>
-        <span>Create GN Account</span>
+    <a href="/dashboard/admin/grama-niladhari/accounts" class="nav-item <?= (is_current_url('/dashboard/admin/grama-niladhari/accounts') || is_current_url('/dashboard/admin/grama-niladhari/create')) ? 'active' : '' ?>" data-section="gn-registry">
+        <span class="icon" data-lucide="user-cog"></span>
+        <span>GN Accounts</span>
     </a>
     <a href="/profile" class="nav-item <?= is_current_url('/profile') ? 'active' : '' ?>" data-section="profile-settings">
         <span class="icon" data-lucide="user"></span>
