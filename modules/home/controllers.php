@@ -6,5 +6,8 @@
 
 function home_index(): void
 {
-    view('home::index', [], 'main');
+    view('home::index', [
+        'content_container' => false,
+        'page_title' => 'Home',
+    ], 'main');
 }

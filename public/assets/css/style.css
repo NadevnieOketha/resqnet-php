@@ -1,6 +1,7 @@
 @import url("./core.css");
 @import url("./dashboard.css");
 @import url("./roles.css");
+@import url("./landing.css");
 
 :root {
   --app-content-max: 1080px;
@@ -8,6 +9,10 @@
 
 .app-main {
   padding: clamp(1.5rem, 3vw, 2.75rem) 0 3rem;
+}
+
+.app-main.app-main-plain {
+  padding: 0;
 }
 
 .app-main .container {
