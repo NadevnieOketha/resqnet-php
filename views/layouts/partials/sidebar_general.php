@@ -31,6 +31,10 @@
         <span class="icon" data-lucide="package-search"></span>
         <span>My Donations</span>
     </a>
+    <a href="/dashboard/become-volunteer" class="nav-item <?= is_current_url('/dashboard/become-volunteer') ? 'active' : '' ?>" data-section="become-volunteer">
+        <span class="icon" data-lucide="users"></span>
+        <span>Be a Volunteer</span>
+    </a>
     <a href="/profile" class="nav-item <?= is_current_url('/profile') ? 'active' : '' ?>" data-section="profile-settings">
         <span class="icon" data-lucide="user"></span>
         <span>Profile Settings</span>

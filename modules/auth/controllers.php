@@ -342,6 +342,60 @@ function auth_profile_post(): void
     redirect('/profile');
 }
 
+function auth_become_volunteer_form(): void
+{
+    $userId = (int) auth_id();
+    $profile = auth_get_profile($userId, 'general');
+
+    if (!$profile) {
+        flash('error', 'Unable to load your profile details for volunteer conversion.');
+        redirect('/dashboard');
+    }
+
+    view('auth::become_volunteer', array_merge(auth_registration_options(), [
+        'profile' => $profile,
+        'breadcrumb' => 'Become Volunteer',
+    ]), 'dashboard');
+}
+
+function auth_become_volunteer_post(): void
+{
+    csrf_check();
+
+    $userId = (int) auth_id();
+    $user = auth_find_user_by_id($userId);
+    if (!$user || (string) ($user['role'] ?? '') !== 'general') {
+        abort(403, 'Only general users can use this action.');
+    }
+
+    $profile = auth_get_profile($userId, 'general') ?? [];
+    $errors = [];
+    $payload = auth_collect_become_volunteer_fields($errors, (array) $profile);
+
+    if (!empty($errors)) {
+        flash('error', implode(' ', $errors));
+        flash_old_input();
+        redirect('/dashboard/become-volunteer');
+    }
+
+    try {
+        auth_convert_general_to_volunteer($userId, $payload);
+    } catch (\Throwable) {
+        flash('error', 'Unable to convert account to volunteer at this time.');
+        flash_old_input();
+        redirect('/dashboard/become-volunteer');
+    }
+
+    $freshUser = auth_find_user_by_id($userId);
+    if ($freshUser) {
+        $_SESSION['user'] = auth_build_session_user($freshUser);
+    }
+
+    clear_old_input();
+    flash('success', 'Your account has been converted to Volunteer successfully.');
+    redirect('/dashboard');
+}
+
 function auth_dmc_pending_approvals(): void
 {
     $pendingUsers = auth_pending_approval_users();
@@ -679,4 +733,72 @@ function auth_resolve_gn_division_input(): string
     }
 
     return $selected;
+}
+
+function auth_collect_become_volunteer_fields(array &$errors, array $profile = []): array
+{
+    $name = trim((string) request_input('name', (string) ($profile['name'] ?? '')));
+    $age = trim((string) request_input('age', ''));
+    $gender = trim((string) request_input('gender', ''));
+    $contact = trim((string) request_input('contact_number', (string) ($profile['contact_number'] ?? '')));
+    $houseNo = trim((string) request_input('house_no', (string) ($profile['house_no'] ?? '')));
+    $street = trim((string) request_input('street', (string) ($profile['street'] ?? '')));
+    $city = trim((string) request_input('city', (string) ($profile['city'] ?? '')));
+    $district = trim((string) request_input('district', (string) ($profile['district'] ?? '')));
+    $gnDivision = auth_resolve_gn_division_input();
+
+    if ($gnDivision === '') {
+        $gnDivision = trim((string) ($profile['gn_division'] ?? ''));
+    }
+
+    $preferences = request_input('preferences', []);
+    $skills = request_input('skills', []);
+
+    if (!is_array($preferences)) {
+        $preferences = [];
+    }
+    if (!is_array($skills)) {
+        $skills = [];
+    }
+
+    if ($name === '') $errors[] = 'Name is required.';
+    if ($contact === '') $errors[] = 'Contact number is required.';
+    if ($houseNo === '') $errors[] = 'House number is required.';
+    if ($street === '') $errors[] = 'Street is required.';
+    if ($city === '') $errors[] = 'City is required.';
+    if ($district === '') $errors[] = 'District is required.';
+    if ($gnDivision === '') $errors[] = 'Grama Niladhari division is required.';
+
+    if ($age !== '') {
+        if (!ctype_digit($age)) {
+            $errors[] = 'Age must be a valid number.';
+        } elseif ((int) $age < 16 || (int) $age > 100) {
+            $errors[] = 'Age must be between 16 and 100.';
+        }
+    }
+
+    if ($gender !== '' && !in_array($gender, config('auth_options.genders', []), true)) {
+        $errors[] = 'Please select a valid gender.';
+    }
+
+    $skills = array_map('strval', $skills);
+    $preferences = array_map('strval', $preferences);
+
+    if (count(array_filter($skills, static fn(string $item): bool => trim($item) !== '')) === 0) {
+        $errors[] = 'Please select at least one specialized skill.';
+    }
+
+    return [
+        'name' => $name,
+        'age' => $age,
+        'gender' => $gender,
+        'contact_number' => $contact,
+        'house_no' => $houseNo,
+        'street' => $street,
+        'city' => $city,
+        'district' => $district,
+        'gn_division' => $gnDivision,
+        'preferences' => $preferences,
+        'skills' => $skills,
+    ];
 }
