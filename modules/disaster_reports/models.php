@@ -227,7 +227,8 @@ function disaster_reports_find_by_id(int $reportId): ?array
 {
     return db_fetch(
         'SELECT report_id, reporter_name, contact_number, disaster_type, other_disaster_type,
-                disaster_datetime, district, gn_division, location, description, status, submitted_at, verified_at
+                disaster_datetime, district, gn_division, location, description, proof_image_path,
+                confirmation, status, submitted_at, verified_at
          FROM disaster_reports
          WHERE report_id = ?
          LIMIT 1',

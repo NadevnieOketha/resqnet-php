@@ -44,6 +44,7 @@ route('POST', '/dashboard/become-volunteer', 'auth_become_volunteer_post', ['mid
 route('GET',  '/report-disaster',                 'disaster_reports_create_form',   ['middleware_auth', fn() => middleware_roles(['general', 'volunteer', 'grama_niladhari', 'dmc'])]);
 route('POST', '/report-disaster',                 'disaster_reports_store_action',  ['middleware_auth', fn() => middleware_roles(['general', 'volunteer', 'grama_niladhari', 'dmc'])]);
 route('GET',  '/dashboard/reports',               'disaster_reports_review_index',  ['middleware_auth', fn() => middleware_role('dmc')]);
+route('GET',  '/dashboard/reports/{reportId}',    'disaster_reports_detail',        ['middleware_auth', fn() => middleware_role('dmc')]);
 route('POST', '/dashboard/reports/{reportId}/verify', 'disaster_reports_verify_action', ['middleware_auth', fn() => middleware_role('dmc')]);
 route('POST', '/dashboard/reports/{reportId}/reject', 'disaster_reports_reject_action', ['middleware_auth', fn() => middleware_role('dmc')]);
 route('POST', '/dashboard/reports/{reportId}/assign-volunteers', 'disaster_reports_assign_volunteers_action', ['middleware_auth', fn() => middleware_role('dmc')]);
