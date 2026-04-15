@@ -41,10 +41,10 @@ $avatarInitial = strtoupper(substr($displayName, 0, 1));
     <header class="topbar">
         <div class="breadcrumb"><?= e($roleTitle) ?> / <span><?= e($crumb) ?></span></div>
         <div class="topbar-right">
-            <div class="hotline" role="button" tabindex="0" aria-label="Hotline 117">
+            <a href="tel:117" class="hotline" aria-label="Call DMC Hotline 117">
                 <span class="hotline-icon" data-lucide="phone"></span>
                 Hotline: <strong>117</strong>
-            </div>
+            </a>
             <div class="user-avatar" aria-label="Current user">
                 <span style="font-weight:700;"><?= e($avatarInitial !== '' ? $avatarInitial : 'U') ?></span>
             </div>
