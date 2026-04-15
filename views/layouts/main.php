@@ -24,7 +24,6 @@ $pageTitle = $page_title ?? config('app.name');
         <div class="site-header__inner">
             <a href="/" class="brand-inline" aria-label="<?= e(config('app.name')) ?> home">
                 <img src="<?= asset('img/logo.svg') ?>" alt="<?= e(config('app.name')) ?> logo">
-                <span><?= e(config('app.name')) ?></span>
             </a>
             <nav class="primary-nav" aria-label="Primary navigation">
                 <ul>
