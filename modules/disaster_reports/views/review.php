@@ -15,7 +15,7 @@
   .date-time { display:flex; flex-direction:column; gap:0.2rem; color:#666; }
   .type-strong { font-weight:700; }
   .action-pills { display:flex; gap:0.55rem; align-items:center; }
-  .pill { all:unset; cursor:pointer; font-size:0.55rem; font-weight:600; padding:0.5rem 1.05rem; border-radius:999px; background:#e3e3e3; display:inline-flex; align-items:center; gap:0.35rem; }
+  .pill { all:unset; cursor:pointer; font-size:0.55rem; font-weight:600; padding:0.5rem 1.05rem; border-radius:999px; background:#e3e3e3; display:inline-flex; align-items:center; gap:0.35rem; text-decoration:none; color:inherit; }
   .pill-danger { background:#d91e18; color:#fff; }
   .pill svg { width:14px; height:14px; }
   .volunteer-stack { display:grid; gap:0.55rem; min-width:250px; }
@@ -91,6 +91,7 @@
                 <td data-label="Description/Notes"><?= e((string) ($report['description'] ?? '-')) ?></td>
                 <td data-label="Actions">
                   <div class="action-pills">
+                    <a href="/dashboard/reports/<?= (int) $report['report_id'] ?>" class="pill"><span data-lucide="eye"></span><span>View</span></a>
                     <form method="POST" action="/dashboard/reports/<?= (int) $report['report_id'] ?>/verify" class="inline-form">
                       <?= csrf_field() ?>
                       <button type="submit" class="pill"><span data-lucide="check"></span><span>Verify</span></button>
@@ -194,6 +195,7 @@
                 </td>
                 <td data-label="Actions">
                   <div class="action-pills" style="flex-direction:column;align-items:flex-start;gap:0.4rem;">
+                    <a href="/dashboard/reports/<?= (int) $report['report_id'] ?>" class="pill"><span data-lucide="eye"></span><span>View</span></a>
                     <form method="POST" action="/dashboard/reports/<?= (int) $report['report_id'] ?>/assign-volunteers" class="inline-form">
                       <?= csrf_field() ?>
                       <button type="submit" class="pill"><span data-lucide="user-plus"></span><span>Assign volunteers</span></button>

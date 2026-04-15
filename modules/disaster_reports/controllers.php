@@ -225,6 +225,32 @@ function disaster_reports_review_index(): void
     ], 'dashboard');
 }
 
+function disaster_reports_detail(string $reportId): void
+{
+    $id = (int) $reportId;
+    if ($id <= 0) {
+        flash('error', 'Invalid disaster report id.');
+        redirect('/dashboard/reports');
+    }
+
+    $report = disaster_reports_find_by_id($id);
+    if (!$report) {
+        flash('error', 'Disaster report not found.');
+        redirect('/dashboard/reports');
+    }
+
+    $assignmentsByReport = disaster_reports_list_assignments_by_report_ids([$id]);
+    $assignedVolunteers = (array) ($assignmentsByReport[$id] ?? []);
+    $assignedCount = disaster_reports_assigned_volunteer_count($id);
+
+    view('disaster_reports::detail', [
+        'breadcrumb' => 'Disaster Report Details',
+        'report' => $report,
+        'assigned_volunteers' => $assignedVolunteers,
+        'assigned_count' => $assignedCount,
+    ], 'dashboard');
+}
+
 function disaster_reports_verify_action(string $reportId): void
 {
     csrf_check();
