@@ -7,6 +7,10 @@
         <span class="icon" data-lucide="file-text"></span>
         <span>Disaster Reports</span>
     </a>
+    <a href="/report-disaster" class="nav-item <?= is_current_url('/report-disaster') ? 'active' : '' ?>" data-section="report-disaster">
+        <span class="icon" data-lucide="alert-triangle"></span>
+        <span>Report a Disaster</span>
+    </a>
     <a href="/dashboard/admin/forum-posts" class="nav-item <?= is_current_url('/dashboard/admin/forum-posts') ? 'active' : '' ?>" data-section="forum-posts">
         <span class="icon" data-lucide="message-square"></span>
         <span>Forum Posts</span>

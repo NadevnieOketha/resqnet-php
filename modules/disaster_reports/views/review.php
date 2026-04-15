@@ -1,5 +1,6 @@
 <style>
-  h1 { margin:0 0 1.4rem; }
+  .page-head { display:flex; justify-content:space-between; align-items:center; gap:0.8rem; margin:0 0 1.2rem; flex-wrap:wrap; }
+  .page-head h1 { margin:0; }
   .tabs { display:flex; gap:2.75rem; border-bottom:1px solid var(--color-border); margin-bottom:1rem; position:relative; }
   .tab-btn { all:unset; cursor:pointer; font-size:0.7rem; font-weight:600; padding:0.9rem 0; color:#222; }
   .tab-btn[aria-selected='true'] { color:#000; }
@@ -38,7 +39,10 @@
   }
 </style>
 
-<h1>Disaster Reports</h1>
+<div class="page-head">
+  <h1>Disaster Reports</h1>
+  <a href="/report-disaster" class="btn btn-primary">Report a Disaster</a>
+</div>
 <div class="tabs" role="tablist">
   <button class="tab-btn" id="tab-pending" role="tab" aria-controls="panel-pending" aria-selected="true">Pending Reports</button>
   <button class="tab-btn" id="tab-approved" role="tab" aria-controls="panel-approved" aria-selected="false">Approved Reports</button>
