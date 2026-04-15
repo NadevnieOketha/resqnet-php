@@ -250,6 +250,261 @@
   margin: 0;
 }
 
+.landing-page .operations {
+  padding: var(--section-spacing) 0;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  background: linear-gradient(180deg, #fff 0%, #fcfcfc 100%);
+}
+
+.landing-page .operations__container {
+  max-width: var(--hero-max-width);
+  margin: 0 auto;
+  padding: 0 var(--space-6);
+}
+
+.landing-page .operations__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.landing-page .operation-step {
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+}
+
+.landing-page .operation-step__index {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  height: 30px;
+  border-radius: var(--radius-pill);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #111;
+  background: var(--color-accent);
+  margin-bottom: var(--space-3);
+}
+
+.landing-page .operation-step__title {
+  margin: 0 0 var(--space-2);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.landing-page .operation-step__desc {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+  color: var(--color-text-subtle);
+}
+
+.landing-page .roles-showcase {
+  padding: var(--section-spacing) 0;
+  background: var(--color-surface-alt);
+}
+
+.landing-page .roles-showcase__container {
+  max-width: var(--hero-max-width);
+  margin: 0 auto;
+  padding: 0 var(--space-6);
+}
+
+.landing-page .roles-showcase__grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.landing-page .role-card {
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-height: 250px;
+}
+
+.landing-page .role-card__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--color-text-subtle);
+}
+
+.landing-page .role-card__top svg {
+  width: 18px;
+  height: 18px;
+}
+
+.landing-page .role-card__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 24px;
+  padding: 0 10px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #444;
+  background: #fafafa;
+}
+
+.landing-page .role-card__title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.landing-page .role-card__desc {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+  color: var(--color-text-subtle);
+  flex: 1;
+}
+
+.landing-page .role-card__link {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: #111;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+  text-decoration-color: rgba(17, 17, 17, 0.25);
+}
+
+.landing-page .role-card__link:hover {
+  text-decoration-color: rgba(17, 17, 17, 0.6);
+}
+
+.landing-page .assurance {
+  padding: var(--section-spacing) 0;
+}
+
+.landing-page .assurance__container {
+  max-width: var(--hero-max-width);
+  margin: 0 auto;
+  padding: 0 var(--space-6);
+}
+
+.landing-page .assurance__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.landing-page .assurance-item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-4);
+  align-items: start;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+}
+
+.landing-page .assurance-item__icon {
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  background: #111;
+  color: #fff;
+}
+
+.landing-page .assurance-item__icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.landing-page .assurance-item h3 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.landing-page .assurance-item p {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+  color: var(--color-text-subtle);
+}
+
+.landing-page .faq {
+  padding: var(--section-spacing) 0;
+  background: var(--color-surface-alt);
+  border-top: 1px solid var(--color-border);
+}
+
+.landing-page .faq__container {
+  max-width: var(--hero-max-width);
+  margin: 0 auto;
+  padding: 0 var(--space-6);
+}
+
+.landing-page .faq__list {
+  max-width: 860px;
+  margin: 0 auto;
+  display: grid;
+  gap: var(--space-3);
+}
+
+.landing-page .faq-item {
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4) var(--space-5);
+}
+
+.landing-page .faq-item summary {
+  list-style: none;
+  cursor: pointer;
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.landing-page .faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.landing-page .faq-item summary::after {
+  content: "+";
+  font-size: 1.1rem;
+  line-height: 1;
+  color: var(--color-text-subtle);
+}
+
+.landing-page .faq-item[open] summary::after {
+  content: "-";
+}
+
+.landing-page .faq-item p {
+  margin: var(--space-3) 0 0;
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+  color: var(--color-text-subtle);
+}
+
 .landing-page .cta {
   padding: var(--section-spacing) 0;
   background: #111;
@@ -416,6 +671,18 @@
   .landing-page .hero__image-wrapper {
     max-width: 100%;
   }
+
+  .landing-page .operations__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .landing-page .roles-showcase__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .landing-page .assurance__grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 768px) {
@@ -437,6 +704,14 @@
   }
 
   .landing-page .features__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .landing-page .operations__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .landing-page .roles-showcase__grid {
     grid-template-columns: 1fr;
   }
 

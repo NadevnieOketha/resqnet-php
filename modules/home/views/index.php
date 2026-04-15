@@ -128,7 +128,162 @@ $registerHref = '/register';
         </div>
     </section>
 
-    <section class="cta" id="about">
+    <section class="operations" id="workflow">
+        <div class="operations__container">
+            <div class="section-header">
+                <h2 class="section-title">How Response Works</h2>
+                <p class="section-subtitle">
+                    A simple operational flow from warning to verified relief delivery.
+                </p>
+            </div>
+            <div class="operations__grid">
+                <article class="operation-step">
+                    <div class="operation-step__index">01</div>
+                    <h3 class="operation-step__title">Early Alerts Published</h3>
+                    <p class="operation-step__desc">
+                        DMC teams share verified warning information and readiness instructions.
+                    </p>
+                </article>
+                <article class="operation-step">
+                    <div class="operation-step__index">02</div>
+                    <h3 class="operation-step__title">Incidents Reported</h3>
+                    <p class="operation-step__desc">
+                        Citizens and officers submit location-based reports for rapid assessment.
+                    </p>
+                </article>
+                <article class="operation-step">
+                    <div class="operation-step__index">03</div>
+                    <h3 class="operation-step__title">Teams Coordinated</h3>
+                    <p class="operation-step__desc">
+                        Volunteers and NGOs are matched by role, district, and operational need.
+                    </p>
+                </article>
+                <article class="operation-step">
+                    <div class="operation-step__index">04</div>
+                    <h3 class="operation-step__title">Relief Tracked</h3>
+                    <p class="operation-step__desc">
+                        Donation requests, inventories, and safe locations are managed transparently.
+                    </p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="roles-showcase" id="roles">
+        <div class="roles-showcase__container">
+            <div class="section-header">
+                <h2 class="section-title">Built for Every Response Role</h2>
+                <p class="section-subtitle">
+                    Role-specific access keeps operations secure while enabling faster collaboration.
+                </p>
+            </div>
+            <div class="roles-showcase__grid">
+                <article class="role-card">
+                    <div class="role-card__top">
+                        <span class="role-card__badge">Public</span>
+                        <span data-lucide="user-round"></span>
+                    </div>
+                    <h3 class="role-card__title">General Public</h3>
+                    <p class="role-card__desc">Receive alerts, report incidents, and submit donation requests.</p>
+                    <a href="/register?role=general" class="role-card__link">Create Public Account</a>
+                </article>
+                <article class="role-card">
+                    <div class="role-card__top">
+                        <span class="role-card__badge">Approved</span>
+                        <span data-lucide="handshake"></span>
+                    </div>
+                    <h3 class="role-card__title">Volunteer</h3>
+                    <p class="role-card__desc">Support response tasks based on skills and district availability.</p>
+                    <a href="/register?role=volunteer" class="role-card__link">Apply as Volunteer</a>
+                </article>
+                <article class="role-card">
+                    <div class="role-card__top">
+                        <span class="role-card__badge">Approved</span>
+                        <span data-lucide="building-2"></span>
+                    </div>
+                    <h3 class="role-card__title">NGO</h3>
+                    <p class="role-card__desc">Manage collection points, donation intake, and inventory updates.</p>
+                    <a href="/register?role=ngo" class="role-card__link">Register NGO</a>
+                </article>
+                <article class="role-card">
+                    <div class="role-card__top">
+                        <span class="role-card__badge">DMC Managed</span>
+                        <span data-lucide="map-pinned"></span>
+                    </div>
+                    <h3 class="role-card__title">Grama Niladhari</h3>
+                    <p class="role-card__desc">Verify local reports and coordinate location-specific relief needs.</p>
+                    <a href="/login" class="role-card__link">Officer Login</a>
+                </article>
+                <article class="role-card">
+                    <div class="role-card__top">
+                        <span class="role-card__badge">Admin</span>
+                        <span data-lucide="shield"></span>
+                    </div>
+                    <h3 class="role-card__title">DMC</h3>
+                    <p class="role-card__desc">Approve accounts, oversee reports, and govern platform operations.</p>
+                    <a href="/login" class="role-card__link">Admin Login</a>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="assurance" id="about">
+        <div class="assurance__container">
+            <div class="section-header">
+                <h2 class="section-title">Secure, Governed, and Field-Ready</h2>
+                <p class="section-subtitle">
+                    The platform is designed for accountable operations in high-pressure conditions.
+                </p>
+            </div>
+            <div class="assurance__grid">
+                <article class="assurance-item">
+                    <span class="assurance-item__icon" data-lucide="badge-check"></span>
+                    <div>
+                        <h3>Controlled Account Lifecycle</h3>
+                        <p>Volunteer and NGO accounts follow DMC approval before activation.</p>
+                    </div>
+                </article>
+                <article class="assurance-item">
+                    <span class="assurance-item__icon" data-lucide="lock-keyhole"></span>
+                    <div>
+                        <h3>Role-Based Permissions</h3>
+                        <p>Each role sees only the workflows and data required for its responsibilities.</p>
+                    </div>
+                </article>
+                <article class="assurance-item">
+                    <span class="assurance-item__icon" data-lucide="clipboard-list"></span>
+                    <div>
+                        <h3>Traceable Operations</h3>
+                        <p>Reports, requests, and inventory actions are consistently tracked across modules.</p>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="faq" id="faq">
+        <div class="faq__container">
+            <div class="section-header">
+                <h2 class="section-title">Frequently Asked Questions</h2>
+            </div>
+            <div class="faq__list">
+                <details class="faq-item">
+                    <summary>Do volunteer and NGO accounts activate immediately?</summary>
+                    <p>No. They remain pending until approved by DMC administrators.</p>
+                </details>
+                <details class="faq-item">
+                    <summary>Can unregistered users make donations?</summary>
+                    <p>Yes. Guest donations are supported through the public donation flow.</p>
+                </details>
+                <details class="faq-item">
+                    <summary>Who can verify disaster reports?</summary>
+                    <p>DMC handles report verification and coordinates assignments for response teams.</p>
+                </details>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta">
         <div class="cta__container">
             <h2 class="cta__title">Ready to Make a Difference?</h2>
             <p class="cta__subtitle">
@@ -164,7 +319,7 @@ $registerHref = '/register';
                         <li><a href="<?= e($dashboardHref) ?>">Dashboard</a></li>
                         <li><a href="/register?role=volunteer">Become a Volunteer</a></li>
                         <li><a href="/register?role=ngo">Join as NGO</a></li>
-                        <li><a href="#features">Features</a></li>
+                        <li><a href="#workflow">How It Works</a></li>
                     </ul>
                 </div>
                 <div>
@@ -173,7 +328,7 @@ $registerHref = '/register';
                         <li><a href="/forum">Community Forum</a></li>
                         <li><a href="/safe-locations">Safe Locations</a></li>
                         <li><a href="/make-donation">Donation Portal</a></li>
-                        <li><a href="/forgot-password">Account Help</a></li>
+                        <li><a href="#faq">FAQ</a></li>
                     </ul>
                 </div>
                 <div>
