@@ -34,6 +34,17 @@ function disaster_reports_find_district_for_gn_division(string $gnDivision): str
 
 function disaster_reports_insert(array $payload): int
 {
+    $status = (string) ($payload['status'] ?? 'Pending');
+    if (!in_array($status, ['Pending', 'Approved', 'Rejected'], true)) {
+        $status = 'Pending';
+    }
+
+    $verifiedAt = null;
+    if ($status === 'Approved') {
+        $candidateVerifiedAt = trim((string) ($payload['verified_at'] ?? ''));
+        $verifiedAt = $candidateVerifiedAt !== '' ? $candidateVerifiedAt : date('Y-m-d H:i:s');
+    }
+
     return (int) db_insert('disaster_reports', [
         'user_id' => (int) $payload['user_id'],
         'reporter_name' => (string) $payload['reporter_name'],
@@ -46,7 +57,8 @@ function disaster_reports_insert(array $payload): int
         'gn_division' => (string) $payload['gn_division'],
         'proof_image_path' => $payload['proof_image_path'] !== '' ? (string) $payload['proof_image_path'] : null,
         'confirmation' => 1,
-        'status' => 'Pending',
+        'status' => $status,
+        'verified_at' => $verifiedAt,
         'description' => $payload['description'] !== '' ? (string) $payload['description'] : null,
     ]);
 }

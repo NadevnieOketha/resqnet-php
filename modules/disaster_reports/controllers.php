@@ -43,9 +43,11 @@ function disaster_reports_store_action(): void
     csrf_check();
 
     $role = (string) (user_role() ?? '');
-    if (!in_array($role, ['general', 'volunteer', 'grama_niladhari'], true)) {
-        abort(403, 'Only general users, volunteers, and Grama Niladhari users can submit reports.');
+    if (!in_array($role, ['general', 'volunteer', 'grama_niladhari', 'dmc'], true)) {
+        abort(403, 'Only general users, volunteers, Grama Niladhari users, and DMC users can submit reports.');
     }
+
+    $isDmcReporter = $role === 'dmc';
 
     $reporterName = trim((string) request_input('reporter_name', ''));
     $contactNumber = trim((string) request_input('contact_number', ''));
@@ -131,7 +133,7 @@ function disaster_reports_store_action(): void
             $gnDivision
         );
 
-        disaster_reports_insert([
+        $createdReportId = disaster_reports_insert([
             'user_id' => (int) auth_id(),
             'reporter_name' => $reporterName,
             'contact_number' => $contactNumber,
@@ -143,7 +145,48 @@ function disaster_reports_store_action(): void
             'location' => $location,
             'description' => $description,
             'proof_image_path' => $proofImagePath,
+            'status' => $isDmcReporter ? 'Approved' : 'Pending',
+            'verified_at' => $isDmcReporter ? date('Y-m-d H:i:s') : null,
         ]);
+
+        if ($createdReportId <= 0) {
+            throw new RuntimeException('Failed to create disaster report.');
+        }
+
+        if ($isDmcReporter) {
+            $report = disaster_reports_find_by_id($createdReportId) ?? [];
+            $processing = disaster_reports_finalize_approved_report($createdReportId, $report);
+            $notifyResult = (array) ($processing['notify_result'] ?? []);
+            $assignmentResult = (array) ($processing['assignment_result'] ?? []);
+            $volunteerNotified = (int) ($processing['volunteer_notified'] ?? 0);
+
+            $message = 'Disaster report submitted and approved successfully.';
+            if ((int) ($notifyResult['sent'] ?? 0) > 0) {
+                $message .= ' ' . (int) $notifyResult['sent'] . ' Grama Niladhari contact(s) notified.';
+            } else {
+                $message .= ' No matching Grama Niladhari contact was notified.';
+            }
+
+            $message .= ' ' . (string) ($assignmentResult['message'] ?? '');
+            if ($volunteerNotified > 0) {
+                $message .= ' ' . $volunteerNotified . ' volunteer notification email(s) sent.';
+            }
+
+            clear_old_input();
+            flash('success', trim($message));
+
+            if ((int) ($notifyResult['failed'] ?? 0) > 0) {
+                flash('warning', (int) $notifyResult['failed'] . ' GN notification email(s) failed to send.');
+            }
+
+            $totalAssigned = (int) ($assignmentResult['total_assigned'] ?? 0);
+            $requiredMinimum = (int) ($assignmentResult['required_minimum'] ?? 5);
+            if ($totalAssigned < $requiredMinimum) {
+                flash('warning', 'Automatic assignment is currently below 5 volunteers. You can manually reassign from Volunteer Assignments.');
+            }
+
+            redirect('/dashboard/reports');
+        }
     } catch (Throwable $e) {
         flash('error', 'Unable to submit report right now. Please try again.');
         flash_old_input();
@@ -195,10 +238,10 @@ function disaster_reports_verify_action(string $reportId): void
     $updated = disaster_reports_update_status($id, 'Approved');
     if ($updated > 0) {
         $report = disaster_reports_find_by_id($id);
-        $notifyResult = disaster_reports_notify_grama_niladhari($report ?: []);
-        $assignmentResult = disaster_reports_assign_volunteers_to_report($id, 5);
-        $assigned = $assignmentResult['assigned'] ?? [];
-        $volunteerNotified = disaster_reports_notify_assigned_volunteers($assigned, (array) $report, $id);
+        $processing = disaster_reports_finalize_approved_report($id, (array) ($report ?? []));
+        $notifyResult = (array) ($processing['notify_result'] ?? []);
+        $assignmentResult = (array) ($processing['assignment_result'] ?? []);
+        $volunteerNotified = (int) ($processing['volunteer_notified'] ?? 0);
 
         $message = 'Report verified successfully.';
         if (($notifyResult['sent'] ?? 0) > 0) {
@@ -377,6 +420,26 @@ function disaster_reports_dmc_task_verify_action(string $taskId): void
     }
 
     redirect('/dashboard/admin/volunteer-tasks');
+}
+
+function disaster_reports_finalize_approved_report(int $reportId, array $report = []): array
+{
+    $finalReport = $report;
+    if (empty($finalReport)) {
+        $finalReport = disaster_reports_find_by_id($reportId) ?? [];
+    }
+
+    $notifyResult = disaster_reports_notify_grama_niladhari($finalReport);
+    $assignmentResult = disaster_reports_assign_volunteers_to_report($reportId, 5);
+    $assigned = (array) ($assignmentResult['assigned'] ?? []);
+    $volunteerNotified = disaster_reports_notify_assigned_volunteers($assigned, $finalReport, $reportId);
+
+    return [
+        'report' => $finalReport,
+        'notify_result' => $notifyResult,
+        'assignment_result' => $assignmentResult,
+        'volunteer_notified' => $volunteerNotified,
+    ];
 }
 
 function disaster_reports_notify_grama_niladhari(array $report): array

@@ -700,8 +700,11 @@ $smsMonthly = (array) ($sms['monthly'] ?? []);
     <div class="quick-actions">
         <article class="action-card">
             <h3><span data-lucide="file-text" style="width:14px;height:14px;vertical-align:-2px;"></span> Disaster Reports</h3>
-            <p>Review pending reports and verify or reject submissions.</p>
-            <a href="/dashboard/reports" class="btn btn-primary">Open Reports</a>
+            <p>Review pending reports, verify or reject submissions, or file a new disaster report.</p>
+            <div style="display:flex;flex-wrap:wrap;gap:0.5rem;">
+                <a href="/dashboard/reports" class="btn btn-primary">Open Reports</a>
+                <a href="/report-disaster" class="btn">Report a Disaster</a>
+            </div>
         </article>
         <article class="action-card">
             <h3><span data-lucide="message-square" style="width:14px;height:14px;vertical-align:-2px;"></span> Forum Posts</h3>
