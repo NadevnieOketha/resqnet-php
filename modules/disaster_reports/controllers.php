@@ -420,6 +420,35 @@ function disaster_reports_dmc_task_reassign_action(string $taskId): void
 
     $result = disaster_reports_reassign_task($id, $newVolunteerId);
     if ($result['ok']) {
+        $task = db_fetch(
+            "SELECT vt.disaster_id,
+                    v.user_id,
+                    v.name,
+                    v.contact_number,
+                    u.email
+             FROM volunteer_task vt
+             INNER JOIN volunteers v ON v.user_id = vt.volunteer_id
+             INNER JOIN users u ON u.user_id = v.user_id
+             WHERE vt.id = ?
+             LIMIT 1",
+            [$id]
+        );
+
+        if ($task) {
+            $reportId = (int) ($task['disaster_id'] ?? 0);
+            if ($reportId > 0) {
+                $report = disaster_reports_find_by_id($reportId) ?? [];
+                disaster_reports_notify_assigned_volunteers([
+                    [
+                        'user_id' => (int) ($task['user_id'] ?? 0),
+                        'name' => (string) ($task['name'] ?? 'Volunteer'),
+                        'email' => (string) ($task['email'] ?? ''),
+                        'contact_number' => (string) ($task['contact_number'] ?? ''),
+                    ],
+                ], $report, $reportId);
+            }
+        }
+
         flash('success', (string) $result['message']);
     } else {
         flash('error', (string) $result['message']);
@@ -528,9 +557,101 @@ function disaster_reports_notify_assigned_volunteers(array $assigned, array $rep
         if (mail_send($email, $subject, $html)) {
             $notified++;
         }
+
+        disaster_reports_send_assignment_sms($volunteer, $report);
     }
 
     return $notified;
+}
+
+function disaster_reports_send_assignment_sms(array $volunteer, array $report): bool
+{
+    if (!function_exists('sms_alert_notifylk_is_configured') || !sms_alert_notifylk_is_configured()) {
+        return false;
+    }
+
+    if (!function_exists('sms_alert_normalize_phone') || !function_exists('sms_alert_notifylk_send')) {
+        return false;
+    }
+
+    $phoneRaw = trim((string) ($volunteer['contact_number'] ?? ''));
+    $volunteerId = (int) ($volunteer['user_id'] ?? 0);
+    if ($phoneRaw === '' && $volunteerId > 0) {
+        $row = db_fetch('SELECT contact_number FROM volunteers WHERE user_id = ? LIMIT 1', [$volunteerId]);
+        $phoneRaw = trim((string) ($row['contact_number'] ?? ''));
+    }
+
+    $phone = sms_alert_normalize_phone($phoneRaw);
+    if ($phone === '') {
+        return false;
+    }
+
+    $message = disaster_reports_assignment_sms_message($report);
+    $result = sms_alert_notifylk_send($phone, $message);
+    return (bool) ($result['success'] ?? false);
+}
+
+function disaster_reports_assignment_sms_message(array $report): string
+{
+    $disasterType = trim((string) disaster_reports_disaster_label($report));
+    if ($disasterType === '') {
+        $disasterType = 'Disaster';
+    }
+
+    $location = disaster_reports_assignment_location_label($report);
+    $dateTime = disaster_reports_assignment_datetime_label((string) ($report['disaster_datetime'] ?? ''));
+    $contactPerson = trim((string) ($report['reporter_name'] ?? ''));
+    $contactNumber = trim((string) ($report['contact_number'] ?? ''));
+
+    if ($contactPerson === '') {
+        $contactPerson = 'N/A';
+    }
+    if ($contactNumber === '') {
+        $contactNumber = 'N/A';
+    }
+
+    return "ResQnet VOLUNTEER ASSIGNMENT\n"
+        . "Disaster: {$disasterType}\n"
+        . "Location: {$location}\n"
+        . "Date/Time: {$dateTime}\n"
+        . "Contact: {$contactPerson} ({$contactNumber})\n"
+        . 'Action: Please proceed and update status in app.';
+}
+
+function disaster_reports_assignment_location_label(array $report): string
+{
+    $location = trim((string) ($report['location'] ?? ''));
+    $district = trim((string) ($report['district'] ?? ''));
+    $gnDivision = trim((string) ($report['gn_division'] ?? ''));
+
+    if ($location !== '') {
+        if ($district !== '' || $gnDivision !== '') {
+            $area = trim($district . ($gnDivision !== '' ? ' / ' . $gnDivision : ''));
+            if ($area !== '') {
+                return $location . ' (' . $area . ')';
+            }
+        }
+
+        return $location;
+    }
+
+    $fallback = trim($district . ($gnDivision !== '' ? ' / ' . $gnDivision : ''));
+    return $fallback !== '' ? $fallback : 'N/A';
+}
+
+function disaster_reports_assignment_datetime_label(string $disasterDateTime): string
+{
+    $trimmed = trim($disasterDateTime);
+    if ($trimmed === '') {
+        return 'N/A';
+    }
+
+    $timestamp = strtotime($trimmed);
+    if ($timestamp === false) {
+        return $trimmed;
+    }
+
+    return date('Y-m-d H:i', $timestamp);
 }
 
 function disaster_reports_handle_image_upload(string $fieldName): array

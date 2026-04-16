@@ -37,6 +37,7 @@ route('GET',  '/dashboard/forecast',  'forecast_dashboard_index',['middleware_au
 route('POST', '/dashboard/forecast/sms-alert', 'forecast_sms_alert_update', ['middleware_auth']);
 route('GET',  '/profile',             'auth_profile',            ['middleware_auth']);
 route('POST', '/profile',             'auth_profile_post',       ['middleware_auth']);
+route('POST', '/profile/delete',      'auth_delete_account_post',['middleware_auth', fn() => middleware_roles(['general', 'volunteer', 'ngo'])]);
 route('GET',  '/dashboard/become-volunteer', 'auth_become_volunteer_form', ['middleware_auth', fn() => middleware_role('general')]);
 route('POST', '/dashboard/become-volunteer', 'auth_become_volunteer_post', ['middleware_auth', fn() => middleware_role('general')]);
 

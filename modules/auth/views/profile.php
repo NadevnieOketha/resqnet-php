@@ -280,6 +280,21 @@ if (
     </div>
 </div>
 
+<?php if (in_array($role, ['general', 'volunteer', 'ngo'], true)): ?>
+<div class="card" style="border-color:#d9534f;">
+    <div class="card-body">
+        <p style="margin-top:0; color:#555;">
+            Deleting your account is permanent. Your profile access will be removed immediately.
+        </p>
+        <form method="POST" action="/profile/delete" onsubmit="return confirm('Are you sure you want to permanently delete your account? This action cannot be undone.');">
+            <?= csrf_field() ?>
+            <input type="hidden" name="confirm_delete" value="1">
+            <button type="submit" class="btn btn-outline" style="border-color:#d9534f; color:#b52b27;">Delete Account</button>
+        </form>
+    </div>
+</div>
+<?php endif; ?>
+
 <?php if (in_array($role, ['general', 'volunteer'], true)): ?>
 <script>
 (() => {

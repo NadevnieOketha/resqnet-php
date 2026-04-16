@@ -342,6 +342,42 @@ function auth_profile_post(): void
     redirect('/profile');
 }
 
+function auth_delete_account_post(): void
+{
+    csrf_check();
+
+    if (!auth_check()) {
+        redirect('/login');
+    }
+
+    $userId = (int) auth_id();
+    $role = (string) (user_role() ?? '');
+
+    if (!in_array($role, ['general', 'volunteer', 'ngo'], true)) {
+        abort(403, 'Only General users, Volunteers, and NGOs can delete their own accounts.');
+    }
+
+    if ((string) request_input('confirm_delete', '0') !== '1') {
+        flash('error', 'Account deletion confirmation is missing.');
+        redirect('/profile');
+    }
+
+    try {
+        $deleted = auth_delete_account($userId, $role);
+        if (!$deleted) {
+            throw new RuntimeException('Unable to delete account.');
+        }
+    } catch (Throwable $e) {
+        flash('error', 'Unable to delete account right now. Please try again.');
+        redirect('/profile');
+    }
+
+    session_destroy();
+    session_start();
+    flash('success', 'Your account has been deleted successfully.');
+    redirect('/login');
+}
+
 function auth_become_volunteer_form(): void
 {
     $userId = (int) auth_id();

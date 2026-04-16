@@ -472,6 +472,89 @@ function auth_set_grama_niladhari_active_state(int $userId, bool $active): int
     )->rowCount();
 }
 
+function auth_delete_account(int $userId, string $role): bool
+{
+    if ($userId <= 0 || !in_array($role, ['general', 'volunteer', 'ngo'], true)) {
+        return false;
+    }
+
+    $pdo = db_connect();
+    $pdo->beginTransaction();
+
+    try {
+        if (auth_table_exists('donations')) {
+            db_query(
+                'UPDATE donations SET submitted_by_user_id = NULL WHERE submitted_by_user_id = ?',
+                [$userId]
+            );
+        }
+
+        if (auth_table_exists('disaster_reports') && auth_table_exists('volunteer_task')) {
+            $reportRows = db_fetch_all(
+                'SELECT report_id FROM disaster_reports WHERE user_id = ?',
+                [$userId]
+            );
+
+            $reportIds = array_values(array_filter(array_map(
+                static fn(array $row): int => (int) ($row['report_id'] ?? 0),
+                $reportRows
+            )));
+
+            if (!empty($reportIds)) {
+                $placeholders = implode(', ', array_fill(0, count($reportIds), '?'));
+
+                if (auth_table_exists('volunteer_field_updates')) {
+                    db_query(
+                        "DELETE FROM volunteer_field_updates
+                         WHERE task_id IN (
+                             SELECT id FROM volunteer_task WHERE disaster_id IN ({$placeholders})
+                         )",
+                        $reportIds
+                    );
+                }
+
+                db_query(
+                    "DELETE FROM volunteer_task WHERE disaster_id IN ({$placeholders})",
+                    $reportIds
+                );
+            }
+        }
+
+        if ($role === 'volunteer') {
+            if (auth_table_exists('volunteer_field_updates')) {
+                db_query(
+                    'DELETE FROM volunteer_field_updates WHERE volunteer_id = ?',
+                    [$userId]
+                );
+            }
+
+            if (auth_table_exists('volunteer_task')) {
+                db_query(
+                    'DELETE FROM volunteer_task WHERE volunteer_id = ?',
+                    [$userId]
+                );
+            }
+        }
+
+        $deleted = db_query(
+            'DELETE FROM users WHERE user_id = ? AND role = ? LIMIT 1',
+            [$userId, $role]
+        )->rowCount();
+
+        if ($deleted <= 0) {
+            throw new RuntimeException('Delete failed.');
+        }
+
+        $pdo->commit();
+        return true;
+    } catch (Throwable $e) {
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
+        throw $e;
+    }
+}
+
 function auth_list_grama_niladhari_users(): array
 {
     return db_fetch_all(
