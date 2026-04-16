@@ -178,12 +178,12 @@ function donations_catalog_seed_data(): array
 function donations_seed_catalog_items(): void
 {
     foreach (donations_catalog_seed_data() as $row) {
-        [$itemId, $itemName, $category] = $row;
+        [, $itemName, $category] = $row;
         db_query(
-            'INSERT INTO donation_items_catalog (item_id, item_name, category)
-             VALUES (?, ?, ?)
-             ON DUPLICATE KEY UPDATE item_name = VALUES(item_name), category = VALUES(category)',
-            [(int) $itemId, (string) $itemName, (string) $category]
+            'INSERT INTO donation_items_catalog (item_name, category)
+             VALUES (?, ?)
+             ON DUPLICATE KEY UPDATE category = VALUES(category)',
+            [(string) $itemName, (string) $category]
         );
     }
 }
