@@ -441,10 +441,6 @@ $smsAlertJson = is_string($smsAlertJson) ? $smsAlertJson : '{}';
     <div class="wx-wrap">
         <div class="wx-hero">
             <h2 class="wx-title">River Basin Rainfall, Discharge, Temperature, and Water Level Dashboard</h2>
-            <p class="wx-subtitle">
-                Daily river discharge is fetched from the Open-Meteo Flood API (day-before-yesterday, yesterday, today, and next 7 days).
-                Alert baseline thresholds are shown per basin location together with rainfall, temperature, and realtime water level context.
-            </p>
         </div>
 
         <div class="wx-toolbar">

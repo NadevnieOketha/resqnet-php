@@ -7,7 +7,7 @@ CREATE DATABASE IF NOT EXISTS resqnet
 
 USE resqnet;
 
--- 1. BASE TABLES (No Foreign Key Dependencies)
+-- 1. BASE TABLES (Created First)
 -- ---------------------------------------------------------
 
 CREATE TABLE IF NOT EXISTS `users` (
@@ -72,7 +72,9 @@ CREATE TABLE IF NOT EXISTS `safe_locations` (
   `assigned_gn_user_id` int DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`location_id`)
+  PRIMARY KEY (`location_id`),
+  KEY `idx_safe_locations_area` (`district`,`gn_division`),
+  KEY `idx_safe_locations_gn` (`assigned_gn_user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE IF NOT EXISTS `safe_location_occupancy` (
@@ -90,6 +92,7 @@ CREATE TABLE IF NOT EXISTS `safe_location_occupancy` (
 
 -- 2. USER PROFILE TABLES (Depend on 'users')
 -- ---------------------------------------------------------
+-- Note: DMC users currently do not use a dedicated profile table.
 
 CREATE TABLE IF NOT EXISTS `general_user` (
   `user_id` int NOT NULL,
@@ -245,7 +248,7 @@ CREATE TABLE IF NOT EXISTS disaster_reports (
   PRIMARY KEY (report_id),
 
   CONSTRAINT fk_disaster_report_user 
-  FOREIGN KEY (user_id) REFERENCES general_user(user_id) 
+  FOREIGN KEY (user_id) REFERENCES users(user_id) 
   ON DELETE CASCADE
 ) ENGINE=INNODB;
 
