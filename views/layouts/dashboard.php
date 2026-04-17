@@ -48,9 +48,7 @@ $avatarInitial = strtoupper(substr($displayName, 0, 1));
             <div class="user-avatar" aria-label="Current user">
                 <span style="font-weight:700;"><?= e($avatarInitial !== '' ? $avatarInitial : 'U') ?></span>
             </div>
-            <button class="menu-toggle" aria-label="Open menu" aria-expanded="false">
-                <span data-lucide="menu"></span>
-            </button>
+
         </div>
     </header>
 
