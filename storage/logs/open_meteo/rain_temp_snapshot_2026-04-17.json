@@ -1,0 +1,3143 @@
+{
+    "version": 3,
+    "source": {
+        "weather": "Open-Meteo Weather Forecast API",
+        "discharge": "Open-Meteo Flood API (GloFAS)",
+        "water_levels": "Irrigation Department ArcGIS Realtime Water Level Dashboard"
+    },
+    "endpoint": {
+        "weather": "https://api.open-meteo.com/v1/forecast",
+        "discharge": "https://flood-api.open-meteo.com/v1/flood",
+        "water_levels": "https://services3.arcgis.com/J7ZFXmR8rSmQ3FGf/arcgis/rest/services/gauges_2_view/FeatureServer/0"
+    },
+    "fetched_at": "2026-04-17 15:14:15 +0530",
+    "window": {
+        "from": "2026-04-15",
+        "to": "2026-04-24",
+        "observed_to": "2026-04-17"
+    },
+    "rivers": [
+        {
+            "river_key": "mahaweli",
+            "river_name": "Mahaweli",
+            "stations": [
+                {
+                    "station_key": "manampitiya",
+                    "station_name": "Manampitiya",
+                    "district": "Polonnaruwa",
+                    "local_area": "Manampitiya GN (Dimbulagala DS)",
+                    "latitude": 7.912987,
+                    "longitude": 81.090594,
+                    "description": "Mahaweli basin hydrometric station",
+                    "daily_weather": [
+                        {
+                            "date": "2026-04-15",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 37.7,
+                            "temperature_2m_min": 24.5,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "rain_sum": 0,
+                            "showers_sum": 0.9,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 36.3,
+                            "temperature_2m_min": 24.3,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 37.4,
+                            "temperature_2m_min": 23.8,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-18",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 37.8,
+                            "temperature_2m_min": 23.8,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-19",
+                            "rain_sum": 0,
+                            "showers_sum": 9,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 37.9,
+                            "temperature_2m_min": 24,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-20",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 36.7,
+                            "temperature_2m_min": 24.2,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-21",
+                            "rain_sum": 0,
+                            "showers_sum": 5.4,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 36.3,
+                            "temperature_2m_min": 25.4,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-22",
+                            "rain_sum": 0,
+                            "showers_sum": 1.2,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 35.5,
+                            "temperature_2m_min": 24.1,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-23",
+                            "rain_sum": 0,
+                            "showers_sum": 6.3,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 36.5,
+                            "temperature_2m_min": 24.5,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-24",
+                            "rain_sum": 0,
+                            "showers_sum": 2.55,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 35.7,
+                            "temperature_2m_min": 24.6,
+                            "is_forecast_day": true
+                        }
+                    ],
+                    "daily_water_levels": [
+                        {
+                            "date": "2026-04-15",
+                            "gauge": "Manampitiya",
+                            "water_level": 0.24,
+                            "alert_threshold": 3,
+                            "minor_threshold": 4.3,
+                            "major_threshold": 6,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "gauge": "Manampitiya",
+                            "water_level": 0.3,
+                            "alert_threshold": 3,
+                            "minor_threshold": 4.3,
+                            "major_threshold": 6,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "gauge": "Manampitiya",
+                            "water_level": 0.16,
+                            "alert_threshold": 3,
+                            "minor_threshold": 4.3,
+                            "major_threshold": 6,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        }
+                    ],
+                    "daily_discharge": [
+                        {
+                            "date": "2026-04-15",
+                            "river_discharge": 3.44,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "river_discharge": 3.59,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "river_discharge": 3.88,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-18",
+                            "river_discharge": 3.56,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-19",
+                            "river_discharge": 3.09,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-20",
+                            "river_discharge": 2.85,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-21",
+                            "river_discharge": 2.66,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-22",
+                            "river_discharge": 2.66,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-23",
+                            "river_discharge": 2.81,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-24",
+                            "river_discharge": 2.97,
+                            "is_forecast_day": true
+                        }
+                    ],
+                    "discharge_thresholds": {
+                        "mean": 177.47,
+                        "alert": 354.93,
+                        "minor": 532.4,
+                        "major": 887.33
+                    }
+                },
+                {
+                    "station_key": "nawalapitiya",
+                    "station_name": "Nawalapitiya",
+                    "district": "Kandy",
+                    "local_area": "Nawalapitiya Town GN Divisions",
+                    "latitude": 7.04894547,
+                    "longitude": 80.53616209,
+                    "description": "Mahaweli basin hydrometric station",
+                    "daily_weather": [
+                        {
+                            "date": "2026-04-15",
+                            "rain_sum": 0,
+                            "showers_sum": 13.2,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 31.9,
+                            "temperature_2m_min": 23.4,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "rain_sum": 0,
+                            "showers_sum": 10.2,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 30.3,
+                            "temperature_2m_min": 24.1,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "rain_sum": 0,
+                            "showers_sum": 0.2,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 34.2,
+                            "temperature_2m_min": 22.7,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-18",
+                            "rain_sum": 0,
+                            "showers_sum": 0.7,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 34,
+                            "temperature_2m_min": 23.2,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-19",
+                            "rain_sum": 0,
+                            "showers_sum": 0.6,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 33,
+                            "temperature_2m_min": 23.1,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-20",
+                            "rain_sum": 0,
+                            "showers_sum": 4.2,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 31.5,
+                            "temperature_2m_min": 22.5,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-21",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 33.1,
+                            "temperature_2m_min": 22.4,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-22",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 32.9,
+                            "temperature_2m_min": 22.8,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-23",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 32.7,
+                            "temperature_2m_min": 22.4,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-24",
+                            "rain_sum": 0,
+                            "showers_sum": 0.15,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 33.2,
+                            "temperature_2m_min": 21.5,
+                            "is_forecast_day": true
+                        }
+                    ],
+                    "daily_water_levels": [
+                        {
+                            "date": "2026-04-15",
+                            "gauge": "Nawalapitiya",
+                            "water_level": 0.81,
+                            "alert_threshold": 3.5,
+                            "minor_threshold": 5,
+                            "major_threshold": 6,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "gauge": "Nawalapitiya",
+                            "water_level": 0.95,
+                            "alert_threshold": 3.5,
+                            "minor_threshold": 5,
+                            "major_threshold": 6,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "gauge": "Nawalapitiya",
+                            "water_level": 0.78,
+                            "alert_threshold": 3.5,
+                            "minor_threshold": 5,
+                            "major_threshold": 6,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        }
+                    ],
+                    "daily_discharge": [
+                        {
+                            "date": "2026-04-15",
+                            "river_discharge": 0.72,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "river_discharge": 0.78,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "river_discharge": 0.85,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-18",
+                            "river_discharge": 0.91,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-19",
+                            "river_discharge": 0.91,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-20",
+                            "river_discharge": 0.87,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-21",
+                            "river_discharge": 0.81,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-22",
+                            "river_discharge": 0.81,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-23",
+                            "river_discharge": 0.85,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-24",
+                            "river_discharge": 0.87,
+                            "is_forecast_day": true
+                        }
+                    ],
+                    "discharge_thresholds": {
+                        "mean": 2.22,
+                        "alert": 4.43,
+                        "minor": 6.65,
+                        "major": 11.08
+                    }
+                },
+                {
+                    "station_key": "peradeniya",
+                    "station_name": "Peradeniya",
+                    "district": "Kandy",
+                    "local_area": "Peradeniya Town GN Divisions",
+                    "latitude": 7.269059,
+                    "longitude": 80.593005,
+                    "description": "Mahaweli basin hydrometric station",
+                    "daily_weather": [
+                        {
+                            "date": "2026-04-15",
+                            "rain_sum": 0,
+                            "showers_sum": 1.4,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 32,
+                            "temperature_2m_min": 22.1,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "rain_sum": 0,
+                            "showers_sum": 6.2,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 31,
+                            "temperature_2m_min": 23.4,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 33.5,
+                            "temperature_2m_min": 22,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-18",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 33.6,
+                            "temperature_2m_min": 22.3,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-19",
+                            "rain_sum": 0,
+                            "showers_sum": 0.2,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 32.6,
+                            "temperature_2m_min": 23.1,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-20",
+                            "rain_sum": 0,
+                            "showers_sum": 4,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 30.6,
+                            "temperature_2m_min": 22,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-21",
+                            "rain_sum": 0,
+                            "showers_sum": 0.3,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 32.6,
+                            "temperature_2m_min": 21.9,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-22",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 32.8,
+                            "temperature_2m_min": 21.6,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-23",
+                            "rain_sum": 0,
+                            "showers_sum": 0.6,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 32.2,
+                            "temperature_2m_min": 22.3,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-24",
+                            "rain_sum": 0,
+                            "showers_sum": 1.05,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 32.7,
+                            "temperature_2m_min": 22.1,
+                            "is_forecast_day": true
+                        }
+                    ],
+                    "daily_water_levels": [
+                        {
+                            "date": "2026-04-15",
+                            "gauge": "Peradeniya",
+                            "water_level": 2.21,
+                            "alert_threshold": 5,
+                            "minor_threshold": 7,
+                            "major_threshold": 9,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "gauge": "Peradeniya",
+                            "water_level": 1.96,
+                            "alert_threshold": 5,
+                            "minor_threshold": 7,
+                            "major_threshold": 9,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "gauge": "Peradeniya",
+                            "water_level": 1.78,
+                            "alert_threshold": 5,
+                            "minor_threshold": 7,
+                            "major_threshold": 9,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        }
+                    ],
+                    "daily_discharge": [
+                        {
+                            "date": "2026-04-15",
+                            "river_discharge": 14.74,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "river_discharge": 14.81,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "river_discharge": 15.94,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-18",
+                            "river_discharge": 16.54,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-19",
+                            "river_discharge": 15.26,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-20",
+                            "river_discharge": 14.14,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-21",
+                            "river_discharge": 13.32,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-22",
+                            "river_discharge": 13.66,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-23",
+                            "river_discharge": 14.92,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-24",
+                            "river_discharge": 15.48,
+                            "is_forecast_day": true
+                        }
+                    ],
+                    "discharge_thresholds": {
+                        "mean": 67.82,
+                        "alert": 135.64,
+                        "minor": 203.47,
+                        "major": 339.11
+                    }
+                },
+                {
+                    "station_key": "thaldena",
+                    "station_name": "Thaldena",
+                    "district": "Badulla",
+                    "local_area": "Adjacent GN in Welimada / Uva region",
+                    "latitude": 7.090653,
+                    "longitude": 81.048886,
+                    "description": "Mahaweli basin hydrometric station",
+                    "daily_weather": [
+                        {
+                            "date": "2026-04-15",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 33,
+                            "temperature_2m_min": 21.8,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "rain_sum": 0,
+                            "showers_sum": 2.7,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 31.9,
+                            "temperature_2m_min": 22.9,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 33.2,
+                            "temperature_2m_min": 22,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-18",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 33.3,
+                            "temperature_2m_min": 21.7,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-19",
+                            "rain_sum": 0,
+                            "showers_sum": 0.5,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 33.5,
+                            "temperature_2m_min": 22.3,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-20",
+                            "rain_sum": 0,
+                            "showers_sum": 8.4,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 31.2,
+                            "temperature_2m_min": 21.6,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-21",
+                            "rain_sum": 0,
+                            "showers_sum": 30.6,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 30.5,
+                            "temperature_2m_min": 21.9,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-22",
+                            "rain_sum": 0,
+                            "showers_sum": 1.2,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 31.1,
+                            "temperature_2m_min": 21.2,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-23",
+                            "rain_sum": 0,
+                            "showers_sum": 0.3,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 30.9,
+                            "temperature_2m_min": 21.8,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-24",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 32.1,
+                            "temperature_2m_min": 23.6,
+                            "is_forecast_day": true
+                        }
+                    ],
+                    "daily_water_levels": [
+                        {
+                            "date": "2026-04-15",
+                            "gauge": "Thaldena",
+                            "water_level": 0.48,
+                            "alert_threshold": 3,
+                            "minor_threshold": 4,
+                            "major_threshold": 5,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "gauge": "Thaldena",
+                            "water_level": 0.52,
+                            "alert_threshold": 3,
+                            "minor_threshold": 4,
+                            "major_threshold": 5,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "gauge": "Thaldena",
+                            "water_level": 0.42,
+                            "alert_threshold": 3,
+                            "minor_threshold": 4,
+                            "major_threshold": 5,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        }
+                    ],
+                    "daily_discharge": [
+                        {
+                            "date": "2026-04-15",
+                            "river_discharge": 3.79,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "river_discharge": 3.66,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "river_discharge": 3.79,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-18",
+                            "river_discharge": 3.5,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-19",
+                            "river_discharge": 3.29,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-20",
+                            "river_discharge": 3.06,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-21",
+                            "river_discharge": 2.91,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-22",
+                            "river_discharge": 2.91,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-23",
+                            "river_discharge": 3.09,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-24",
+                            "river_discharge": 3.22,
+                            "is_forecast_day": true
+                        }
+                    ],
+                    "discharge_thresholds": {
+                        "mean": 9.08,
+                        "alert": 18.16,
+                        "minor": 27.24,
+                        "major": 45.4
+                    }
+                },
+                {
+                    "station_key": "weraganthota",
+                    "station_name": "Weraganthota",
+                    "district": "Kandy",
+                    "local_area": "Weraganthota / adjacent GN",
+                    "latitude": 7.31647,
+                    "longitude": 80.98911,
+                    "description": "Mahaweli basin hydrometric station",
+                    "daily_weather": [
+                        {
+                            "date": "2026-04-15",
+                            "rain_sum": 0,
+                            "showers_sum": 2.1,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 30.9,
+                            "temperature_2m_min": 21,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "rain_sum": 0,
+                            "showers_sum": 4.7,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 29.6,
+                            "temperature_2m_min": 20.9,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "rain_sum": 0,
+                            "showers_sum": 0.3,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 31.1,
+                            "temperature_2m_min": 20.2,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-18",
+                            "rain_sum": 0,
+                            "showers_sum": 0.1,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 31.2,
+                            "temperature_2m_min": 20.7,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-19",
+                            "rain_sum": 0,
+                            "showers_sum": 1.5,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 30.8,
+                            "temperature_2m_min": 21.4,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-20",
+                            "rain_sum": 0.1,
+                            "showers_sum": 18.9,
+                            "precipitation_sum": 0.1,
+                            "temperature_2m_max": 28.5,
+                            "temperature_2m_min": 20.9,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-21",
+                            "rain_sum": 0,
+                            "showers_sum": 11.7,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 28.6,
+                            "temperature_2m_min": 21,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-22",
+                            "rain_sum": 0,
+                            "showers_sum": 3.9,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 28.8,
+                            "temperature_2m_min": 20.8,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-23",
+                            "rain_sum": 0,
+                            "showers_sum": 3,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 29,
+                            "temperature_2m_min": 21.2,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-24",
+                            "rain_sum": 0,
+                            "showers_sum": 1.2,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 30.9,
+                            "temperature_2m_min": 21.6,
+                            "is_forecast_day": true
+                        }
+                    ],
+                    "daily_water_levels": [
+                        {
+                            "date": "2026-04-15",
+                            "gauge": "Weraganthota",
+                            "water_level": -2.37,
+                            "alert_threshold": 5,
+                            "minor_threshold": 6,
+                            "major_threshold": 8,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "gauge": "Weraganthota",
+                            "water_level": -2.8,
+                            "alert_threshold": 5,
+                            "minor_threshold": 6,
+                            "major_threshold": 8,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "gauge": "Weraganthota",
+                            "water_level": -2.93,
+                            "alert_threshold": 5,
+                            "minor_threshold": 6,
+                            "major_threshold": 8,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        }
+                    ],
+                    "daily_discharge": [
+                        {
+                            "date": "2026-04-15",
+                            "river_discharge": 0.25,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "river_discharge": 0.19,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "river_discharge": 0.16,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-18",
+                            "river_discharge": 0.16,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-19",
+                            "river_discharge": 0.16,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-20",
+                            "river_discharge": 0.12,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-21",
+                            "river_discharge": 0.12,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-22",
+                            "river_discharge": 0.12,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-23",
+                            "river_discharge": 0.16,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-24",
+                            "river_discharge": 0.16,
+                            "is_forecast_day": true
+                        }
+                    ],
+                    "discharge_thresholds": {
+                        "mean": 0.53,
+                        "alert": 1.06,
+                        "minor": 1.59,
+                        "major": 2.65
+                    }
+                }
+            ]
+        },
+        {
+            "river_key": "kalu",
+            "river_name": "Kalu",
+            "stations": [
+                {
+                    "station_key": "ellagawa",
+                    "station_name": "Ellagawa",
+                    "district": "Ratnapura",
+                    "local_area": "Ellagawa GN area",
+                    "latitude": 6.731554,
+                    "longitude": 80.218254,
+                    "description": "Kalu basin hydrometric station",
+                    "daily_weather": [
+                        {
+                            "date": "2026-04-15",
+                            "rain_sum": 0,
+                            "showers_sum": 8.1,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 34.5,
+                            "temperature_2m_min": 25.3,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "rain_sum": 0,
+                            "showers_sum": 12.8,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 32.2,
+                            "temperature_2m_min": 25.5,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "rain_sum": 0,
+                            "showers_sum": 2.8,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 36.6,
+                            "temperature_2m_min": 23.5,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-18",
+                            "rain_sum": 0,
+                            "showers_sum": 0.6,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 36.8,
+                            "temperature_2m_min": 24.1,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-19",
+                            "rain_sum": 0,
+                            "showers_sum": 0.3,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 35.9,
+                            "temperature_2m_min": 24.5,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-20",
+                            "rain_sum": 0,
+                            "showers_sum": 0.3,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 34.5,
+                            "temperature_2m_min": 23.6,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-21",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 35,
+                            "temperature_2m_min": 23.2,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-22",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 34.7,
+                            "temperature_2m_min": 24.2,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-23",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 35.7,
+                            "temperature_2m_min": 23.9,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-24",
+                            "rain_sum": 0,
+                            "showers_sum": 0.6,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 34.4,
+                            "temperature_2m_min": 24.2,
+                            "is_forecast_day": true
+                        }
+                    ],
+                    "daily_water_levels": [
+                        {
+                            "date": "2026-04-15",
+                            "gauge": "Ellagawa",
+                            "water_level": 4.29,
+                            "alert_threshold": 10,
+                            "minor_threshold": 10.7,
+                            "major_threshold": 12.2,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "gauge": "Ellagawa",
+                            "water_level": 4.66,
+                            "alert_threshold": 10,
+                            "minor_threshold": 10.7,
+                            "major_threshold": 12.2,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "gauge": "Ellagawa",
+                            "water_level": 4.56,
+                            "alert_threshold": 10,
+                            "minor_threshold": 10.7,
+                            "major_threshold": 12.2,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        }
+                    ],
+                    "daily_discharge": [
+                        {
+                            "date": "2026-04-15",
+                            "river_discharge": 38.45,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "river_discharge": 42.25,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "river_discharge": 40.5,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-18",
+                            "river_discharge": 40.59,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-19",
+                            "river_discharge": 40.3,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-20",
+                            "river_discharge": 39.27,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-21",
+                            "river_discharge": 37.9,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-22",
+                            "river_discharge": 37.28,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-23",
+                            "river_discharge": 37.99,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-24",
+                            "river_discharge": 39.36,
+                            "is_forecast_day": true
+                        }
+                    ],
+                    "discharge_thresholds": {
+                        "mean": 106.34,
+                        "alert": 212.69,
+                        "minor": 319.03,
+                        "major": 531.72
+                    }
+                },
+                {
+                    "station_key": "kalawellawa",
+                    "station_name": "Kalawellawa",
+                    "district": "Ratnapura",
+                    "local_area": "Kalawellawa GN area",
+                    "latitude": 6.631166,
+                    "longitude": 80.16069,
+                    "description": "Kalu basin hydrometric station",
+                    "daily_weather": [
+                        {
+                            "date": "2026-04-15",
+                            "rain_sum": 0,
+                            "showers_sum": 4.9,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 33.6,
+                            "temperature_2m_min": 26.1,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "rain_sum": 0,
+                            "showers_sum": 8,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 32,
+                            "temperature_2m_min": 25.7,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "rain_sum": 0,
+                            "showers_sum": 0.9,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 35.1,
+                            "temperature_2m_min": 24,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-18",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 34.8,
+                            "temperature_2m_min": 24.1,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-19",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 34.4,
+                            "temperature_2m_min": 24.4,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-20",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 33.5,
+                            "temperature_2m_min": 24.2,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-21",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 33.8,
+                            "temperature_2m_min": 23.2,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-22",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 33.6,
+                            "temperature_2m_min": 24.3,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-23",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 34.5,
+                            "temperature_2m_min": 24.1,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-24",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 34.5,
+                            "temperature_2m_min": 24.1,
+                            "is_forecast_day": true
+                        }
+                    ],
+                    "daily_water_levels": [
+                        {
+                            "date": "2026-04-15",
+                            "gauge": "Kalawellawa (Millakanda)",
+                            "water_level": 2.36,
+                            "alert_threshold": 5,
+                            "minor_threshold": 6.5,
+                            "major_threshold": 8,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "gauge": "Kalawellawa (Millakanda)",
+                            "water_level": 2.16,
+                            "alert_threshold": 5,
+                            "minor_threshold": 6.5,
+                            "major_threshold": 8,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "gauge": "Kalawellawa (Millakanda)",
+                            "water_level": 2,
+                            "alert_threshold": 5,
+                            "minor_threshold": 6.5,
+                            "major_threshold": 8,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        }
+                    ],
+                    "daily_discharge": [
+                        {
+                            "date": "2026-04-15",
+                            "river_discharge": 18.86,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "river_discharge": 20.93,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "river_discharge": 19.23,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-18",
+                            "river_discharge": 18.91,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-19",
+                            "river_discharge": 18.86,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-20",
+                            "river_discharge": 18.5,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-21",
+                            "river_discharge": 17.97,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-22",
+                            "river_discharge": 17.71,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-23",
+                            "river_discharge": 17.84,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-24",
+                            "river_discharge": 18.36,
+                            "is_forecast_day": true
+                        }
+                    ],
+                    "discharge_thresholds": {
+                        "mean": 56.1,
+                        "alert": 112.2,
+                        "minor": 168.3,
+                        "major": 280.5
+                    }
+                },
+                {
+                    "station_key": "magura",
+                    "station_name": "Magura",
+                    "district": "Ratnapura",
+                    "local_area": "Magura GN area",
+                    "latitude": 6.513727,
+                    "longitude": 80.243935,
+                    "description": "Kalu basin hydrometric station",
+                    "daily_weather": [
+                        {
+                            "date": "2026-04-15",
+                            "rain_sum": 0,
+                            "showers_sum": 6.6,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 33.7,
+                            "temperature_2m_min": 26.3,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "rain_sum": 0,
+                            "showers_sum": 6,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 31.7,
+                            "temperature_2m_min": 26.2,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "rain_sum": 0,
+                            "showers_sum": 1.1,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 35.8,
+                            "temperature_2m_min": 24.4,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-18",
+                            "rain_sum": 0,
+                            "showers_sum": 0.1,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 35.6,
+                            "temperature_2m_min": 24.4,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-19",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 35.2,
+                            "temperature_2m_min": 24.2,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-20",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 34,
+                            "temperature_2m_min": 24.1,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-21",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 34.2,
+                            "temperature_2m_min": 23.8,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-22",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 34.3,
+                            "temperature_2m_min": 24.8,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-23",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 34.8,
+                            "temperature_2m_min": 23.5,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-24",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 35,
+                            "temperature_2m_min": 24.2,
+                            "is_forecast_day": true
+                        }
+                    ],
+                    "daily_water_levels": [
+                        {
+                            "date": "2026-04-15",
+                            "gauge": "Magura",
+                            "water_level": 1.33,
+                            "alert_threshold": 4,
+                            "minor_threshold": 6,
+                            "major_threshold": 7.5,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "gauge": "Magura",
+                            "water_level": 1.39,
+                            "alert_threshold": 4,
+                            "minor_threshold": 6,
+                            "major_threshold": 7.5,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "gauge": "Magura",
+                            "water_level": 1.42,
+                            "alert_threshold": 4,
+                            "minor_threshold": 6,
+                            "major_threshold": 7.5,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        }
+                    ],
+                    "daily_discharge": [
+                        {
+                            "date": "2026-04-15",
+                            "river_discharge": 1.28,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "river_discharge": 1.44,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "river_discharge": 1.31,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-18",
+                            "river_discharge": 1.28,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-19",
+                            "river_discharge": 1.28,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-20",
+                            "river_discharge": 1.25,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-21",
+                            "river_discharge": 1.25,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-22",
+                            "river_discharge": 1.22,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-23",
+                            "river_discharge": 1.25,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-24",
+                            "river_discharge": 1.28,
+                            "is_forecast_day": true
+                        }
+                    ],
+                    "discharge_thresholds": {
+                        "mean": 4.03,
+                        "alert": 8.07,
+                        "minor": 12.1,
+                        "major": 20.17
+                    }
+                },
+                {
+                    "station_key": "putupaula",
+                    "station_name": "Putupaula",
+                    "district": "Ratnapura",
+                    "local_area": "Putupaula GN area",
+                    "latitude": 6.614324,
+                    "longitude": 80.061511,
+                    "description": "Kalu basin hydrometric station",
+                    "daily_weather": [
+                        {
+                            "date": "2026-04-15",
+                            "rain_sum": 0,
+                            "showers_sum": 7.8,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 30.3,
+                            "temperature_2m_min": 28.3,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "rain_sum": 0,
+                            "showers_sum": 14.7,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 29.8,
+                            "temperature_2m_min": 27.4,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "rain_sum": 0,
+                            "showers_sum": 0.7,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 29.8,
+                            "temperature_2m_min": 28.2,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-18",
+                            "rain_sum": 0,
+                            "showers_sum": 1.1,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 29.7,
+                            "temperature_2m_min": 28.3,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-19",
+                            "rain_sum": 0,
+                            "showers_sum": 2,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 29.7,
+                            "temperature_2m_min": 28.3,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-20",
+                            "rain_sum": 0,
+                            "showers_sum": 0.1,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 29.8,
+                            "temperature_2m_min": 28.2,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-21",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 29.8,
+                            "temperature_2m_min": 28.5,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-22",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 29.6,
+                            "temperature_2m_min": 29,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-23",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 29.6,
+                            "temperature_2m_min": 28.9,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-24",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 30.2,
+                            "temperature_2m_min": 25.6,
+                            "is_forecast_day": true
+                        }
+                    ],
+                    "daily_water_levels": [
+                        {
+                            "date": "2026-04-15",
+                            "gauge": "Putupaula",
+                            "water_level": 0.98,
+                            "alert_threshold": 3,
+                            "minor_threshold": 4,
+                            "major_threshold": 5,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "gauge": "Putupaula",
+                            "water_level": 0.99,
+                            "alert_threshold": 3,
+                            "minor_threshold": 4,
+                            "major_threshold": 5,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "gauge": "Putupaula",
+                            "water_level": 1.03,
+                            "alert_threshold": 3,
+                            "minor_threshold": 4,
+                            "major_threshold": 5,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        }
+                    ],
+                    "daily_discharge": [
+                        {
+                            "date": "2026-04-15",
+                            "river_discharge": 20.93,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "river_discharge": 23.32,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "river_discharge": 21.39,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-18",
+                            "river_discharge": 21.23,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-19",
+                            "river_discharge": 21.13,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-20",
+                            "river_discharge": 20.73,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-21",
+                            "river_discharge": 20.09,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-22",
+                            "river_discharge": 19.8,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-23",
+                            "river_discharge": 19.99,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-24",
+                            "river_discharge": 20.53,
+                            "is_forecast_day": true
+                        }
+                    ],
+                    "discharge_thresholds": {
+                        "mean": 66.94,
+                        "alert": 133.89,
+                        "minor": 200.83,
+                        "major": 334.71
+                    }
+                },
+                {
+                    "station_key": "rathnapura",
+                    "station_name": "Rathnapura",
+                    "district": "Ratnapura",
+                    "local_area": "Rathnapura Town GN divisions",
+                    "latitude": 6.679067,
+                    "longitude": 80.397235,
+                    "description": "Kalu basin hydrometric station",
+                    "daily_weather": [
+                        {
+                            "date": "2026-04-15",
+                            "rain_sum": 0,
+                            "showers_sum": 8.6,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 34.7,
+                            "temperature_2m_min": 25.9,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "rain_sum": 0,
+                            "showers_sum": 5.7,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 31.9,
+                            "temperature_2m_min": 25.5,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "rain_sum": 0,
+                            "showers_sum": 2.9,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 36.8,
+                            "temperature_2m_min": 23.8,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-18",
+                            "rain_sum": 0,
+                            "showers_sum": 0.2,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 36.4,
+                            "temperature_2m_min": 24.2,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-19",
+                            "rain_sum": 0,
+                            "showers_sum": 0.9,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 35.9,
+                            "temperature_2m_min": 23.9,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-20",
+                            "rain_sum": 0,
+                            "showers_sum": 0.9,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 34.7,
+                            "temperature_2m_min": 24,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-21",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 35.1,
+                            "temperature_2m_min": 23.4,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-22",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 35,
+                            "temperature_2m_min": 24.3,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-23",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 35.4,
+                            "temperature_2m_min": 23.9,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-24",
+                            "rain_sum": 0,
+                            "showers_sum": 1.05,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 35.4,
+                            "temperature_2m_min": 24,
+                            "is_forecast_day": true
+                        }
+                    ],
+                    "daily_water_levels": [
+                        {
+                            "date": "2026-04-15",
+                            "gauge": "Rathnapura",
+                            "water_level": 1.3,
+                            "alert_threshold": 5.2,
+                            "minor_threshold": 7.5,
+                            "major_threshold": 9.5,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "gauge": "Rathnapura",
+                            "water_level": 1.66,
+                            "alert_threshold": 5.2,
+                            "minor_threshold": 7.5,
+                            "major_threshold": 9.5,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "gauge": "Rathnapura",
+                            "water_level": 1,
+                            "alert_threshold": 5.2,
+                            "minor_threshold": 7.5,
+                            "major_threshold": 9.5,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        }
+                    ],
+                    "daily_discharge": [
+                        {
+                            "date": "2026-04-15",
+                            "river_discharge": 18.23,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "river_discharge": 19.99,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "river_discharge": 19.14,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-18",
+                            "river_discharge": 18.91,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-19",
+                            "river_discharge": 18.77,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-20",
+                            "river_discharge": 18.23,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-21",
+                            "river_discharge": 17.62,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-22",
+                            "river_discharge": 17.32,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-23",
+                            "river_discharge": 17.58,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-24",
+                            "river_discharge": 18.23,
+                            "is_forecast_day": true
+                        }
+                    ],
+                    "discharge_thresholds": {
+                        "mean": 45,
+                        "alert": 90.01,
+                        "minor": 135.01,
+                        "major": 225.02
+                    }
+                }
+            ]
+        },
+        {
+            "river_key": "kelani",
+            "river_name": "Kelani",
+            "stations": [
+                {
+                    "station_key": "deraniyagala",
+                    "station_name": "Deraniyagala",
+                    "district": "Kegalle",
+                    "local_area": "Deraniyagala GN",
+                    "latitude": 6.925934,
+                    "longitude": 80.339212,
+                    "description": "Kelani basin hydrometric station",
+                    "daily_weather": [
+                        {
+                            "date": "2026-04-15",
+                            "rain_sum": 0,
+                            "showers_sum": 21.4,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 35,
+                            "temperature_2m_min": 26.4,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "rain_sum": 0,
+                            "showers_sum": 21.6,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 32.4,
+                            "temperature_2m_min": 26.1,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "rain_sum": 0,
+                            "showers_sum": 4.9,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 36.9,
+                            "temperature_2m_min": 24.4,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-18",
+                            "rain_sum": 0,
+                            "showers_sum": 2.2,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 36.9,
+                            "temperature_2m_min": 24.7,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-19",
+                            "rain_sum": 0,
+                            "showers_sum": 9.3,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 36.5,
+                            "temperature_2m_min": 24.6,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-20",
+                            "rain_sum": 0,
+                            "showers_sum": 1.8,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 35.4,
+                            "temperature_2m_min": 24.1,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-21",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 37.1,
+                            "temperature_2m_min": 24.7,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-22",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 36.5,
+                            "temperature_2m_min": 25.4,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-23",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 37,
+                            "temperature_2m_min": 25,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-24",
+                            "rain_sum": 0,
+                            "showers_sum": 0.6,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 36.3,
+                            "temperature_2m_min": 24.5,
+                            "is_forecast_day": true
+                        }
+                    ],
+                    "daily_water_levels": [
+                        {
+                            "date": "2026-04-15",
+                            "gauge": "Deraniyagala",
+                            "water_level": 0.45,
+                            "alert_threshold": 4.8,
+                            "minor_threshold": 5.8,
+                            "major_threshold": 6.4,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "gauge": "Deraniyagala",
+                            "water_level": 0.57,
+                            "alert_threshold": 4.8,
+                            "minor_threshold": 5.8,
+                            "major_threshold": 6.4,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "gauge": "Deraniyagala",
+                            "water_level": 0.32,
+                            "alert_threshold": 4.8,
+                            "minor_threshold": 5.8,
+                            "major_threshold": 6.4,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        }
+                    ],
+                    "daily_discharge": [
+                        {
+                            "date": "2026-04-15",
+                            "river_discharge": 6.03,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "river_discharge": 6.69,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "river_discharge": 6.96,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-18",
+                            "river_discharge": 7.41,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-19",
+                            "river_discharge": 7.38,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-20",
+                            "river_discharge": 7.15,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-21",
+                            "river_discharge": 6.96,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-22",
+                            "river_discharge": 6.82,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-23",
+                            "river_discharge": 6.96,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-24",
+                            "river_discharge": 7.18,
+                            "is_forecast_day": true
+                        }
+                    ],
+                    "discharge_thresholds": {
+                        "mean": 15.28,
+                        "alert": 30.56,
+                        "minor": 45.83,
+                        "major": 76.39
+                    }
+                },
+                {
+                    "station_key": "glencourse",
+                    "station_name": "Glencourse",
+                    "district": "Kalutara",
+                    "local_area": "Glencourse / Avissawella GN",
+                    "latitude": 6.976981,
+                    "longitude": 80.194247,
+                    "description": "Kelani basin hydrometric station",
+                    "daily_weather": [
+                        {
+                            "date": "2026-04-15",
+                            "rain_sum": 0,
+                            "showers_sum": 6.4,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 35.2,
+                            "temperature_2m_min": 25.8,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "rain_sum": 0,
+                            "showers_sum": 3.6,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 34,
+                            "temperature_2m_min": 25.5,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "rain_sum": 0,
+                            "showers_sum": 0.9,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 37.5,
+                            "temperature_2m_min": 24,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-18",
+                            "rain_sum": 0,
+                            "showers_sum": 0.2,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 37.4,
+                            "temperature_2m_min": 25.4,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-19",
+                            "rain_sum": 0,
+                            "showers_sum": 0.6,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 36.9,
+                            "temperature_2m_min": 25.8,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-20",
+                            "rain_sum": 0,
+                            "showers_sum": 0.7,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 33.8,
+                            "temperature_2m_min": 24.5,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-21",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 35.8,
+                            "temperature_2m_min": 23.7,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-22",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 36.1,
+                            "temperature_2m_min": 24.8,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-23",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 36.5,
+                            "temperature_2m_min": 24.2,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-24",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 36.1,
+                            "temperature_2m_min": 24,
+                            "is_forecast_day": true
+                        }
+                    ],
+                    "daily_water_levels": [
+                        {
+                            "date": "2026-04-15",
+                            "gauge": "Glencourse",
+                            "water_level": 8.8,
+                            "alert_threshold": 15,
+                            "minor_threshold": 16.5,
+                            "major_threshold": 19,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "gauge": "Glencourse",
+                            "water_level": 9.34,
+                            "alert_threshold": 15,
+                            "minor_threshold": 16.5,
+                            "major_threshold": 19,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "gauge": "Glencourse",
+                            "water_level": 9.15,
+                            "alert_threshold": 15,
+                            "minor_threshold": 16.5,
+                            "major_threshold": 19,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        }
+                    ],
+                    "daily_discharge": [
+                        {
+                            "date": "2026-04-15",
+                            "river_discharge": 41.07,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "river_discharge": 44.5,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "river_discharge": 46.42,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-18",
+                            "river_discharge": 49,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-19",
+                            "river_discharge": 47.98,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-20",
+                            "river_discharge": 46.53,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-21",
+                            "river_discharge": 45.34,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-22",
+                            "river_discharge": 44.92,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-23",
+                            "river_discharge": 46.1,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-24",
+                            "river_discharge": 47.98,
+                            "is_forecast_day": true
+                        }
+                    ],
+                    "discharge_thresholds": {
+                        "mean": 132.15,
+                        "alert": 264.3,
+                        "minor": 396.44,
+                        "major": 660.74
+                    }
+                },
+                {
+                    "station_key": "hanwella",
+                    "station_name": "Hanwella",
+                    "district": "Colombo",
+                    "local_area": "Hanwella GN (Seethawaka DS)",
+                    "latitude": 6.9097,
+                    "longitude": 80.083126,
+                    "description": "Kelani basin hydrometric station",
+                    "daily_weather": [
+                        {
+                            "date": "2026-04-15",
+                            "rain_sum": 0,
+                            "showers_sum": 4.1,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 34.1,
+                            "temperature_2m_min": 27.1,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "rain_sum": 0,
+                            "showers_sum": 4.8,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 33,
+                            "temperature_2m_min": 26.5,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 36.3,
+                            "temperature_2m_min": 25.7,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-18",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 35.7,
+                            "temperature_2m_min": 26.3,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-19",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 35,
+                            "temperature_2m_min": 27,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-20",
+                            "rain_sum": 0,
+                            "showers_sum": 1.2,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 34.1,
+                            "temperature_2m_min": 26.3,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-21",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 34.2,
+                            "temperature_2m_min": 25.9,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-22",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 34.1,
+                            "temperature_2m_min": 26.1,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-23",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 35.7,
+                            "temperature_2m_min": 25.5,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-24",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 35.3,
+                            "temperature_2m_min": 25,
+                            "is_forecast_day": true
+                        }
+                    ],
+                    "daily_water_levels": [
+                        {
+                            "date": "2026-04-15",
+                            "gauge": "Hanwella",
+                            "water_level": 0.52,
+                            "alert_threshold": 7,
+                            "minor_threshold": 8,
+                            "major_threshold": 10,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "gauge": "Hanwella",
+                            "water_level": 0.91,
+                            "alert_threshold": 7,
+                            "minor_threshold": 8,
+                            "major_threshold": 10,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "gauge": "Hanwella",
+                            "water_level": 0.88,
+                            "alert_threshold": 7,
+                            "minor_threshold": 8,
+                            "major_threshold": 10,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        }
+                    ],
+                    "daily_discharge": [
+                        {
+                            "date": "2026-04-15",
+                            "river_discharge": 1.34,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "river_discharge": 1.31,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "river_discharge": 1.22,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-18",
+                            "river_discharge": 1.19,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-19",
+                            "river_discharge": 1.19,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-20",
+                            "river_discharge": 1.16,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-21",
+                            "river_discharge": 1.16,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-22",
+                            "river_discharge": 1.19,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-23",
+                            "river_discharge": 1.25,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-24",
+                            "river_discharge": 1.28,
+                            "is_forecast_day": true
+                        }
+                    ],
+                    "discharge_thresholds": {
+                        "mean": 7.76,
+                        "alert": 15.52,
+                        "minor": 23.27,
+                        "major": 38.79
+                    }
+                },
+                {
+                    "station_key": "holombuwa",
+                    "station_name": "Holombuwa",
+                    "district": "Kegalle",
+                    "local_area": "Holombuwa GN",
+                    "latitude": 7.188201,
+                    "longitude": 80.266331,
+                    "description": "Kelani basin hydrometric station",
+                    "daily_weather": [
+                        {
+                            "date": "2026-04-15",
+                            "rain_sum": 0,
+                            "showers_sum": 3.4,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 36.2,
+                            "temperature_2m_min": 25.7,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "rain_sum": 0,
+                            "showers_sum": 3.3,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 33.8,
+                            "temperature_2m_min": 25.3,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "rain_sum": 0,
+                            "showers_sum": 0.4,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 37.1,
+                            "temperature_2m_min": 24,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-18",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 37.2,
+                            "temperature_2m_min": 25.3,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-19",
+                            "rain_sum": 0,
+                            "showers_sum": 0.4,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 36.6,
+                            "temperature_2m_min": 25.6,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-20",
+                            "rain_sum": 0,
+                            "showers_sum": 1.3,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 33.7,
+                            "temperature_2m_min": 24.4,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-21",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 35.7,
+                            "temperature_2m_min": 24.1,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-22",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 36,
+                            "temperature_2m_min": 24.5,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-23",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 36.3,
+                            "temperature_2m_min": 24.1,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-24",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 36.4,
+                            "temperature_2m_min": 24.2,
+                            "is_forecast_day": true
+                        }
+                    ],
+                    "daily_water_levels": [
+                        {
+                            "date": "2026-04-15",
+                            "gauge": "Holombuwa",
+                            "water_level": 0.35,
+                            "alert_threshold": 3,
+                            "minor_threshold": 3.4,
+                            "major_threshold": 5,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "gauge": "Holombuwa",
+                            "water_level": 0.34,
+                            "alert_threshold": 3,
+                            "minor_threshold": 3.4,
+                            "major_threshold": 5,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "gauge": "Holombuwa",
+                            "water_level": 0.28,
+                            "alert_threshold": 3,
+                            "minor_threshold": 3.4,
+                            "major_threshold": 5,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        }
+                    ],
+                    "daily_discharge": [
+                        {
+                            "date": "2026-04-15",
+                            "river_discharge": 1.81,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "river_discharge": 1.84,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "river_discharge": 1.97,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-18",
+                            "river_discharge": 2.16,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-19",
+                            "river_discharge": 2.09,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-20",
+                            "river_discharge": 2.03,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-21",
+                            "river_discharge": 2,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-22",
+                            "river_discharge": 2,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-23",
+                            "river_discharge": 2.09,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-24",
+                            "river_discharge": 2.18,
+                            "is_forecast_day": true
+                        }
+                    ],
+                    "discharge_thresholds": {
+                        "mean": 8.2,
+                        "alert": 16.39,
+                        "minor": 24.59,
+                        "major": 40.99
+                    }
+                },
+                {
+                    "station_key": "kithulgala",
+                    "station_name": "Kithulgala",
+                    "district": "Kegalle",
+                    "local_area": "Kithulgala GN",
+                    "latitude": 6.991259,
+                    "longitude": 80.419213,
+                    "description": "Kelani basin hydrometric station",
+                    "daily_weather": [
+                        {
+                            "date": "2026-04-15",
+                            "rain_sum": 0,
+                            "showers_sum": 5.4,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 36.8,
+                            "temperature_2m_min": 26.9,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "rain_sum": 0,
+                            "showers_sum": 9.1,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 35.4,
+                            "temperature_2m_min": 26.6,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "rain_sum": 0,
+                            "showers_sum": 1.3,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 38.7,
+                            "temperature_2m_min": 25.2,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-18",
+                            "rain_sum": 0,
+                            "showers_sum": 0.2,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 38.5,
+                            "temperature_2m_min": 26.3,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-19",
+                            "rain_sum": 0,
+                            "showers_sum": 2.6,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 38.3,
+                            "temperature_2m_min": 27.3,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-20",
+                            "rain_sum": 0,
+                            "showers_sum": 1.8,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 35.4,
+                            "temperature_2m_min": 25.6,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-21",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 38,
+                            "temperature_2m_min": 25.2,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-22",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 38.1,
+                            "temperature_2m_min": 26,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-23",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 38.7,
+                            "temperature_2m_min": 25.7,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-24",
+                            "rain_sum": 0,
+                            "showers_sum": 0.15,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 37.8,
+                            "temperature_2m_min": 24.7,
+                            "is_forecast_day": true
+                        }
+                    ],
+                    "daily_water_levels": [
+                        {
+                            "date": "2026-04-15",
+                            "gauge": "Kithulgala",
+                            "water_level": 1.79,
+                            "alert_threshold": 3,
+                            "minor_threshold": 4,
+                            "major_threshold": 6,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "gauge": "Kithulgala",
+                            "water_level": 1.63,
+                            "alert_threshold": 3,
+                            "minor_threshold": 4,
+                            "major_threshold": 6,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "gauge": "Kithulgala",
+                            "water_level": 1.6,
+                            "alert_threshold": 3,
+                            "minor_threshold": 4,
+                            "major_threshold": 6,
+                            "unit": "m",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        }
+                    ],
+                    "daily_discharge": [
+                        {
+                            "date": "2026-04-15",
+                            "river_discharge": 8.4,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "river_discharge": 9.02,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "river_discharge": 9.52,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-18",
+                            "river_discharge": 9.74,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-19",
+                            "river_discharge": 9.35,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-20",
+                            "river_discharge": 8.91,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-21",
+                            "river_discharge": 8.59,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-22",
+                            "river_discharge": 8.57,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-23",
+                            "river_discharge": 8.82,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-24",
+                            "river_discharge": 9.12,
+                            "is_forecast_day": true
+                        }
+                    ],
+                    "discharge_thresholds": {
+                        "mean": 20.97,
+                        "alert": 41.95,
+                        "minor": 62.92,
+                        "major": 104.87
+                    }
+                },
+                {
+                    "station_key": "nagalagam_street",
+                    "station_name": "Nagalagam Street",
+                    "district": "Colombo",
+                    "local_area": "Colombo riverside GN divisions",
+                    "latitude": 6.958265,
+                    "longitude": 79.878642,
+                    "description": "Kelani basin hydrometric station",
+                    "daily_weather": [
+                        {
+                            "date": "2026-04-15",
+                            "rain_sum": 0,
+                            "showers_sum": 6.2,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 30.4,
+                            "temperature_2m_min": 28.6,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "rain_sum": 0,
+                            "showers_sum": 7.1,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 29.9,
+                            "temperature_2m_min": 27.5,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "rain_sum": 0,
+                            "showers_sum": 1.3,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 29.8,
+                            "temperature_2m_min": 28.5,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-18",
+                            "rain_sum": 0,
+                            "showers_sum": 0.7,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 29.7,
+                            "temperature_2m_min": 28.7,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-19",
+                            "rain_sum": 0,
+                            "showers_sum": 0.7,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 29.5,
+                            "temperature_2m_min": 28.7,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-20",
+                            "rain_sum": 0,
+                            "showers_sum": 1.8,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 29.7,
+                            "temperature_2m_min": 28.1,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-21",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 29.7,
+                            "temperature_2m_min": 29.2,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-22",
+                            "rain_sum": 0,
+                            "showers_sum": 0.3,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 29.6,
+                            "temperature_2m_min": 29.1,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-23",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 29.5,
+                            "temperature_2m_min": 28.9,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-24",
+                            "rain_sum": 0,
+                            "showers_sum": 0,
+                            "precipitation_sum": 0,
+                            "temperature_2m_max": 30.1,
+                            "temperature_2m_min": 26.3,
+                            "is_forecast_day": true
+                        }
+                    ],
+                    "daily_water_levels": [
+                        {
+                            "date": "2026-04-15",
+                            "gauge": "Nagalagam Street",
+                            "water_level": 2.8,
+                            "alert_threshold": 4,
+                            "minor_threshold": 5,
+                            "major_threshold": 7,
+                            "unit": "ft",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "gauge": "Nagalagam Street",
+                            "water_level": 2.9,
+                            "alert_threshold": 4,
+                            "minor_threshold": 5,
+                            "major_threshold": 7,
+                            "unit": "ft",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "gauge": "Nagalagam Street",
+                            "water_level": 3,
+                            "alert_threshold": 4,
+                            "minor_threshold": 5,
+                            "major_threshold": 7,
+                            "unit": "ft",
+                            "status": "safe",
+                            "is_forecast_day": false
+                        }
+                    ],
+                    "daily_discharge": [
+                        {
+                            "date": "2026-04-15",
+                            "river_discharge": 1.65,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-16",
+                            "river_discharge": 1.06,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-17",
+                            "river_discharge": 0.87,
+                            "is_forecast_day": false
+                        },
+                        {
+                            "date": "2026-04-18",
+                            "river_discharge": 0.85,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-19",
+                            "river_discharge": 0.53,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-20",
+                            "river_discharge": 0.44,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-21",
+                            "river_discharge": 0.44,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-22",
+                            "river_discharge": 0.66,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-23",
+                            "river_discharge": 0.87,
+                            "is_forecast_day": true
+                        },
+                        {
+                            "date": "2026-04-24",
+                            "river_discharge": 1.06,
+                            "is_forecast_day": true
+                        }
+                    ],
+                    "discharge_thresholds": {
+                        "mean": 2.23,
+                        "alert": 4.46,
+                        "minor": 6.69,
+                        "major": 11.15
+                    }
+                }
+            ]
+        }
+    ]
+}
