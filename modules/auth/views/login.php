@@ -1,6 +1,8 @@
 <div class="auth-panel panel" role="form" aria-labelledby="loginHeading">
     <div class="auth-brand">
-        <img src="<?= asset('img/logo.svg') ?>" alt="<?= e(config('app.name')) ?> logo">
+        <a href="/" aria-label="<?= e(config('app.name')) ?> home">
+            <img src="<?= asset('img/logo.svg') ?>" alt="<?= e(config('app.name')) ?> logo">
+        </a>
         <span class="sr-only"><?= e(config('app.name')) ?></span>
     </div>
 

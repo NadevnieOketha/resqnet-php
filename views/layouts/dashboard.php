@@ -27,7 +27,9 @@ $avatarInitial = strtoupper(substr($displayName, 0, 1));
 <div class="layout">
     <aside class="sidebar" aria-label="Primary navigation">
         <div class="brand">
-            <img class="logo-img" src="<?= asset('img/logo.svg') ?>" alt="<?= e(config('app.name')) ?> logo" width="120" height="32">
+            <a href="/" aria-label="<?= e(config('app.name')) ?> home">
+                <img class="logo-img" src="<?= asset('img/logo.svg') ?>" alt="<?= e(config('app.name')) ?> logo" width="120" height="32">
+            </a>
             <span class="brand-name sr-only"><?= e(config('app.name')) ?></span>
         </div>
 

@@ -382,11 +382,11 @@ $registerHref = "/register";
         <div class="footer__container">
             <div class="footer__grid">
                 <div>
-                    <div class="footer__brand">
+                    <a class="footer__brand" href="/" aria-label="<?= e($appName) ?> home">
                         <img src="<?= asset("img/logo.svg") ?>" alt="<?= e(
     $appName,
 ) ?>">
-                    </div>
+                    </a>
                     <p class="footer__desc">
                         <?= e(
                             $appName,
