@@ -29,6 +29,7 @@ route('POST', '/reset-password',   'auth_reset_password_post', ['middleware_gues
 // Authenticated
 route('GET',  '/logout',              'auth_logout',             ['middleware_auth']);
 route('GET',  '/dashboard',           'dashboard_index',         ['middleware_auth']);
+route('GET',  '/dashboard/forum',     'forum_dashboard_index',   ['middleware_auth']);
 route('GET',  '/dashboard/export/district-report', 'dashboard_export_district_pdf', ['middleware_auth', fn() => middleware_role('dmc')]);
 route('GET',  '/dashboard/export/district-report.pdf', 'dashboard_export_district_pdf', ['middleware_auth', fn() => middleware_role('dmc')]);
 route('GET',  '/dashboard/export/full-report', 'dashboard_export_full_pdf', ['middleware_auth', fn() => middleware_role('dmc')]);

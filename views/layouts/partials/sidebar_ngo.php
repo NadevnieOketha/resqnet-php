@@ -23,7 +23,7 @@
         <span class="icon" data-lucide="cloud-rain"></span>
         <span>Forecast Dashboard</span>
     </a>
-    <a href="/forum" class="nav-item <?= is_current_url('/forum') ? 'active' : '' ?>" data-section="forum">
+    <a href="/dashboard/forum" class="nav-item <?= is_current_url('/dashboard/forum') ? 'active' : '' ?>" data-section="forum">
         <span class="icon" data-lucide="message-square"></span>
         <span>Forum</span>
     </a>

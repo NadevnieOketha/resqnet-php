@@ -15,7 +15,7 @@
         <span class="icon" data-lucide="message-square"></span>
         <span>Forum Posts</span>
     </a>
-    <a href="/forum" class="nav-item <?= is_current_url('/forum') ? 'active' : '' ?>" data-section="forum-public">
+    <a href="/dashboard/forum" class="nav-item <?= is_current_url('/dashboard/forum') ? 'active' : '' ?>" data-section="forum-public">
         <span class="icon" data-lucide="messages-square"></span>
         <span>Public Forum</span>
     </a>

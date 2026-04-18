@@ -15,6 +15,17 @@ function forum_public_index(): void
     ], 'main');
 }
 
+function forum_dashboard_index(): void
+{
+    $posts = forum_list_all_posts();
+
+    view('forum::public', [
+        'page_title' => 'Forum',
+        'breadcrumb' => 'Forum',
+        'posts' => $posts,
+    ], 'dashboard');
+}
+
 function forum_dmc_manage_index(): void
 {
     $posts = forum_list_all_posts();
