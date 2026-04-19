@@ -436,8 +436,16 @@ function auth_reset_user_password(int $userId, string $password): void
 function auth_pending_approval_users(): array
 {
     return db_fetch_all(
-        "SELECT u.user_id, u.username, u.email, u.role, u.active,
-                COALESCE(v.name, n.organization_name, u.username) AS display_name
+    "SELECT u.user_id, u.username, u.email, u.role, u.active,
+        v.name AS volunteer_name,
+        v.contact_number AS volunteer_contact_number,
+        v.gn_division AS volunteer_gn_division,
+        n.organization_name,
+        n.registration_number,
+        n.contact_person_name,
+        n.contact_person_telephone,
+        n.contact_person_email,
+        COALESCE(v.name, n.organization_name, u.username) AS display_name
          FROM users u
          LEFT JOIN volunteers v ON v.user_id = u.user_id
          LEFT JOIN ngos n ON n.user_id = u.user_id

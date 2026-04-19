@@ -435,9 +435,18 @@ function auth_become_volunteer_post(): void
 function auth_dmc_pending_approvals(): void
 {
     $pendingUsers = auth_pending_approval_users();
+    $pendingVolunteers = array_values(array_filter(
+        $pendingUsers,
+        static fn(array $row): bool => (string) ($row['role'] ?? '') === 'volunteer'
+    ));
+    $pendingNgos = array_values(array_filter(
+        $pendingUsers,
+        static fn(array $row): bool => (string) ($row['role'] ?? '') === 'ngo'
+    ));
 
     view('auth::dmc_pending', [
-        'pending_users' => $pendingUsers,
+        'pending_volunteers' => $pendingVolunteers,
+        'pending_ngos' => $pendingNgos,
         'breadcrumb' => 'Pending Approvals',
     ], 'dashboard');
 }
