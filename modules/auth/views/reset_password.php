@@ -9,7 +9,7 @@
     <h1 id="resetHeading" class="auth-heading">Reset password</h1>
 
     <?php if (empty($token_valid)): ?>
-        <p class="auth-subtitle">This reset link is invalid or expired.</p>
+        <p class="auth-subtitle">This reset link is invalid, expired, or has been replaced by a newer link.</p>
         <div class="auth-links">
             <a href="/forgot-password" class="underline-link">Request a new reset link</a>
         </div>
