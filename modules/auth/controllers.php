@@ -170,21 +170,29 @@ function auth_forgot_password_post(): void
         redirect('/forgot-password');
     }
 
-    $token = auth_create_password_reset_token((int) $user['user_id']);
+    $resetTtlMinutes = auth_password_reset_ttl_minutes();
+    $token = auth_create_password_reset_token((int) $user['user_id'], $resetTtlMinutes);
     $resetLink = base_url('/reset-password?token=' . urlencode($token));
+    $resetTtlLabel = $resetTtlMinutes . ' minutes';
+    if ($resetTtlMinutes % 60 === 0) {
+        $hours = (int) ($resetTtlMinutes / 60);
+        $resetTtlLabel = $hours . ' hour' . ($hours === 1 ? '' : 's');
+    }
 
     $subject = 'resqnet password reset';
     $html = '<p>Hello ' . e($user['username']) . ',</p>'
         . '<p>Use this link to reset your password:</p>'
         . '<p><a href="' . e($resetLink) . '">' . e($resetLink) . '</a></p>'
-        . '<p>This link expires in 30 minutes.</p>';
+        . '<p>This link expires in ' . e($resetTtlLabel) . '.</p>';
 
     $sent = mail_send((string) $user['email'], $subject, $html, "Reset link: {$resetLink}");
 
     if ($sent) {
         flash('success', 'A reset link has been sent to your email.');
     } else {
-        flash('warning', 'Email sending failed. Check storage/logs/mail.log for SMTP details. Use this reset link: ' . $resetLink);
+        $mailError = mail_last_error();
+        $reason = $mailError !== '' ? ' Reason: ' . $mailError : '';
+        flash('warning', 'Email sending failed. Check storage/logs/mail.log for SMTP details.' . $reason . ' Use this reset link: ' . $resetLink);
     }
 
     clear_old_input();
@@ -214,7 +222,7 @@ function auth_reset_password_post(): void
 
     $tokenData = $token === '' ? null : auth_find_valid_password_reset_token($token);
     if (!$tokenData) {
-        flash('error', 'Invalid or expired reset token.');
+        flash('error', 'Invalid, expired, or superseded reset token. Please request a new link.');
         redirect('/reset-password?token=' . urlencode($token));
     }
 
@@ -521,7 +529,7 @@ function auth_dmc_create_gn_post(): void
         redirect('/dashboard/admin/grama-niladhari/create');
     }
 
-    $token = auth_create_password_reset_token($userId);
+    $token = auth_create_password_reset_token($userId, auth_password_reset_ttl_minutes());
     $resetLink = base_url('/reset-password?token=' . urlencode($token));
 
     $subject = 'resqnet Grama Niladhari account access confirmation';
@@ -537,7 +545,9 @@ function auth_dmc_create_gn_post(): void
     if ($sent) {
         flash('success', 'GN account created. Activation link sent to email; account becomes active after confirmation.');
     } else {
-        flash('warning', 'GN account created, but email failed. Share this activation link manually: ' . $resetLink);
+        $mailError = mail_last_error();
+        $reason = $mailError !== '' ? ' Reason: ' . $mailError : '';
+        flash('warning', 'GN account created, but email failed.' . $reason . ' Share this activation link manually: ' . $resetLink);
     }
 
     redirect('/dashboard/admin/grama-niladhari/accounts');
@@ -553,7 +563,7 @@ function auth_dmc_resend_gn_credentials(string $userId): void
         redirect('/dashboard/admin/grama-niladhari/accounts');
     }
 
-    $token = auth_create_password_reset_token((int) $user['user_id']);
+    $token = auth_create_password_reset_token((int) $user['user_id'], auth_password_reset_ttl_minutes());
     $resetLink = base_url('/reset-password?token=' . urlencode($token));
 
     $subject = 'resqnet Grama Niladhari account access';
@@ -567,7 +577,9 @@ function auth_dmc_resend_gn_credentials(string $userId): void
     if ($sent) {
         flash('success', 'Credential email sent successfully.');
     } else {
-        flash('warning', 'Email failed. Share this reset link manually: ' . $resetLink);
+        $mailError = mail_last_error();
+        $reason = $mailError !== '' ? ' Reason: ' . $mailError : '';
+        flash('warning', 'Email failed.' . $reason . ' Share this reset link manually: ' . $resetLink);
     }
 
     redirect('/dashboard/admin/grama-niladhari/accounts');
