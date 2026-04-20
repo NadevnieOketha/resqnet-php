@@ -184,7 +184,9 @@ function auth_forgot_password_post(): void
     if ($sent) {
         flash('success', 'A reset link has been sent to your email.');
     } else {
-        flash('warning', 'Email sending failed. Check storage/logs/mail.log for SMTP details. Use this reset link: ' . $resetLink);
+        $mailError = mail_last_error();
+        $reason = $mailError !== '' ? ' Reason: ' . $mailError : '';
+        flash('warning', 'Email sending failed. Check storage/logs/mail.log for SMTP details.' . $reason . ' Use this reset link: ' . $resetLink);
     }
 
     clear_old_input();
@@ -528,7 +530,9 @@ function auth_dmc_create_gn_post(): void
     if ($sent) {
         flash('success', 'GN account created. Activation link sent to email; account becomes active after confirmation.');
     } else {
-        flash('warning', 'GN account created, but email failed. Share this activation link manually: ' . $resetLink);
+        $mailError = mail_last_error();
+        $reason = $mailError !== '' ? ' Reason: ' . $mailError : '';
+        flash('warning', 'GN account created, but email failed.' . $reason . ' Share this activation link manually: ' . $resetLink);
     }
 
     redirect('/dashboard/admin/grama-niladhari/accounts');
@@ -558,7 +562,9 @@ function auth_dmc_resend_gn_credentials(string $userId): void
     if ($sent) {
         flash('success', 'Credential email sent successfully.');
     } else {
-        flash('warning', 'Email failed. Share this reset link manually: ' . $resetLink);
+        $mailError = mail_last_error();
+        $reason = $mailError !== '' ? ' Reason: ' . $mailError : '';
+        flash('warning', 'Email failed.' . $reason . ' Share this reset link manually: ' . $resetLink);
     }
 
     redirect('/dashboard/admin/grama-niladhari/accounts');
