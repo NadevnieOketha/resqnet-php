@@ -399,16 +399,23 @@ function auth_convert_general_to_volunteer(int $userId, array $data): void
 
 function auth_create_password_reset_token(int $userId, int $ttlMinutes = 30): string
 {
+    $ttlMinutes = max(15, min(1440, $ttlMinutes));
     $token = bin2hex(random_bytes(32));
-    $expiresAt = date('Y-m-d H:i:s', time() + ($ttlMinutes * 60));
 
     db_query('UPDATE password_reset_tokens SET used = 1 WHERE user_id = ? AND used = 0', [$userId]);
     db_query(
-        'INSERT INTO password_reset_tokens (token, user_id, expires_at, used) VALUES (?, ?, ?, 0)',
-        [$token, $userId, $expiresAt]
+        'INSERT INTO password_reset_tokens (token, user_id, expires_at, used)
+         VALUES (?, ?, DATE_ADD(NOW(), INTERVAL ? MINUTE), 0)',
+        [$token, $userId, $ttlMinutes]
     );
 
     return $token;
+}
+
+function auth_password_reset_ttl_minutes(): int
+{
+    $ttl = (int) env('PASSWORD_RESET_TTL_MINUTES', 180);
+    return max(15, min(1440, $ttl));
 }
 
 function auth_find_valid_password_reset_token(string $token): ?array
