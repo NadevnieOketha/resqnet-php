@@ -375,3 +375,13 @@ if (
 })();
 </script>
 <?php endif; ?>
+
+<!--<div class="form-group">
+    <label for="donation_priority">Donation Priority</label>
+    <select id="donation_priority" name="donation_priority">
+        <option value="Low" <?= (($old['donation_priority'] ?? '') === 'Low') ? 'selected' : '' ?>>Low</option>
+        <option value="Medium" <?= (($old['donation_priority'] ?? 'Medium') === 'Medium') ? 'selected' : '' ?>>Medium</option>
+        <option value="High" <?= (($old['donation_priority'] ?? '') === 'High') ? 'selected' : '' ?>>High</option>
+    </select>
+</div>
+

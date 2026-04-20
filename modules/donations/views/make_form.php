@@ -10,7 +10,8 @@ $collectionPoints = is_array($collection_points ?? null) ? $collection_points : 
 $catalogGrouped = is_array($catalog_grouped ?? null) ? $catalog_grouped : [];
 $timeSlots = is_array($time_slots ?? null) ? $time_slots : [];
 $locationProfileComplete = !empty($location_profile_complete);
-$oldInput = $_SESSION['_old_input'] ?? [];
+//$oldInput = $_SESSION['_old_input'] ?? [];
+$oldInput = is_array($old_input ?? null) ? $old_input : [];
 
 $fieldValue = static function (string $key, string $fallback = '') use ($oldInput, $defaults): string {
     if (array_key_exists($key, $oldInput)) {
@@ -397,9 +398,7 @@ foreach ($collectionPoints as $point) {
             <div class="form-group" style="margin-top:0.75rem;">
                 <label for="special_notes">Special Notes (optional)</label>
                 <textarea class="input" id="special_notes" name="special_notes" rows="3" placeholder="Any handling notes or special pickup instructions"><?= e((string) ($oldInput['special_notes'] ?? '')) ?></textarea>
-            </div>
-
-            <h2 style="margin-top:1rem; margin-bottom:0.5rem;">Donation Items</h2>
+            </div><h2 style="margin-top:1rem; margin-bottom:0.5rem;">Donation Items</h2>
             <p class="muted" style="margin-top:0;">Enter a quantity for at least one item.</p>
 
             <?php foreach ($catalogGrouped as $category => $items): ?>

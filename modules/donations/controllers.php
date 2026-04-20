@@ -82,6 +82,7 @@ function donations_send_guest_delivered_email(array $donation): bool
 
     return mail_send($email, $subject, $html, $text);
 }
+$oldInput = $_SESSION['_old_input'] ?? [];
 
 function donations_make_form(): void
 {
@@ -111,8 +112,10 @@ function donations_make_form(): void
         $selectedDistrict = (string) ($defaults['district'] ?? '');
         $selectedGn = (string) ($defaults['gn_division'] ?? '');
     } else {
-        $selectedDistrict = trim((string) request_query('district', (string) ($_SESSION['_old_input']['district'] ?? '')));
-        $selectedGn = trim((string) request_query('gn_division', (string) ($_SESSION['_old_input']['gn_division'] ?? '')));
+        //$selectedDistrict = trim((string) request_query('district', (string) ($_SESSION['_old_input']['district'] ?? '')));
+        //$selectedGn = trim((string) request_query('gn_division', (string) ($_SESSION['_old_input']['gn_division'] ?? '')));
+        $selectedDistrict = trim((string) request_query('district', (string) ($oldInput['district'] ?? '')));
+        $selectedGn = trim((string) request_query('gn_division', (string) ($oldInput['gn_division'] ?? '')));
     }
 
     $collectionPoints = [];
@@ -126,6 +129,8 @@ function donations_make_form(): void
 
     $layout = $isLoggedDonor ? 'dashboard' : 'main';
 
+    unset($_SESSION['_old_input']);
+    
     view('donations::make_form', [
         'breadcrumb' => 'Make a Donation',
         'submit_role' => $submitRole,
@@ -139,6 +144,7 @@ function donations_make_form(): void
         'collection_points' => $collectionPoints,
         'catalog_grouped' => donations_catalog_grouped(),
         'time_slots' => donations_time_slots(),
+        'old_input' => $oldInput,
     ], $layout);
 }
 
@@ -233,6 +239,10 @@ function donations_store(): void
 
     if (!$confirmed) {
         $errors[] = 'You must confirm the donation details before submitting.';
+    }
+
+    if (mb_strlen($specialNotes) > 255) {
+        //$errors['special_notes'] = 'Special notes must be 255 characters or less.';
     }
 
     $point = null;
