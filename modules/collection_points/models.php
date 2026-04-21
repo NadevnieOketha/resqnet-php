@@ -84,6 +84,7 @@ function collection_points_ensure_schema(): void
                 full_address VARCHAR(255) NOT NULL,
                 contact_person VARCHAR(100) DEFAULT NULL,
                 contact_number VARCHAR(20) DEFAULT NULL,
+                active TINYINT(1) NOT NULL DEFAULT 1,
                 created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 PRIMARY KEY (collection_point_id)
@@ -96,6 +97,7 @@ function collection_points_ensure_schema(): void
     collection_points_ensure_column('collection_points', 'address_city', 'VARCHAR(120) DEFAULT NULL AFTER address_street');
     collection_points_ensure_column('collection_points', 'district', 'VARCHAR(100) DEFAULT NULL AFTER address_city');
     collection_points_ensure_column('collection_points', 'gn_division', 'VARCHAR(150) DEFAULT NULL AFTER district');
+    collection_points_ensure_column('collection_points', 'active', 'TINYINT(1) NOT NULL DEFAULT 1 AFTER contact_number');
     collection_points_ensure_column('collection_points', 'created_at', 'TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP');
     collection_points_ensure_column('collection_points', 'updated_at', 'TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP');
 
@@ -175,6 +177,11 @@ function collection_points_validate_payload(array $payload): array
     return $errors;
 }
 
+function collection_points_normalize_active_value($value): int
+{
+    return (string) $value === '1' ? 1 : 0;
+}
+
 function collection_points_list_for_ngo(int $ngoUserId): array
 {
     collection_points_ensure_schema();
@@ -192,6 +199,7 @@ function collection_points_list_for_ngo(int $ngoUserId): array
                 full_address,
                 contact_person,
                 contact_number,
+                active,
                 created_at,
                 updated_at
          FROM collection_points
@@ -218,6 +226,7 @@ function collection_points_find_for_ngo(int $collectionPointId, int $ngoUserId):
                 full_address,
                 contact_person,
                 contact_number,
+                active,
                 created_at,
                 updated_at
          FROM collection_points
@@ -234,8 +243,8 @@ function collection_points_create(int $ngoUserId, array $payload): int
 
     db_query(
         'INSERT INTO collection_points
-         (ngo_id, name, address_house_no, address_street, address_city, district, gn_division, location_landmark, full_address, contact_person, contact_number)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+         (ngo_id, name, address_house_no, address_street, address_city, district, gn_division, location_landmark, full_address, contact_person, contact_number, active)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
         [
             $ngoUserId,
             (string) $payload['name'],
@@ -248,6 +257,7 @@ function collection_points_create(int $ngoUserId, array $payload): int
             (string) $payload['full_address'],
             $payload['contact_person'] !== '' ? (string) $payload['contact_person'] : null,
             $payload['contact_number'] !== '' ? (string) $payload['contact_number'] : null,
+            collection_points_normalize_active_value($payload['active'] ?? 1),
         ]
     );
 
@@ -269,7 +279,8 @@ function collection_points_update_for_ngo(int $collectionPointId, int $ngoUserId
              location_landmark = ?,
              full_address = ?,
              contact_person = ?,
-             contact_number = ?
+             contact_number = ?,
+             active = ?
          WHERE collection_point_id = ?
            AND ngo_id = ?
          LIMIT 1',
@@ -284,6 +295,7 @@ function collection_points_update_for_ngo(int $collectionPointId, int $ngoUserId
             (string) $payload['full_address'],
             $payload['contact_person'] !== '' ? (string) $payload['contact_person'] : null,
             $payload['contact_number'] !== '' ? (string) $payload['contact_number'] : null,
+            collection_points_normalize_active_value($payload['active'] ?? 1),
             $collectionPointId,
             $ngoUserId,
         ]

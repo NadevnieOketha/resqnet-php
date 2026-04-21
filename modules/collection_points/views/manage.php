@@ -37,6 +37,9 @@ $selectedGnOther = $selectedGnRaw === '__other__' ? $selectedGnOtherRaw : ($sele
 $formAction = $isEditing
     ? '/dashboard/collection-points/' . (int) ($editingPoint['collection_point_id'] ?? 0) . '/update'
     : '/dashboard/collection-points/create';
+
+$activeValue = $fieldValue('active', $isEditing ? (string) ((int) ($editingPoint['active'] ?? 1)) : '1');
+$isActiveChecked = $activeValue === '1';
 ?>
 
 <style>
@@ -48,6 +51,9 @@ $formAction = $isEditing
   .cp-table thead th { text-align:left; padding:0.75rem 0.8rem; background:#fafafa; border-bottom:1px solid var(--color-border); }
   .cp-table tbody td { padding:0.75rem 0.8rem; border-bottom:1px solid var(--color-border); vertical-align:top; }
   .cp-table tbody tr:last-child td { border-bottom:none; }
+  .cp-status { display:inline-flex; align-items:center; border-radius:999px; padding:0.22rem 0.6rem; font-size:0.64rem; font-weight:700; border:1px solid var(--color-border); }
+  .cp-status-active { background:#edf8ee; border-color:#b8dfbc; color:#1f5f2a; }
+  .cp-status-inactive { background:#fdeeee; border-color:#f0bbbb; color:#8a1616; }
   .tiny { color:#666; font-size:0.66rem; }
 </style>
 
@@ -122,6 +128,12 @@ $formAction = $isEditing
         <input class="input" type="text" id="contact_number" name="contact_number" value="<?= e($fieldValue('contact_number')) ?>">
       </div>
 
+        <div class="form-group" style="margin:0; display:flex; align-items:center; gap:0.5rem;">
+          <input type="hidden" name="active" value="0">
+          <input type="checkbox" id="active" name="active" value="1" <?= $isActiveChecked ? 'checked' : '' ?>>
+          <label for="active" style="margin:0;">Active</label>
+        </div>
+
       <div style="display:flex; gap:0.5rem; grid-column:1 / -1;">
         <button type="submit" class="btn btn-primary"><?= $isEditing ? 'Update Collection Point' : 'Add Collection Point' ?></button>
         <?php if ($isEditing): ?>
@@ -139,15 +151,17 @@ $formAction = $isEditing
           <th>Address</th>
           <th>Landmark</th>
           <th>Contact</th>
+          <th>Status</th>
           <th style="text-align:right;">Actions</th>
         </tr>
       </thead>
       <tbody>
         <?php if (empty($collectionPoints)): ?>
-          <tr><td colspan="5" class="tiny">No collection points created yet.</td></tr>
+          <tr><td colspan="6" class="tiny">No collection points created yet.</td></tr>
         <?php else: ?>
           <?php foreach ($collectionPoints as $point): ?>
             <?php $pointId = (int) ($point['collection_point_id'] ?? 0); ?>
+            <?php $isActive = (int) ($point['active'] ?? 1) === 1; ?>
             <tr>
               <td>
                 <strong><?= e((string) ($point['name'] ?? '-')) ?></strong><br>
@@ -158,6 +172,11 @@ $formAction = $isEditing
               <td>
                 <?= e((string) ($point['contact_person'] ?? '-')) ?><br>
                 <span class="tiny"><?= e((string) ($point['contact_number'] ?? '-')) ?></span>
+              </td>
+              <td>
+                <span class="cp-status <?= $isActive ? 'cp-status-active' : 'cp-status-inactive' ?>">
+                  <?= $isActive ? 'Active' : 'Inactive' ?>
+                </span>
               </td>
               <td style="text-align:right; white-space:nowrap;">
                 <a href="/dashboard/collection-points?edit=<?= $pointId ?>" class="btn btn-primary btn-sm">Edit</a>

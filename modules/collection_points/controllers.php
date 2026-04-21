@@ -45,6 +45,7 @@ function collection_points_ngo_create_action(): void
         'location_landmark' => trim((string) request_input('location_landmark', '')),
         'contact_person' => trim((string) request_input('contact_person', '')),
         'contact_number' => trim((string) request_input('contact_number', '')),
+        'active' => request_input('active', '0') === '1' ? 1 : 0,
     ];
 
     $payload['full_address'] = collection_points_compose_full_address($payload);
@@ -91,6 +92,7 @@ function collection_points_ngo_update_action(string $collectionPointId): void
         'location_landmark' => trim((string) request_input('location_landmark', '')),
         'contact_person' => trim((string) request_input('contact_person', '')),
         'contact_number' => trim((string) request_input('contact_number', '')),
+        'active' => request_input('active', '0') === '1' ? 1 : 0,
     ];
 
     $payload['full_address'] = collection_points_compose_full_address($payload);

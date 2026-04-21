@@ -215,6 +215,9 @@ function donations_logged_donor_defaults(int $userId, string $role): array
 function donations_list_collection_points(?string $district = null, ?string $gnDivision = null): array
 {
     donations_ensure_schema();
+    if (function_exists('collection_points_ensure_schema')) {
+        collection_points_ensure_schema();
+    }
 
     $sql = 'SELECT collection_point_id,
                    ngo_id,
@@ -224,10 +227,11 @@ function donations_list_collection_points(?string $district = null, ?string $gnD
                    gn_division,
                    location_landmark,
                    contact_person,
-                   contact_number
+                   contact_number,
+                   active
             FROM collection_points';
 
-    $where = [];
+    $where = ['COALESCE(active, 1) = 1'];
     $params = [];
 
     $district = trim((string) $district);
@@ -255,6 +259,9 @@ function donations_list_collection_points(?string $district = null, ?string $gnD
 function donations_find_collection_point_by_id(int $collectionPointId): ?array
 {
     donations_ensure_schema();
+    if (function_exists('collection_points_ensure_schema')) {
+        collection_points_ensure_schema();
+    }
 
     return db_fetch(
         'SELECT collection_point_id,
@@ -265,9 +272,11 @@ function donations_find_collection_point_by_id(int $collectionPointId): ?array
                 gn_division,
                 location_landmark,
                 contact_person,
-                contact_number
+                contact_number,
+                active
          FROM collection_points
          WHERE collection_point_id = ?
+           AND COALESCE(active, 1) = 1
          LIMIT 1',
         [$collectionPointId]
     );
