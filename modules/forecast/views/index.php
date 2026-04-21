@@ -156,18 +156,6 @@ $smsAlertJson = is_string($smsAlertJson) ? $smsAlertJson : '{}';
         padding: 0.42rem 0.55rem;
     }
 
-    .wx-meta-item-status-safe {
-        border-color: #93c5fd;
-        background: linear-gradient(180deg, #eff6ff 0%, #dbeafe 100%);
-        color: #1d4ed8;
-    }
-
-    .wx-meta-item-status-major {
-        border-color: #fca5a5;
-        background: linear-gradient(180deg, #fef2f2 0%, #fee2e2 100%);
-        color: #b91c1c;
-    }
-
     .wx-grid {
         display: grid;
         grid-template-columns: 1fr;
@@ -412,7 +400,7 @@ $smsAlertJson = is_string($smsAlertJson) ? $smsAlertJson : '{}';
     }
 
     .wx-water-safe {
-        background: linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
+        background: #2626dc;
     }
 
     .wx-water-alert {
@@ -424,7 +412,7 @@ $smsAlertJson = is_string($smsAlertJson) ? $smsAlertJson : '{}';
     }
 
     .wx-water-major {
-        background: linear-gradient(180deg, #f87171 0%, #dc2626 100%);
+        background: #dc2626;
     }
 
     @media (max-width: 760px) {
@@ -539,7 +527,6 @@ $smsAlertJson = is_string($smsAlertJson) ? $smsAlertJson : '{}';
         </div>
     </div>
 </section>
-
 <script>
 (() => {
     const snapshot = <?= $snapshotJson ?>;
@@ -653,15 +640,15 @@ $smsAlertJson = is_string($smsAlertJson) ? $smsAlertJson : '{}';
         const toDate = String(windowInfo.to || '-');
         const waterRows = rowsForWater(station);
         const latestWater = waterRows.length ? waterRows[waterRows.length - 1] : null;
-        const latestWaterStatus = latestWater ? String(latestWater.status || 'safe') : '';
+        const latestWaterStatus = latestWater ? String(latestWater.status || 'safe').toLowerCase() : '';
         const latestStatus = latestWater ? statusLabel(latestWaterStatus) : 'No data';
         const latestValue = latestWater ? (fmt(latestWater.water_level, 2) + ' ' + String(latestWater.unit || 'm')) : '-';
         const dischargeRows = rowsForDischarge(station);
         const latestDischarge = latestObservedDischarge(dischargeRows);
         const alertThreshold = toNum(station && station.discharge_thresholds && station.discharge_thresholds.alert);
-        const latestStatusCardClass = latestWaterStatus.toLowerCase() === 'major'
-            ? 'wx-meta-item-status-major'
-            : (latestWaterStatus.toLowerCase() === 'safe' ? 'wx-meta-item-status-safe' : '');
+        const latestStatusStyle = latestWaterStatus === 'safe'
+            ? ' style="background-color: #dbeafe;"'
+            : (latestWaterStatus === 'major' ? ' style="background-color: #fee2e2;"' : '');
 
         metaBox.innerHTML = ''
             + '<div class="wx-meta-grid">'
@@ -672,7 +659,7 @@ $smsAlertJson = is_string($smsAlertJson) ? $smsAlertJson : '{}';
             + '<div class="wx-meta-item"><strong>Latest Observed Discharge:</strong> ' + esc(latestDischarge === null ? '-' : fmt(latestDischarge, 2) + ' m3/s') + '</div>'
             + '<div class="wx-meta-item"><strong>Alert Baseline:</strong> ' + esc(alertThreshold === null ? '-' : fmt(alertThreshold, 2) + ' m3/s') + '</div>'
             + '<div class="wx-meta-item"><strong>Latest Water Level:</strong> ' + esc(latestValue) + '</div>'
-            + '<div class="wx-meta-item ' + esc(latestStatusCardClass) + '"><strong>Latest Status:</strong> ' + esc(latestStatus) + '</div>'
+            + '<div class="wx-meta-item"' + latestStatusStyle + '><strong>Latest Status:</strong> ' + esc(latestStatus) + '</div>'
             + '</div>';
     }
 
