@@ -156,6 +156,18 @@ $smsAlertJson = is_string($smsAlertJson) ? $smsAlertJson : '{}';
         padding: 0.42rem 0.55rem;
     }
 
+    .wx-meta-item-status-safe {
+        border-color: #93c5fd;
+        background: linear-gradient(180deg, #eff6ff 0%, #dbeafe 100%);
+        color: #1d4ed8;
+    }
+
+    .wx-meta-item-status-major {
+        border-color: #fca5a5;
+        background: linear-gradient(180deg, #fef2f2 0%, #fee2e2 100%);
+        color: #b91c1c;
+    }
+
     .wx-grid {
         display: grid;
         grid-template-columns: 1fr;
@@ -641,11 +653,15 @@ $smsAlertJson = is_string($smsAlertJson) ? $smsAlertJson : '{}';
         const toDate = String(windowInfo.to || '-');
         const waterRows = rowsForWater(station);
         const latestWater = waterRows.length ? waterRows[waterRows.length - 1] : null;
-        const latestStatus = latestWater ? statusLabel(latestWater.status || 'safe') : 'No data';
+        const latestWaterStatus = latestWater ? String(latestWater.status || 'safe') : '';
+        const latestStatus = latestWater ? statusLabel(latestWaterStatus) : 'No data';
         const latestValue = latestWater ? (fmt(latestWater.water_level, 2) + ' ' + String(latestWater.unit || 'm')) : '-';
         const dischargeRows = rowsForDischarge(station);
         const latestDischarge = latestObservedDischarge(dischargeRows);
         const alertThreshold = toNum(station && station.discharge_thresholds && station.discharge_thresholds.alert);
+        const latestStatusCardClass = latestWaterStatus.toLowerCase() === 'major'
+            ? 'wx-meta-item-status-major'
+            : (latestWaterStatus.toLowerCase() === 'safe' ? 'wx-meta-item-status-safe' : '');
 
         metaBox.innerHTML = ''
             + '<div class="wx-meta-grid">'
@@ -656,7 +672,7 @@ $smsAlertJson = is_string($smsAlertJson) ? $smsAlertJson : '{}';
             + '<div class="wx-meta-item"><strong>Latest Observed Discharge:</strong> ' + esc(latestDischarge === null ? '-' : fmt(latestDischarge, 2) + ' m3/s') + '</div>'
             + '<div class="wx-meta-item"><strong>Alert Baseline:</strong> ' + esc(alertThreshold === null ? '-' : fmt(alertThreshold, 2) + ' m3/s') + '</div>'
             + '<div class="wx-meta-item"><strong>Latest Water Level:</strong> ' + esc(latestValue) + '</div>'
-            + '<div class="wx-meta-item"><strong>Latest Status:</strong> ' + esc(latestStatus) + '</div>'
+            + '<div class="wx-meta-item ' + esc(latestStatusCardClass) + '"><strong>Latest Status:</strong> ' + esc(latestStatus) + '</div>'
             + '</div>';
     }
 

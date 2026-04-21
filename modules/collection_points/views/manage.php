@@ -51,9 +51,6 @@ $isActiveChecked = $activeValue === '1';
   .cp-table thead th { text-align:left; padding:0.75rem 0.8rem; background:#fafafa; border-bottom:1px solid var(--color-border); }
   .cp-table tbody td { padding:0.75rem 0.8rem; border-bottom:1px solid var(--color-border); vertical-align:top; }
   .cp-table tbody tr:last-child td { border-bottom:none; }
-  .cp-status { display:inline-flex; align-items:center; border-radius:999px; padding:0.22rem 0.6rem; font-size:0.64rem; font-weight:700; border:1px solid var(--color-border); }
-  .cp-status-active { background:#edf8ee; border-color:#b8dfbc; color:#1f5f2a; }
-  .cp-status-inactive { background:#fdeeee; border-color:#f0bbbb; color:#8a1616; }
   .tiny { color:#666; font-size:0.66rem; }
 </style>
 
@@ -174,7 +171,7 @@ $isActiveChecked = $activeValue === '1';
                 <span class="tiny"><?= e((string) ($point['contact_number'] ?? '-')) ?></span>
               </td>
               <td>
-                <span class="cp-status <?= $isActive ? 'cp-status-active' : 'cp-status-inactive' ?>">
+                <span>
                   <?= $isActive ? 'Active' : 'Inactive' ?>
                 </span>
               </td>
